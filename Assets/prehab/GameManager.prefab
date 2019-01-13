@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1018172331966050}
+  m_IsPrefabParent: 1
+--- !u!1 &1018172331966050
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4643903275106938}
+  - component: {fileID: 114115753632839456}
+  - component: {fileID: 114075511026611236}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4643903275106938
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1018172331966050}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114075511026611236
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1018172331966050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a7b5657731ae7146babbcfd05e3d31b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Playerturn: 0
+  Enemymoving: 0
+  Pose: 0
+  emoveY: 0
+  emoveX: 0
+  i: 0
+  level: 0
+  blockinglayer:
+    serializedVersion: 2
+    m_Bits: 0
+  Enemy: {fileID: 1491634110333938, guid: 0c865f7224903bb449e715aa05339440, type: 2}
+  Player: {fileID: 1027602602160358, guid: 0020f9b7aba916b4fb81114936558147, type: 2}
+  enemies: []
+--- !u!114 &114115753632839456
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1018172331966050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a74c6d721ec77b468584690cb75ca99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallObject: {fileID: 1257389088625110, guid: ee7dc84ccdeed314095a0f7298ffd4c1, type: 2}
+  wallObject1: {fileID: 1813503086422936, guid: 4669c7decf14ef842a3e321b9bf9d5e1,
+    type: 2}
+  wallObject2: {fileID: 1711646814665370, guid: cb58a15db8eb3f64f853936c78a33168,
+    type: 2}
+  wallObject3: {fileID: 1657903569062292, guid: 77f1fff528899d04a89ab28e4064ac42,
+    type: 2}
+  wallObject4: {fileID: 1715820693063482, guid: a470ecf5ffc86c746b73e3f5699a7b16,
+    type: 2}
+  floor: {fileID: 1613847214825734, guid: 221cc240317215f4483ae7f6b32d0cbc, type: 2}
+  Player: {fileID: 1027602602160358, guid: 0020f9b7aba916b4fb81114936558147, type: 2}
+  Enemy: {fileID: 1491634110333938, guid: 0c865f7224903bb449e715aa05339440, type: 2}
+  Enemy2: {fileID: 1507781165617544, guid: 6345f5f03da1baf499772fb660248c4e, type: 2}
+  Enemy3: {fileID: 1537472234422684, guid: 233e048be09f5dc4f9971612a76cfe5c, type: 2}
+  Colider: {fileID: 1747246609733402, guid: e83e6cdf2a336904fa60a3d6bdb87fe3, type: 2}
+  kaidan: {fileID: 1843178513867256, guid: c05434e2c1aadd140946cf0b4cee24db, type: 2}
+  Xline: 0000000000000000
+  Yline: 0000000000000000
+  room_0: 000000000000000000000000000000000000000000000000000000000000000000000000
