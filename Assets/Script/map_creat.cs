@@ -15,7 +15,6 @@ public class map_creat : MonoBehaviour {
     public GameObject Enemy;
     public GameObject Enemy2;
     public GameObject Enemy3;
-    public GameObject Colider;
     public GameObject kaidan;
 
     static int MAX_X = 55;
@@ -28,7 +27,7 @@ public class map_creat : MonoBehaviour {
 
     int[,,] room_x;
     int[,,] room_y;
-    static GameObject[,] AttackColiders;
+    
 
     private int i1, i2, i3, i4, i5, i6, r, z1, z2, z3, z4;
 
@@ -38,16 +37,6 @@ public class map_creat : MonoBehaviour {
     // Use this for initialization
     public void Mapcreat()
     {
-
-        AttackColiders = new GameObject[59, 59];
-        for (i1 = 0; i1 < 59; i1++)
-        {
-            for (i2 = 0; i2 < 59; i2++)
-            {
-                AttackColiders[i1, i2] = Colider;
-                AttackColiders[i1, i2].SetActive(false);
-            }
-        }
 
         map = new int[MAX_X + 4, MAX_Y + 4];
         room_x = new int[3, 2, 3];
@@ -747,22 +736,8 @@ public class map_creat : MonoBehaviour {
             i1++;
         }
 
-        //通路のあまりを消す
-
-
-        //通路のつなぎ目を再生する
-        /*for (i1 = 0; i1 < 2; i1++)
-        {
-            for (i2 = 0; i2 < 2; i2++)
-            {
-                if (map[Xline[i1]+1, Yline[i2]]==1&&map[Xline[i1]-1,Yline[i2]]==1
-                 || map[Xline[i1], Yline[i2]+1] == 1 && map[Xline[i1], Yline[i2]-1] == 1)
-                {
-                    map[Xline[i1], Yline[i2]] = 3;
-                }
-            }
-        }失敗*/
-
+        
+        
 
 
         for (int x = 0; x < 59; x++)
@@ -773,7 +748,7 @@ public class map_creat : MonoBehaviour {
                 {
                     Instantiate(wallObject, new Vector3(x, 0, y), Quaternion.identity);
                 }
-                /*壁以外
+                /*壁以外色付け用
                 if (map[x, y] == 1)
                 {
                     Instantiate(wallObject1, new Vector3(x, 0, y), Quaternion.identity);
@@ -782,11 +757,11 @@ public class map_creat : MonoBehaviour {
                 {
                     Instantiate(wallObject2, new Vector3(x, 0, y), Quaternion.identity);
                 }
-        if (map[x, y] == 3)通路の分岐点
+        if (map[x, y] == 3)//通路の分岐点
         {
             Instantiate(wallObject3, new Vector3(x, 0, y), Quaternion.identity);
         }
-                if (map[x, y] == 4)部屋の入口
+                if (map[x, y] == 4)//部屋の入口
                 {
                     Instantiate(wallObject4, new Vector3(x, 0, y), Quaternion.identity);
                 }
@@ -794,7 +769,7 @@ public class map_creat : MonoBehaviour {
 
                 Instantiate(floor, new Vector3(x, -1, y), Quaternion.identity);
 
-                Instantiate(AttackColiders[x, y], new Vector3(x, 0, y), Quaternion.identity);
+               
             }
         }
 

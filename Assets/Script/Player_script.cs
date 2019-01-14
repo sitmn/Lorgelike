@@ -36,17 +36,20 @@ public class Player_script : MonoBehaviour {
     // Update is called once per frame
     public void Update()
     {
-
+        //プレイヤーターンでないときまたはポーズ時は動かない
         if (GameManager.instance.Playerturn == false||GameManager.instance.Pose==true)
         {
             
             
             return;
-    }
+        }
+
+        //移動せず向きのみ変える
         if (Input.GetKey(KeyCode.C))
         {
             vector = true;
         }
+
             playerpos = this.transform;
             if (Input.GetKey(KeyCode.UpArrow) == true)
             {
@@ -95,7 +98,7 @@ public class Player_script : MonoBehaviour {
 
         }
             
-
+        //障害物がなく、向きのみ変更でないとき移動
             if (notmove == false&&vector==false&&GameManager.instance.Playerturn==true)
             {
             Debug.Log("a");
@@ -104,12 +107,22 @@ public class Player_script : MonoBehaviour {
             GameManager.instance.Playerturn = false;
             
         }
+            //変数リセット
             moveX = 0;
             moveY = 0;
         vector = false;
         
        
     }
+
+
+
+
+
+
+
+
+
 
     //階段
     public void OnTriggerEnter(Collider other)
