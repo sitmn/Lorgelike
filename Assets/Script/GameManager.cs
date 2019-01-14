@@ -8,8 +8,6 @@ public class GameManager : MonoBehaviour {
     public bool Enemymoving;
     public bool Pose;
     public bool coroutine;
-    public bool kasoku;
-    
 
     public int emoveY;
     public int emoveX;
@@ -18,10 +16,11 @@ public class GameManager : MonoBehaviour {
 
     public LayerMask blockinglayer;
 
-    map_creat mapscript;
+    private map_creat mapscript;
 
     
-    Enemy_script enemyscript;
+    private Enemy_script enemyscript;
+    private Player_script playerscript;
 
     public static GameManager instance = null;
 
@@ -32,7 +31,7 @@ public class GameManager : MonoBehaviour {
 
     void Awake()
     {
-        
+        //シングルトン
         if (instance == null)
         {
             instance = this;
@@ -44,13 +43,16 @@ public class GameManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
+        //EnemyをListで管理
         enemies = new List<Enemy_script>();
 
+        //コンポーネントを取得
         mapscript = GetComponent<map_creat>();
-        //playerscript = Player.GetComponent<Player_script>();
         enemyscript = Enemy.GetComponent<Enemy_script>();
         
+        //マップ生成
         mapscript.Mapcreat();
+
 
         instance.Playerturn = true;
         instance.Pose = false;
@@ -65,69 +67,48 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        
-        
+        playerscript = Player.GetComponent<Player_script>();
     }
 
     // Update is called once per frame
     void Update () {
         if (instance.Playerturn == true || instance.Enemymoving == true|| instance.Pose ==true)
         {
-            
             return;
         }
-        /*
-        for (i = 0; i < enemies.Count; i++) {
-            enemies[i].Emove();
-            
-            for (a = 0; a < 100; a++)
-            {
-                Debug.Log(a);
-            }
-            
-        }
-
-
         
-        */
+
         if (coroutine == false)
         {
             coroutine = true;
             StartCoroutine(MoveEnemies());
-            
         }
     }
 
-   IEnumerator MoveEnemies()
+    //Enemy全体の行動
+    IEnumerator MoveEnemies()
     {
-        kasoku = Input.GetKey(KeyCode.Space);
-        if (kasoku == false)
+        //1ターンの最小時間を0.1秒に、Space押しながらで加速
+        if (Input.GetKey(KeyCode.Space) == false /*×|| map_creat.map[(int)playerscript.transform.position.x, (int)playerscript.transform.position.z] == 3 || map_creat.map[(int)playerscript.transform.position.x, (int)playerscript.transform.position.z] == 4 || map_creat.map[(int)playerscript.transform.position.x, (int)playerscript.transform.position.z] == 5*/)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
         }
-        if (enemies.Count == 0)
-        {
-            //yield return new WaitForSeconds(0.05f);
-        }
+        
+        
+        //Enemyを1体ずつ移動
         for (int i = 0; i < enemies.Count; i++)
         {
             enemies[i].Emove();
-            //yield return new WaitForSeconds(0.05f);
         }
+
+
         instance.Playerturn = true;
         instance.Enemymoving = false;
         coroutine = false;
     }
+    
 
-
-    //階段
-    /*private void OnLevelWasLoaded(int index)
-    {
-        level++;
-        mapscript.Mapcreat();
-    }*/
-
-
+    //Enemyをリストに追加
     public void AddListenemy(Enemy_script script)
     {
         enemies.Add(script);

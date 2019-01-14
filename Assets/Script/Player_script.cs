@@ -4,24 +4,23 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Player_script : MonoBehaviour {
+    
+    private int moveX;
+    private int moveY;
+    private bool attack;
+    private int attack_x, attack_y;
 
-
-    public int a;
-    public int moveX;
-    public int moveY;
-
-    public int attack_x, attack_y;
 
     public LayerMask blockinglayer;
     public LayerMask enemylayer;
 
-    public bool notmove,vector,test,attack;
+    public bool notmove,vectorchange,menu;
 
     public Vector3 direction;
 
     public RaycastHit enemyhit;
 
-    Transform playerpos;
+    private Transform playerpos;
 
     public int playerpow = 1;
 
@@ -30,7 +29,8 @@ public class Player_script : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        notmove = true;
+        this.notmove = true;
+        this.playerpos = GetComponent<Transform>();
     }
 
     // Update is called once per frame
@@ -39,89 +39,142 @@ public class Player_script : MonoBehaviour {
         //プレイヤーターンでないときまたはポーズ時は動かない
         if (GameManager.instance.Playerturn == false||GameManager.instance.Pose==true)
         {
-            
-            
             return;
         }
 
-        //移動せず向きのみ変える
-        if (Input.GetKey(KeyCode.C))
+        //Cキーを押している間、vectorchangeを有効に
+        if (Input.GetKey(KeyCode.C) && this.menu == false)
         {
-            vector = true;
+            this.vectorchange = true;
+            //〇マス目を表示
         }
-
-            playerpos = this.transform;
-            if (Input.GetKey(KeyCode.UpArrow) == true)
-            {
-                moveY = 1;
-            transform.eulerAngles = new Vector3(0, 270, 0);
-            attack_x = 0;
-            attack_y = 1;
-            notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(moveX, 0, moveY), blockinglayer);
-        }
-            else if (Input.GetKey(KeyCode.LeftArrow) == true)
-            {
-                moveX = -1;
-            
-            transform.eulerAngles = new Vector3(0, 180, 0);
-            attack_x = -1;
-            attack_y = 0;
-            notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(moveX, 0, moveY), blockinglayer);
-        }
-            else if (Input.GetKey(KeyCode.RightArrow) == true)
-            {
-                moveX = 1;
-            transform.eulerAngles = new Vector3(0, 0, 0);
-            attack_x = 1;
-            attack_y = 0;
-            notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(moveX, 0, moveY), blockinglayer);
-        }
-            else if (Input.GetKey(KeyCode.DownArrow) == true)
-            {
-                moveY = -1;
-            transform.eulerAngles = new Vector3(0, 90, 0);
-            attack_x = 0;
-            attack_y = -1;
-            notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(moveX, 0, moveY), blockinglayer);
-        }
-
-        if (Input.GetKey(KeyCode.Z) == true)
+        else
         {
-            
-            attack = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(attack_x, 0, attack_y), out enemyhit, enemylayer);
-            if (attack == true)
-            {
-                enemyhit.collider.gameObject.GetComponent<Enemy_script>().enemydamage(playerpow);
-            }
-            GameManager.instance.Playerturn = false;
-            
+            this.vectorchange = false;
+            //〇マス目表示を消す
+        }
 
+        //Xキーを押している間、menuを有効に
+        if (Input.GetKey(KeyCode.X) && this.menu ==false && this.vectorchange == false)
+        {
+            this.menu = true;
+            //〇メニュー画面を表示
         }
-            
-        //障害物がなく、向きのみ変更でないとき移動
-            if (notmove == false&&vector==false&&GameManager.instance.Playerturn==true)
-            {
-            Debug.Log("a");
-            playerpos.position += new Vector3(moveX, 0, moveY);
-            notmove = true;
-            GameManager.instance.Playerturn = false;
-            
-        }
-            //変数リセット
-            moveX = 0;
-            moveY = 0;
-        vector = false;
         
-       
+
+        //向きのみ変更
+        if (this.vectorchange == true)
+        {
+            VectorChange();
+        }else if(this.menu == true){
+            //〇メニュー処理
+
+            /*〇メニュー終了処理
+            if (Input.GetKey(KeyCode.X) && menu == true)
+            {
+                menu = false;
+            }*/
+        }
+        else {
+            if (Input.GetKey(KeyCode.Z))
+            {
+                Attack();
+            } else{
+                PlayerMove();
+            }
+        }
     }
 
 
+    private void VectorChange()
+    {
+        if (Input.GetKey(KeyCode.RightArrow) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 0, 0);
+        }
+        else if (Input.GetKey(KeyCode.DownArrow) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 90, 0);
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 180, 0);
+        }
+        else if (Input.GetKey(KeyCode.UpArrow) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 270, 0);
+        }  
+    }
 
 
+    private void PlayerMove()
+    {
+        //方向キーの向きに回転、障害物を確認
+        if (Input.GetKey(KeyCode.UpArrow) == true)
+        {
+            this.moveY = 1;
+            transform.eulerAngles = new Vector3(0, 270, 0);
+            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow) == true)
+        {
+            this.moveX = -1;
 
+            transform.eulerAngles = new Vector3(0, 180, 0);
+            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+        }
+        else if (Input.GetKey(KeyCode.RightArrow) == true)
+        {
+            this.moveX = 1;
+            transform.eulerAngles = new Vector3(0, 0, 0);
+            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+        }
+        else if (Input.GetKey(KeyCode.DownArrow) == true)
+        {
+            this.moveY = -1;
+            transform.eulerAngles = new Vector3(0, 90, 0);
+            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+        }
 
+        //障害物がなく、向きのみ変更でないとき移動
+        if (this.notmove == false && GameManager.instance.Playerturn == true)
+        {
+            playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+            this.notmove = true;
+            GameManager.instance.Playerturn = false;
+        }
+        //変数リセット
+        this.moveX = 0;
+        this.moveY = 0;
+    }
 
+    //プレイヤーの向いている方向に攻撃
+    private void Attack()
+    {
+        if(transform.eulerAngles == new Vector3(0, 0, 0)) {
+            this.attack_x = 1;
+            this.attack_y = 0;
+        }else if (transform.eulerAngles == new Vector3(0, 90, 0))
+        {
+            this.attack_x = 0;
+            this.attack_y = -1;
+        }else if (transform.eulerAngles == new Vector3(0, 180, 0))
+        {
+            this.attack_x = -1;
+            this.attack_y = 0;
+        }else if (transform.eulerAngles == new Vector3(0, 270, 0))
+        {
+            this.attack_x = 0;
+            this.attack_y = 1;
+        }
 
+        this.attack = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.attack_x, 0, this.attack_y), out enemyhit, this.enemylayer);
+        if (attack == true)
+        {
+            enemyhit.collider.gameObject.GetComponent<Enemy_script>().enemydamage(playerpow);
+        }
+        GameManager.instance.Playerturn = false;
+    }
 
 
     //階段

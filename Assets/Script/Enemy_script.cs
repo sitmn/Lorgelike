@@ -15,21 +15,19 @@ public class Enemy_script : MonoBehaviour
 
     public int enemyhp;
     
-
-    // Use this for initialization
+    
     void Start()
     {
+        //このEnemyが生成された時、このスクリプトをListに追加
         GameManager.instance.AddListenemy(this);
-        
-        enotmove = false;
+
+        this.enotmove = false;
     }
 
-    // Update is called once per frame
-
+    
+    //敵の行動
     public void Emove()
     {
-
-
         GameManager.instance.Enemymoving = true;
         this.enotmove = true;
 
@@ -67,21 +65,19 @@ public class Enemy_script : MonoBehaviour
                     break;
 
             }
+
+　　　　//動けるかどうかの判定
         this.enotmove = Physics.Linecast(transform.position, transform.position + new Vector3(emoveX, 0, emoveY), blockinglayer);
             if (this.enotmove == false)
             {
-             
-        transform.position += new Vector3(emoveX, 0, emoveY);
-
-                
-
-                
+        　　　　transform.position += new Vector3(emoveX, 0, emoveY);
                 GameManager.instance.Enemymoving = false;
             } 
-}
+        }
 
     }
 
+    //被ダメージ、HP0以下で削除
     public void enemydamage(int playerattack)
     {
         enemyhp -= playerattack;
@@ -92,7 +88,7 @@ public class Enemy_script : MonoBehaviour
         }
     }
 
-
+//↓敵AI（未使用）
     public void AI()
     {
         
