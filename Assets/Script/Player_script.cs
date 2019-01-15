@@ -8,7 +8,7 @@ public class Player_script : MonoBehaviour {
     private int moveX;
     private int moveY;
     private bool attack;
-    private int attack_x, attack_y;
+    private int attack_x, attack_y,x,z;
 
 
     public LayerMask blockinglayer;
@@ -31,6 +31,15 @@ public class Player_script : MonoBehaviour {
     {
         this.notmove = true;
         this.playerpos = GetComponent<Transform>();
+
+        do
+        {
+          x = Random.Range(1, 58);
+          z = Random.Range(1, 58);
+        } while (map_creat.map[x, z] != 2);
+
+        map_creat.map[x, z] = 5;
+        this.playerpos.position = new Vector3( x, 0, z);
     }
 
     // Update is called once per frame

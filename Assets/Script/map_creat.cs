@@ -29,7 +29,7 @@ public class map_creat : MonoBehaviour {
     int[,,] room_y;
     
 
-    private int i1, i2, i3, i4, i5, i6, r, z1, z2, z3, z4;
+    private int i1, i2, i3, i4, i5, i6, r, z1, z2, z3, z4,enemynumber;
 
 
     public static int[,] map;
@@ -772,20 +772,44 @@ public class map_creat : MonoBehaviour {
                
             }
         }
-
-        Instantiate(Player, new Vector3(Xline[0], 0, Yline[0]), Quaternion.identity);
         
-        Instantiate(Enemy, new Vector3(Xline[1], 0, Yline[1]), Quaternion.identity);
-        Instantiate(Enemy2, new Vector3(Xline[0], 0, Yline[1]), Quaternion.identity);
-        Instantiate(Enemy3, new Vector3(Xline[1], 0, Yline[0]), Quaternion.identity);
+        //階段を部屋に配置
+        InstantiateInRoom(kaidan);
 
+        //敵をランダムに配置
+        enemynumber = Random.Range(5, 9);
+        for (int i = 0; i < enemynumber; i++)
+        {
+            int a = Random.Range(0, 10);
+            if(0 <= a && a < 4) {
+                InstantiateInRoom(Enemy);
+            }
+            else if(4 <= a && a < 7)
+            {
+                InstantiateInRoom(Enemy2);
+            }
+            else if(7 <= a && a < 9)
+            {
+                InstantiateInRoom(Enemy2);
+            }
+            else
+            {
+                InstantiateInRoom(Enemy3);
+            }
+        }
+        
+    }
+
+    private void InstantiateInRoom(GameObject obj)
+    {
         do
         {
             i1 = Random.Range(1, 58);
             i2 = Random.Range(1, 58);
         } while (map[i1, i2] != 2);
-        Instantiate(kaidan, new Vector3(i1, 0, i2), Quaternion.identity);
-        
+
+        map[i1, i2] = 5;
+        Instantiate(obj, new Vector3(i1, 0, i2), Quaternion.identity);
     }
 
 

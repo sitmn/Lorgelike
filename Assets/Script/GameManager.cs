@@ -17,10 +17,7 @@ public class GameManager : MonoBehaviour {
     public LayerMask blockinglayer;
 
     private map_creat mapscript;
-
     
-    private Enemy_script enemyscript;
-    private Player_script playerscript;
 
     public static GameManager instance = null;
 
@@ -48,7 +45,6 @@ public class GameManager : MonoBehaviour {
 
         //コンポーネントを取得
         mapscript = GetComponent<map_creat>();
-        enemyscript = Enemy.GetComponent<Enemy_script>();
         
         //マップ生成
         mapscript.Mapcreat();
@@ -67,7 +63,7 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        playerscript = Player.GetComponent<Player_script>();
+
     }
 
     // Update is called once per frame
@@ -89,7 +85,7 @@ public class GameManager : MonoBehaviour {
     IEnumerator MoveEnemies()
     {
         //1ターンの最小時間を0.1秒に、Space押しながらで加速
-        if (Input.GetKey(KeyCode.Space) == false /*×|| map_creat.map[(int)playerscript.transform.position.x, (int)playerscript.transform.position.z] == 3 || map_creat.map[(int)playerscript.transform.position.x, (int)playerscript.transform.position.z] == 4 || map_creat.map[(int)playerscript.transform.position.x, (int)playerscript.transform.position.z] == 5*/)
+        if (Input.GetKey(KeyCode.Space) == false)
         {
             yield return new WaitForSeconds(0.1f);
         }
