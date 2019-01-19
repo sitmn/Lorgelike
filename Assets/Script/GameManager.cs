@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour {
     IEnumerator MoveEnemies()
     {
         //1ターンの最小時間を0.1秒に、Space押しながらで加速
-        if (Input.GetKey(KeyCode.Space) == false)
+        if (Input.GetKey(KeyCode.Space) == false /*&& map_creat.map[(int)Player.transform.position.x , (int)Player.transform.position.z] != 3*/ )
         {
             yield return new WaitForSeconds(0.1f);
         }

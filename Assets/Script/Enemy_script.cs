@@ -14,6 +14,8 @@ public class Enemy_script : MonoBehaviour
     public LayerMask blockinglayer;
 
     public int enemyhp;
+
+    private Vector3 enemypos;
     
     
     void Start()
@@ -31,7 +33,12 @@ public class Enemy_script : MonoBehaviour
         GameManager.instance.Enemymoving = true;
         this.enotmove = true;
 
-        while (this.enotmove == true)
+        
+        AisleMove();
+
+        GameManager.instance.Enemymoving = false;
+        //完全ランダム移動
+        /*while (this.enotmove == true)
         { 
             i = Random.Range(0, 4);
             switch (i)
@@ -73,7 +80,7 @@ public class Enemy_script : MonoBehaviour
         　　　　transform.position += new Vector3(emoveX, 0, emoveY);
                 GameManager.instance.Enemymoving = false;
             } 
-        }
+        }*/
 
     }
 
@@ -94,126 +101,110 @@ public class Enemy_script : MonoBehaviour
         
     }
 
-    //通路にいるときの移動
-    public void RoadMove()
-    {
-        //通路にいるとき
-        if (map_creat.map[(int)transform.position.x,(int)transform.position.z]==1)
-        {
-            if (transform.eulerAngles == new Vector3(0, 0, 0))
-            {
-                emoveX = 1;
-                emoveY = 0;
-            }
-            if (transform.eulerAngles == new Vector3(0, 90, 0))
-            {
-                emoveX = 0;
-                emoveY = -1;
-            }
-            if (transform.eulerAngles == new Vector3(0, 180, 0))
-            {
-                emoveX = -1;
-                emoveY = 0;
-            }
-            if (transform.eulerAngles == new Vector3(0, 270, 0))
-            {
-                emoveX = 0;
-                emoveY = 1;
-            }
-        }
-        //通路の分岐点にいるときランダムで移動
-        else if(map_creat.map[(int)transform.position.x, (int)transform.position.z] == 3)
-        {
-            i = Random.Range(0, 3);
-            if(i == 0)
-            {
-                if (transform.eulerAngles == new Vector3(0, 0, 0))
-                {
-                    emoveX = 1;
-                    emoveY = 0;
-                }
-                if (transform.eulerAngles == new Vector3(0, 90, 0))
-                {
-                    emoveX = 0;
-                    emoveY = -1;
-                }
-                if (transform.eulerAngles == new Vector3(0, 180, 0))
-                {
-                    emoveX = -1;
-                    emoveY = 0;
-                }
-                if (transform.eulerAngles == new Vector3(0, 270, 0))
-                {
-                    emoveX = 0;
-                    emoveY = 1;
-                }
-            }
-            if(i == 1)
-            {
-                if (transform.eulerAngles == new Vector3(0, 270, 0))
-                {
-                    emoveX = 1;
-                    emoveY = 0;
-                }
-                if (transform.eulerAngles == new Vector3(0, 0, 0))
-                {
-                    emoveX = 0;
-                    emoveY = -1;
-                }
-                if (transform.eulerAngles == new Vector3(0, 90, 0))
-                {
-                    emoveX = -1;
-                    emoveY = 0;
-                }
-                if (transform.eulerAngles == new Vector3(0, 180, 0))
-                {
-                    emoveX = 0;
-                    emoveY = 1;
-                }
-            }
-            if(i == 2)
-            {
-                if (transform.eulerAngles == new Vector3(0, 180, 0))
-                {
-                    emoveX = 1;
-                    emoveY = 0;
-                }
-                if (transform.eulerAngles == new Vector3(0, 270, 0))
-                {
-                    emoveX = 0;
-                    emoveY = -1;
-                }
-                if (transform.eulerAngles == new Vector3(0, 0, 0))
-                {
-                    emoveX = -1;
-                    emoveY = 0;
-                }
-                if (transform.eulerAngles == new Vector3(0, 90, 0))
-                {
-                    emoveX = 0;
-                    emoveY = 1;
-                }
-            }
-        }
-    }
-
+    
     //部屋に入ったときの移動
-    public void RoomMove()
+    private void RoomMove()
     {
 
     }
 
     //プレイヤーを見つけたときの移動
-    public void FindPlayerMove()
+    private void FindPlayerMove()
     {
 
     }
 
     //設置物を見つけたときの移動
-    public void FindShellMove()
+    private void AisleMove()
     {
+        enemypos = transform.position;
 
+        //通路の分岐点でランダムに曲がる
+        if (map_creat.map[(int)enemypos.x, (int)enemypos.z] == 3 || map_creat.map[(int)enemypos.x, (int)enemypos.z] == 4)
+        {
+            int r = Random.Range(0, 2);
+            //左に曲がる
+            if (r == 0) {
+                transform.Rotate(new Vector3(0, 270, 0));
+
+                //正面が壁ならば90度回転,正面が壁でなくなるまでループ
+                RotateLeft();
+            }
+            //右に曲がる
+            else{
+                transform.Rotate(new Vector3(0, 90, 0));
+
+                //正面が壁ならば270度回転,正面が壁でなくなるまでループ
+                RotateRight();
+            }
+
+        }
+        else {
+
+            //正面が壁ならば90度回転,正面が壁でなくなるまでループ
+            RotateLeft();
+        }
+        
+        ForwardMove();
+
+        //移動先にプレイヤーと敵がいないならば移動
+        this.enotmove = Physics.Linecast(transform.position, enemypos, blockinglayer);
+        if (enotmove == false) {
+            transform.position = enemypos;
+        }else if(enotmove == true)//正面が移動できないものならターン
+        {
+            
+            transform.Rotate(new Vector3(0, 90, 0));
+            RotateLeft();
+            ForwardMove();
+            this.enotmove = Physics.Linecast(transform.position, enemypos, blockinglayer);
+            if(enotmove == false)
+            {
+                transform.position = enemypos;
+            }
+        }
     }
 
+    //左回りで分岐探索
+    void RotateLeft()
+    {
+        while (((transform.eulerAngles.y / 90) % 4 == 0 && map_creat.map[(int)enemypos.x + 1, (int)enemypos.z] == 0) ||
+                    ((transform.eulerAngles.y / 90) % 4 == 1 && map_creat.map[(int)enemypos.x, (int)enemypos.z - 1] == 0) ||
+                    ((transform.eulerAngles.y / 90) % 4 == 2 && map_creat.map[(int)enemypos.x - 1, (int)enemypos.z] == 0) ||
+                    ((transform.eulerAngles.y / 90) % 4 == 3 && map_creat.map[(int)enemypos.x, (int)enemypos.z + 1] == 0))
+        {
+            transform.Rotate(new Vector3(0, 90, 0));
+        }
+    }
+    //右回りで分岐探索
+    void RotateRight()
+    {
+        while (((transform.eulerAngles.y / 90) % 4 == 0 && map_creat.map[(int)enemypos.x + 1, (int)enemypos.z] == 0) ||
+                    ((transform.eulerAngles.y / 90) % 4 == 1 && map_creat.map[(int)enemypos.x, (int)enemypos.z - 1] == 0) ||
+                    ((transform.eulerAngles.y / 90) % 4 == 2 && map_creat.map[(int)enemypos.x - 1, (int)enemypos.z] == 0) ||
+                    ((transform.eulerAngles.y / 90) % 4 == 3 && map_creat.map[(int)enemypos.x, (int)enemypos.z + 1] == 0))
+        {
+            transform.Rotate(new Vector3(0, 270, 0));
+        }
+    }
+    //向いている方向に前進
+    void ForwardMove()
+    {
+        if ((transform.eulerAngles.y / 90) % 4 == 0)
+        {
+            enemypos += new Vector3(1, 0, 0);
+        }else if ((transform.eulerAngles.y / 90) % 4 == 1)
+        {
+            enemypos += new Vector3(0, 0, -1);
+        }
+        else if ((transform.eulerAngles.y / 90) % 4 == 2)
+        {
+            enemypos += new Vector3(-1, 0, 0);
+        }
+        else
+        {
+            enemypos += new Vector3(0, 0, 1);
+        }
+    }
 }
 
