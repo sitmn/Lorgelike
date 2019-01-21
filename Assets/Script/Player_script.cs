@@ -9,36 +9,29 @@ public class Player_script : MonoBehaviour {
     private int moveY;
     private bool attack;
     private int attack_x, attack_y,x,z;
-
-
-    public LayerMask blockinglayer;
-    public LayerMask enemylayer;
-
+    
     public bool notmove,vectorchange,menu;
-
-    public Vector3 direction;
-
-    public RaycastHit enemyhit;
+    
+    public GameObject Player;
 
     private Transform playerpos;
-
-    public int playerpow = 1;
-
-
-
+    
     // Use this for initialization
     void Start()
     {
-        this.notmove = true;
+        this.notmove = false;
         this.playerpos = GetComponent<Transform>();
 
+        //プレイヤーをマップ内に移動
         do
         {
           x = Random.Range(1, 58);
           z = Random.Range(1, 58);
-        } while (map_creat.map[x, z] != 2);
+        } while (map_creat.map[x, z].number != 1 || map_creat.map_ex[x,z].number == 6);
 
-        map_creat.map[x, z] = 5;
+        map_creat.map_ex[x, z] = new player();
+        map_creat.map_ex[x, z].obj = Player;
+        map_creat.map_ex[x, z].player_script = Player.GetComponent<Player_script>();
         this.playerpos.position = new Vector3( x, 0, z);
     }
 
@@ -50,7 +43,6 @@ public class Player_script : MonoBehaviour {
         {
             return;
         }
-
         //Cキーを押している間、vectorchangeを有効に
         if (Input.GetKey(KeyCode.C) && this.menu == false)
         {
@@ -112,7 +104,23 @@ public class Player_script : MonoBehaviour {
         else if (Input.GetKey(KeyCode.UpArrow) == true)
         {
             transform.eulerAngles = new Vector3(0, 270, 0);
-        }  
+        }
+        else if (Input.GetKey(KeyCode.E) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 45, 0);
+        }
+        else if (Input.GetKey(KeyCode.W) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 135, 0);
+        }
+        else if (Input.GetKey(KeyCode.Q) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 225, 0);
+        }
+        else if (Input.GetKey(KeyCode.R) == true)
+        {
+            transform.eulerAngles = new Vector3(0, 315, 0);
+        }
     }
 
 
@@ -123,35 +131,211 @@ public class Player_script : MonoBehaviour {
         {
             this.moveY = 1;
             transform.eulerAngles = new Vector3(0, 270, 0);
-            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+            //移動先に壁と敵がいるか？
+            if (map_creat.map_ex[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 0)
+            {
+                this.notmove = true;
+            }
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
         }
         else if (Input.GetKey(KeyCode.LeftArrow) == true)
         {
             this.moveX = -1;
-
             transform.eulerAngles = new Vector3(0, 180, 0);
-            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+            if (map_creat.map_ex[(int)playerpos.position.x　+ moveX, (int)playerpos.position.z].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 0)
+            {
+                this.notmove = true;
+            }
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
         }
         else if (Input.GetKey(KeyCode.RightArrow) == true)
         {
             this.moveX = 1;
             transform.eulerAngles = new Vector3(0, 0, 0);
-            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+            if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 0)
+            {
+                this.notmove = true;
+            }
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
         }
         else if (Input.GetKey(KeyCode.DownArrow) == true)
         {
             this.moveY = -1;
             transform.eulerAngles = new Vector3(0, 90, 0);
-            this.notmove = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.moveX, 0, this.moveY), this.blockinglayer);
+            if (map_creat.map_ex[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 0)
+            {
+                this.notmove = true;
+            }
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
+        }
+        else if (Input.GetKey(KeyCode.Q) == true)
+        {
+            this.moveX = -1;
+            this.moveY = 1;
+            transform.eulerAngles = new Vector3(0, 225, 0);
+            if(map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
+            {
+                this.notmove = true;
+            }
+            else
+            {
+                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                {
+                    this.notmove = true;
+                }
+            }
+            
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
+        }
+        else if (Input.GetKey(KeyCode.W) == true)
+        {
+            this.moveX = -1;
+            this.moveY = -1;
+            transform.eulerAngles = new Vector3(0, 135, 0);
+            if (map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
+            {
+                this.notmove = true;
+            }
+            else
+            {
+                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                {
+                    this.notmove = true;
+                }
+            }
+
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
+        }
+        else if (Input.GetKey(KeyCode.E) == true)
+        {
+            this.moveX = 1;
+            this.moveY = -1;
+            transform.eulerAngles = new Vector3(0, 45, 0);
+            if (map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
+            {
+                this.notmove = true;
+            }
+            else
+            {
+                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                {
+                    this.notmove = true;
+                }
+            }
+
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
+        }
+        else if (Input.GetKey(KeyCode.R) == true)
+        {
+            this.moveX = 1;
+            this.moveY = 1;
+            transform.eulerAngles = new Vector3(0, 315, 0);
+            if (map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
+            {
+                this.notmove = true;
+            }
+            else
+            {
+                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                {
+                    this.notmove = true;
+                }
+            }
+
+            if (this.notmove == false && GameManager.instance.Playerturn == true)
+            {
+                map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+
+                GameManager.instance.Playerturn = false;
+            }
+            else if (this.notmove == true)
+            {
+                this.notmove = false;
+            }
         }
 
         //障害物がなく、向きのみ変更でないとき移動
-        if (this.notmove == false && GameManager.instance.Playerturn == true)
-        {
-            playerpos.position += new Vector3(this.moveX, 0, this.moveY);
-            this.notmove = true;
-            GameManager.instance.Playerturn = false;
-        }
+
+
         //変数リセット
         this.moveX = 0;
         this.moveY = 0;
@@ -176,11 +360,47 @@ public class Player_script : MonoBehaviour {
             this.attack_x = 0;
             this.attack_y = 1;
         }
-
-        this.attack = Physics.Linecast(playerpos.position, playerpos.position + new Vector3(this.attack_x, 0, this.attack_y), out enemyhit, this.enemylayer);
-        if (attack == true)
+        else if (transform.eulerAngles == new Vector3(0, 45, 0))
         {
-            enemyhit.collider.gameObject.GetComponent<Enemy_script>().enemydamage(playerpow);
+            this.attack_x = 1;
+            this.attack_y = -1;
+        }
+        else if (transform.eulerAngles == new Vector3(0, 135, 0))
+        {
+            this.attack_x = -1;
+            this.attack_y = -1;
+        }
+        else if (transform.eulerAngles == new Vector3(0, 225, 0))
+        {
+            this.attack_x = -1;
+            this.attack_y = 1;
+        }
+        else if (transform.eulerAngles == new Vector3(0, 315, 0))
+        {
+            this.attack_x = 1;
+            this.attack_y = 1;
+        }
+
+        //向いてる方向に攻撃
+        if(transform.eulerAngles == new Vector3(0,45,0) && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)||
+            transform.eulerAngles == new Vector3(0, 135, 0) && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)||
+            transform.eulerAngles == new Vector3(0, 225, 0) && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)||
+                transform.eulerAngles == new Vector3(0, 315, 0) && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0))
+        {
+
+        }
+        else
+        {
+            if (map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].number == 6)
+            {
+                this.attack = true;
+            }
+        }
+        if (this.attack == true)
+        {
+            this.attack = false;
+            map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].hp = map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].hp , map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].attack , map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].defence);
         }
         GameManager.instance.Playerturn = false;
     }

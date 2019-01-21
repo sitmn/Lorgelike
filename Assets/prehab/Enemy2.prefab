@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114432593203584054}
   m_Layer: 10
   m_Name: Enemy2
-  m_TagString: Untagged
+  m_TagString: Enemy2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,10 +108,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a1cf39a64a3ba418042cfe0427d0cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  emoveX: -1
-  emoveY: -1
-  enotmove: 0
-  blockinglayer:
-    serializedVersion: 2
-    m_Bits: 3584
-  enemyhp: 2

@@ -113,6 +113,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: f0f8f056f69aaee46ac27b99b42c4c92, type: 2}
+--- !u!1 &163898106 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1027602602160358, guid: 0020f9b7aba916b4fb81114936558147,
+    type: 2}
+  m_PrefabInternal: {fileID: 353683096}
 --- !u!1001 &353683096
 Prefab:
   m_ObjectHideFlags: 0
@@ -152,6 +157,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114980885007962940, guid: 0020f9b7aba916b4fb81114936558147,
+        type: 2}
+      propertyPath: Player
+      value: 
+      objectReference: {fileID: 163898106}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0020f9b7aba916b4fb81114936558147, type: 2}
   m_IsPrefabAsset: 0
@@ -378,6 +388,12 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Kaidan
+      value: 
+      objectReference: {fileID: 1843178513867256, guid: c05434e2c1aadd140946cf0b4cee24db,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d18c365d4d79b51459e30039fec4952d, type: 2}
   m_IsPrefabAsset: 0
