@@ -3,23 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class map_state
-{
-    public int number;
-}
-public class map_exist
-{
-    public int number;
-
-    public int hp;
-    public int attack;
-    public int defence;
-
-    public GameObject obj;
-    public Player_script player_script;
-    public Enemy_script enemy_script;
-}
-
 public class map_creat : MonoBehaviour {
 
     public GameObject wallObject;
@@ -32,9 +15,13 @@ public class map_creat : MonoBehaviour {
     public GameObject Enemy;
     public GameObject Enemy2;
     public GameObject Enemy3;
+    public GameObject Item1;
+    public GameObject Item2;
+    public GameObject Item3;
     public GameObject Kaidan;
     
-    public List<Vector3> roomlist;
+
+    public Vector3 entrancevec;
 
     static int MAX_X = 55;
     static int MAX_Y = 55;
@@ -46,23 +33,43 @@ public class map_creat : MonoBehaviour {
 
     int[,,] room_x;
     int[,,] room_y;
-    
+
+    private bool duplication = false;
 
     private int i1, i2, i3, i4, i5, i6, r, z1, z2, z3, z4,enemynumber;
 
 
     public static map_state[,] map;
     public static map_exist[,] map_ex;
+    public static map_item[,] map_item;
+
+    void Start()
+    {
+    
+}
 
     // Use this for initialization
     public void Mapcreat()
     {
-
+        
+            GameManager.instance.roomlist.Clear();
+            GameManager.instance.entrancelist_0.Clear();
+            GameManager.instance.entrancelist_1.Clear();
+            GameManager.instance.entrancelist_2.Clear();
+            GameManager.instance.entrancelist_3.Clear();
+            GameManager.instance.entrancelist_4.Clear();
+            GameManager.instance.entrancelist_5.Clear();
+            GameManager.instance.entrancelist_6.Clear();
+            GameManager.instance.entrancelist_7.Clear();
+            GameManager.instance.entrancelist_8.Clear();
+        
         map = new map_state[MAX_X + 4, MAX_Y + 4];
         room_x = new int[3, 2, 3];
         room_y = new int[3, 2, 3];
 
         map_ex = new map_exist[MAX_X + 4, MAX_Y + 4];
+
+        map_item = new map_item[MAX_X + 4, MAX_Y + 4];
 
 
         for (i1 = 0; i1 < MAX_X + 4; i1++)
@@ -71,6 +78,7 @@ public class map_creat : MonoBehaviour {
             {
                 map[i1, i2] = new wall();
                 map_ex[i1, i2] = new clear();
+                map_item[i1, i2] = new clean();
             }
         }//map全て壁にする、map_ex全て空欄に
 
@@ -139,7 +147,44 @@ public class map_creat : MonoBehaviour {
                         for (i4 = room_y[i2, 0, i1]; i4 <= room_y[i2, 1, i1]; i4++)
                         {
                             map[i3, i4] = new room();
-                            roomlist.Add(new Vector3(i3, 0, i4));
+                            if (i1 == 0 && i2 == 2)
+                            {
+                                map[i3, i4].room_No = 0;
+                            }
+                            else if (i1 == 1 && i2 == 2)
+                            {
+                                map[i3, i4].room_No = 1;
+                            }
+                            else if (i1 == 2 && i2 == 2)
+                            {
+                                map[i3, i4].room_No = 2;
+                            }
+                            else if (i1 == 0 && i2 == 1)
+                            {
+                                map[i3, i4].room_No = 3;
+                            }
+                            else if (i1 == 1 && i2 == 1)
+                            {
+                                map[i3, i4].room_No = 4;
+                            }
+                            else if (i1 == 2 && i2 == 1)
+                            {
+                                map[i3, i4].room_No = 5;
+                            }
+                            else if (i1 == 0 && i2 == 0)
+                            {
+                                map[i3, i4].room_No = 6;
+                            }
+                            else if (i1 == 1 && i2 == 0)
+                            {
+                                map[i3, i4].room_No = 7;
+                            }
+                            else if (i1 == 2 && i2 == 0)
+                            {
+                                map[i3, i4].room_No = 8;
+                            }
+                            
+                            GameManager.instance.roomlist.Add(new Vector3(i3, 0, i4));
                         }
                     }
                 }
@@ -178,6 +223,22 @@ public class map_creat : MonoBehaviour {
                             i2 = room_x[0, 1, 0];
 
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 6;
+
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_6.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_6[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_6.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
+
                             i2++;
 
                             while (true)
@@ -199,6 +260,20 @@ public class map_creat : MonoBehaviour {
                             i2 = room_y[0, 1, 0];
 
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 6;
+
+                            for(int i = 0;i < GameManager.instance.entrancelist_6.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_6[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if(duplication != true)
+                            {
+                                GameManager.instance.entrancelist_6.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2++;
 
                             while (true) {
@@ -227,6 +302,21 @@ public class map_creat : MonoBehaviour {
                             i2 = room_x[1, 0, 0];
 
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 7;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_7.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_7[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_7.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
+
                             i2--;
                             while (true)
                             {
@@ -245,6 +335,21 @@ public class map_creat : MonoBehaviour {
                             i2 = room_y[0, 1, 1];
 
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 7;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_7.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_7[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_7.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
+
                             i2++;
                             while (true)
                             {
@@ -262,6 +367,21 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[0, 0, 1], room_y[0, 1, 1] + 1);
                             i2 = room_x[1, 1, 0];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 7;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_7.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_7[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_7.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
+
                             i2++;
                             while (true)
                             {
@@ -287,6 +407,21 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[0, 0, 2], room_y[0, 1, 2] + 1);
                             i2 = room_x[2, 0, 0];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 8;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_8.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_8[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_8.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
+
                             i2--;
                             while (true)
                             {
@@ -304,6 +439,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[2, 0, 0], room_x[2, 1, 0] + 1);
                             i2 = room_y[0, 1, 2];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 8;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_8.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_8[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_8.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2++;
                             while (true)
                             {
@@ -329,6 +478,21 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[0, 0, 1], room_x[0, 1, 1] + 1);
                             i2 = room_y[1, 0, 0];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 3;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_3.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_3[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_3.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
+
                             i2--;
                             while (true)
                             {
@@ -346,6 +510,20 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[1, 0, 0], room_y[1, 1, 0] + 1);
                             i2 = room_x[0, 1, 1];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 3;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_3.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_3[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_3.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
                             i2++;
                             while (true)
                             {
@@ -363,6 +541,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[0, 0, 1], room_x[0, 1, 1] + 1);
                             i2 = room_y[1, 1, 0];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 3;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_3.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_3[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_3.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2++;
                             while (true)
                             {
@@ -388,6 +580,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[1, 0, 1], room_x[1, 1, 1] + 1);
                             i2 = room_y[1, 0, 1];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 4;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_4.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_4[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_4.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -405,6 +611,20 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[1, 0, 1], room_y[1, 1, 1] + 1);
                             i2 = room_x[1, 1, 1];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 4;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_4.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_4[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_4.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
                             i2++;
                             while (true)
                             {
@@ -422,6 +642,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[1, 0, 1], room_x[1, 1, 1] + 1);
                             i2 = room_y[1, 1, 1];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 4;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_4.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_4[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_4.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2++;
                             while (true)
                             {
@@ -439,6 +673,20 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[1, 0, 1], room_y[1, 1, 1] + 1);
                             i2 = room_x[1, 0, 1];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 4;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_4.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_4[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_4.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -464,6 +712,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[2, 0, 1], room_x[2, 1, 1] + 1);
                             i2 = room_y[1, 0, 2];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 5;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_5.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_5[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_5.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -481,6 +743,20 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[1, 0, 2], room_y[1, 1, 2] + 1);
                             i2 = room_x[2, 0, 1];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 5;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_5.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_5[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_5.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -498,6 +774,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[2, 0, 1], room_x[2, 1, 1] + 1);
                             i2 = room_y[1, 1, 2];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 5;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_5.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_5[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_5.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2++;
                             while (true)
                             {
@@ -523,6 +813,21 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[2, 0, 0], room_y[2, 1, 0] + 1);
                             i2 = room_x[0, 1, 2];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 0;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_0.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_0[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_0.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
+
                             i2++;
                             while (true)
                             {
@@ -540,6 +845,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[0, 0, 2], room_x[0, 1, 2] + 1);
                             i2 = room_y[2, 0, 0];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 0;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_0.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_0[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_0.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -565,6 +884,20 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[2, 0, 1], room_y[2, 1, 1] + 1);
                             i2 = room_x[1, 0, 2];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 1;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_1.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_1[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_1.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -582,6 +915,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[1, 0, 2], room_x[1, 1, 2] + 1);
                             i2 = room_y[2, 0, 1];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 1;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_1.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_1[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_1.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -599,6 +946,20 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[2, 0, 1], room_y[2, 1, 1] + 1);
                             i2 = room_x[1, 1, 2];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 1;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_1.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_1[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_1.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
                             i2++;
                             while (true)
                             {
@@ -624,6 +985,20 @@ public class map_creat : MonoBehaviour {
                             z2 = Random.Range(room_y[2, 0, 2], room_y[2, 1, 2] + 1);
                             i2 = room_x[2, 0, 2];
                             map[i2, z2] = new entrance();
+                            map[i2, z2].room_No = 2;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_2.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_2[i] == new Vector3(i2, 0, z2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_2.Add(new Vector3(i2, 0, z2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -641,6 +1016,20 @@ public class map_creat : MonoBehaviour {
                             z1 = Random.Range(room_x[2, 0, 2], room_x[2, 1, 2] + 1);
                             i2 = room_y[2, 0, 2];
                             map[z1, i2] = new entrance();
+                            map[z1, i2].room_No = 2;
+
+                            for (int i = 0; i < GameManager.instance.entrancelist_2.Count; i++)
+                            {
+                                if (GameManager.instance.entrancelist_2[i] == new Vector3(z1, 0, i2))
+                                {
+                                    duplication = true;
+                                }
+                            }
+                            if (duplication != true)
+                            {
+                                GameManager.instance.entrancelist_2.Add(new Vector3(z1, 0, i2));
+                            }
+                            duplication = false;
                             i2--;
                             while (true)
                             {
@@ -667,8 +1056,7 @@ public class map_creat : MonoBehaviour {
                 map[Xline[i1], Yline[i2]] = new intersection();
             }
         }
-
-
+        
 
         //部屋と通路をつなぐ
 
@@ -761,8 +1149,6 @@ public class map_creat : MonoBehaviour {
         }
 
         
-        
-
 
         for (int x = 0; x < 59; x++)
         {
@@ -772,11 +1158,11 @@ public class map_creat : MonoBehaviour {
                 {
                     Instantiate(wallObject, new Vector3(x, 0, y), Quaternion.identity);
                 }
-                /*壁以外色付け用
-                if (map[x, y] == 1)
+                
+                if (map[x, y].number == 99)
                 {
-                    Instantiate(wallObject1, new Vector3(x, 0, y), Quaternion.identity);
-                }
+                    Instantiate(wallObject3, new Vector3(x, 0, y), Quaternion.identity);
+                }/*壁以外色付け用
                 if (map[x, y] == 2)
                 {
                     Instantiate(wallObject2, new Vector3(x, 0, y), Quaternion.identity);
@@ -791,14 +1177,32 @@ public class map_creat : MonoBehaviour {
                 }
                 */
 
-                Instantiate(floor, new Vector3(x, -1, y), Quaternion.identity);
-
-               
+                  Instantiate(floor, new Vector3(x, -1, y), Quaternion.identity);
+              
             }
         }
        
         //階段を部屋に配置
         InstantiateInRoom(Kaidan);
+
+        //アイテムを部屋に配置
+        int itemnumber = Random.Range(5, 15);
+        for(int i = 0; i < itemnumber; i++)
+        {
+            int a = Random.Range(0, 5);
+            if(0 <= a && a < 2)
+            {
+                InstantiateInRoom(Item1);
+            }
+            else if(a == 2)
+            {
+                InstantiateInRoom(Item2);
+            }
+            else if(3 <= a)
+            {
+                InstantiateInRoom(Item3);
+            }
+        }
 
         //敵をランダムに配置
         enemynumber = Random.Range(5, 9);
@@ -821,7 +1225,6 @@ public class map_creat : MonoBehaviour {
                 InstantiateEnemyInRoom(Enemy3);
             }
         }
-        
     }
 
     private void InstantiateInRoom(GameObject obj)
@@ -829,16 +1232,24 @@ public class map_creat : MonoBehaviour {
         Vector3 pos;
         do
         {
-            pos = roomlist[Random.Range(0, roomlist.Count)];
+            pos = GameManager.instance.roomlist[Random.Range(0, GameManager.instance.roomlist.Count)];
 
-        } while (map[(int)pos.x, (int)pos.z].number == 4 || map[(int)pos.x, (int)pos.z].number == 5);
+        } while (map_item[(int)pos.x, (int)pos.z].exist == true || map[(int)pos.x, (int)pos.z].number == 5 || map[(int)pos.x, (int)pos.z].number == 0);
 
         if (obj.tag == "Kaidan")
         {
             map[(int)pos.x , (int)pos.z] = new kaidan();
-        }else if(obj.tag == "Item")
+        }else if(obj.tag == "Item1")
         {
-            map[(int)pos.x, (int)pos.z] = new item();
+            map_item[(int)pos.x, (int)pos.z] = new item1();
+        }
+        else if (obj.tag == "Item2")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new item2();
+        }
+        else if (obj.tag == "Item3")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new item3();
         }
         Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
     }
@@ -849,8 +1260,8 @@ public class map_creat : MonoBehaviour {
         Vector3 pos;
         do
         {
-            pos = roomlist[Random.Range(0, roomlist.Count)];
-        } while (map_ex[(int)pos.x, (int)pos.z].number == 5 || map_ex[(int)pos.x, (int)pos.z].number == 6);
+            pos = GameManager.instance.roomlist[Random.Range(0, GameManager.instance.roomlist.Count)];
+        } while (map_ex[(int)pos.x, (int)pos.z].number == 5 || map_ex[(int)pos.x, (int)pos.z].number == 6 || map[(int)pos.x, (int)pos.z].number == 0);
         
         if (obj.tag == "Enemy")
         {
@@ -862,109 +1273,69 @@ public class map_creat : MonoBehaviour {
         {
             map_ex[(int)pos.x, (int)pos.z] = new enemy3();
         }
-            GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
-            map_ex[(int)pos.x, (int)pos.z].obj = obj2;
+        GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
+        
+        map_ex[(int)pos.x, (int)pos.z].obj = obj2;
             map_ex[(int)pos.x, (int)pos.z].enemy_script = obj2.GetComponent<Enemy_script>();
     }
+
+    private void Addentrancelist(float x , float z)
+    {
+
+    }
     
+
+    private void MapDebug(int a)
+    {
+        Debug.Log(a);
+        for(int i = 0; i < GameManager.instance.entrancelist_0.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_0[i]+"A");
+            map[(int)GameManager.instance.entrancelist_0[i].x, (int)GameManager.instance.entrancelist_0[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_1.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_1[i] + "B");
+            map[(int)GameManager.instance.entrancelist_1[i].x, (int)GameManager.instance.entrancelist_1[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_2.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_2[i] + "C");
+            map[(int)GameManager.instance.entrancelist_2[i].x, (int)GameManager.instance.entrancelist_2[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_3.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_3[i] + "D");
+            map[(int)GameManager.instance.entrancelist_3[i].x, (int)GameManager.instance.entrancelist_3[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_4.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_4[i] + "E");
+            map[(int)GameManager.instance.entrancelist_4[i].x, (int)GameManager.instance.entrancelist_4[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_5.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_5[i] + "F");
+            map[(int)GameManager.instance.entrancelist_5[i].x, (int)GameManager.instance.entrancelist_5[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_6.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_6[i] + "G");
+            map[(int)GameManager.instance.entrancelist_6[i].x, (int)GameManager.instance.entrancelist_6[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_7.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_7[i] + "H");
+            map[(int)GameManager.instance.entrancelist_7[i].x, (int)GameManager.instance.entrancelist_7[i].z] = new test();
+        }
+        for (int i = 0; i < GameManager.instance.entrancelist_8.Count; i++)
+        {
+            Debug.Log(GameManager.instance.entrancelist_8[i] + "I");
+            map[(int)GameManager.instance.entrancelist_8[i].x, (int)GameManager.instance.entrancelist_8[i].z] = new test();
+        }
+    }
 }
 
-public class wall : map_state
-{
-    public wall()
-    {
-        number = 0;
-    }
-}
-public class room : map_state
-{
-    public room()
-    {
-        number = 1;
-    }
-}
-public class intersection : map_state
-{
-    public intersection()
-    {
-        number = 2;
-    }
-}
-public class entrance : map_state
-{
-    public entrance()
-    {
-        number = 3;
-    }
-}
-public class item : map_state
-{
-    public item()
-    {
-        number = 4;
-    }
-}
-public class kaidan : map_state
-{
-    public kaidan()
-    {
-        number = 5;
-    }
-}
-public class aisle : map_state
-{
-    public aisle()
-    {
-        number = 10;
-    }
-}
 
-
-public class player : map_exist
-{
-    public player()
-    {
-        number = 5;
-        hp = 10;
-        attack = 1;
-    }
-}
-public class enemy1 : map_exist
-{
-    
-    public enemy1()
-    {
-        number = 6;
-        hp = 1;
-        attack = 1;
-    }
-}
-public class enemy2 : map_exist
-{
-    
-    public enemy2()
-    {
-        number = 6;
-        hp = 2;
-        attack = 1;
-    }
-}
-public class enemy3 : map_exist
-{
-    
-    public enemy3()
-    {
-        number = 6;
-        hp = 3;
-        attack = 1;
-    }
-}
-public class clear : map_exist
-{
-    public clear()
-    {
-        number = 10;
-    }
-}
 
 

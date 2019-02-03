@@ -134,12 +134,14 @@ public class Player_script : MonoBehaviour {
             //移動先に壁と敵がいるか？
             if (map_creat.map_ex[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 0)
             {
+                
                 this.notmove = true;
             }
             if (this.notmove == false && GameManager.instance.Playerturn == true)
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+
                 playerpos.position += new Vector3(this.moveX, 0, this.moveY);
 
                 GameManager.instance.Playerturn = false;
@@ -155,6 +157,7 @@ public class Player_script : MonoBehaviour {
             transform.eulerAngles = new Vector3(0, 180, 0);
             if (map_creat.map_ex[(int)playerpos.position.x　+ moveX, (int)playerpos.position.z].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 0)
             {
+                
                 this.notmove = true;
             }
             if (this.notmove == false && GameManager.instance.Playerturn == true)
@@ -176,6 +179,7 @@ public class Player_script : MonoBehaviour {
             transform.eulerAngles = new Vector3(0, 0, 0);
             if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 0)
             {
+               
                 this.notmove = true;
             }
             if (this.notmove == false && GameManager.instance.Playerturn == true)
@@ -197,6 +201,7 @@ public class Player_script : MonoBehaviour {
             transform.eulerAngles = new Vector3(0, 90, 0);
             if (map_creat.map_ex[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 0)
             {
+                
                 this.notmove = true;
             }
             if (this.notmove == false && GameManager.instance.Playerturn == true)
@@ -323,7 +328,7 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(moveX,0,moveY);
 
                 GameManager.instance.Playerturn = false;
             }
@@ -405,6 +410,8 @@ public class Player_script : MonoBehaviour {
         GameManager.instance.Playerturn = false;
     }
 
+    
+
 
     //階段
     public void OnTriggerEnter(Collider other)
@@ -414,6 +421,7 @@ public class Player_script : MonoBehaviour {
             GameManager.instance.Pose = true;
            
             GameManager.instance.Playerturn = false;
+
             
             GameManager.instance.enemies.Clear();
 
