@@ -5,8 +5,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
     public bool Playerturn;
+    public bool PlayerMoving;
     public bool Enemymoving;
-    public bool Pose;
+    public bool Menu;
     public bool coroutine;
 
     public int emoveY;
@@ -36,6 +37,7 @@ public class GameManager : MonoBehaviour {
     public List<Vector3> entrancelist_7;
     public List<Vector3> entrancelist_8;
 
+    public List<map_item> possessionitemlist;
 
 
     void Awake()
@@ -54,6 +56,9 @@ public class GameManager : MonoBehaviour {
 
         //EnemyをListで管理
         enemies = new List<Enemy_script>();
+
+        //itemをListで管理
+        possessionitemlist = new List<map_item>();
 
         roomlist = new List<Vector3>();
         entrancelist_0 = new List<Vector3>();
@@ -74,8 +79,8 @@ public class GameManager : MonoBehaviour {
 
 
         instance.Playerturn = true;
-        instance.Pose = false;
-
+        instance.Menu = false;
+        instance.PlayerMoving = false;
         instance.Enemymoving = false;
         coroutine = false;
 
@@ -91,7 +96,7 @@ public class GameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (instance.Playerturn == true || instance.Enemymoving == true|| instance.Pose ==true)
+        if (instance.Playerturn == true || instance.Enemymoving == true|| instance.Menu ==true)
         {
             return;
         }
@@ -132,6 +137,11 @@ public class GameManager : MonoBehaviour {
     {
         enemies.Add(script);
     }
+
+    public void AddListItem(map_item item)
+    {
+        possessionitemlist.Add(item);
+    }
     
     
 }
@@ -157,8 +167,10 @@ public class map_exist
 
 public class map_item
 {
+    public string name;
     public int number;
     public bool exist;
+    public GameObject obj;
 }
 
 public class wall : map_state
@@ -202,24 +214,43 @@ public class item1 : map_item
 {
     public item1()
     {
+        name = "薬草";
         number = 0;
         exist = true;
+    }
+
+    public void healuse(int listnum)
+    {
+        GameManager.instance.possessionitemlist.RemoveAt(listnum);
+        //〇アイテム効果
     }
 }
 public class item2 : map_item
 {
     public item2()
     {
+        name = "爆弾";
         number = 1;
         exist = true;
+    }
+    public void attackuse(int listnum)
+    {
+        GameManager.instance.possessionitemlist.RemoveAt(listnum);
+        //〇アイテム効果
     }
 }
 public class item3 : map_item
 {
     public item3()
     {
+        name = "場所替え";
         number = 2;
         exist = true;
+    }
+    public void changeuse(int listnum)
+    {
+        GameManager.instance.possessionitemlist.RemoveAt(listnum);
+        //〇アイテム効果
     }
 }
 public class clean : map_item

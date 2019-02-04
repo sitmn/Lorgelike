@@ -10,17 +10,15 @@ public class Player_script : MonoBehaviour {
     private bool attack;
     private int attack_x, attack_y,x,z;
     
-    public bool notmove,vectorchange,menu;
+    public bool notmove,vectorchange;
     
     public GameObject Player;
-
-    private Transform playerpos;
+    public GameObject MenuScreen;
     
     // Use this for initialization
     void Start()
     {
         this.notmove = false;
-        this.playerpos = GetComponent<Transform>();
 
         //プレイヤーをマップ内に移動
         do
@@ -32,19 +30,22 @@ public class Player_script : MonoBehaviour {
         map_creat.map_ex[x, z] = new player();
         map_creat.map_ex[x, z].obj = Player;
         map_creat.map_ex[x, z].player_script = Player.GetComponent<Player_script>();
-        this.playerpos.position = new Vector3( x, 0, z);
+        transform.position = new Vector3( x, 0, z);
     }
 
     // Update is called once per frame
     public void Update()
     {
         //プレイヤーターンでないときまたはポーズ時は動かない
-        if (GameManager.instance.Playerturn == false||GameManager.instance.Pose==true)
+        if (GameManager.instance.Playerturn == false||GameManager.instance.Menu == true)
         {
             return;
         }
+
+        GameManager.instance.PlayerMoving = true;
+
         //Cキーを押している間、vectorchangeを有効に
-        if (Input.GetKey(KeyCode.C) && this.menu == false)
+        if (Input.GetKey(KeyCode.C) && GameManager.instance.Menu == false)
         {
             this.vectorchange = true;
             //〇マス目を表示
@@ -55,28 +56,13 @@ public class Player_script : MonoBehaviour {
             //〇マス目表示を消す
         }
 
-        //Xキーを押している間、menuを有効に
-        if (Input.GetKey(KeyCode.X) && this.menu ==false && this.vectorchange == false)
-        {
-            this.menu = true;
-            //〇メニュー画面を表示
-        }
         
-
         //向きのみ変更
-        if (this.vectorchange == true)
+        if (this.vectorchange == true && GameManager.instance.Menu==false)
         {
             VectorChange();
-        }else if(this.menu == true){
-            //〇メニュー処理
-
-            /*〇メニュー終了処理
-            if (Input.GetKey(KeyCode.X) && menu == true)
-            {
-                menu = false;
-            }*/
         }
-        else {
+        else if(GameManager.instance.Menu == false) {
             if (Input.GetKey(KeyCode.Z))
             {
                 Attack();
@@ -84,6 +70,7 @@ public class Player_script : MonoBehaviour {
                 PlayerMove();
             }
         }
+        GameManager.instance.PlayerMoving = false;
     }
 
 
@@ -132,7 +119,7 @@ public class Player_script : MonoBehaviour {
             this.moveY = 1;
             transform.eulerAngles = new Vector3(0, 270, 0);
             //移動先に壁と敵がいるか？
-            if (map_creat.map_ex[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 0)
+            if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
                 
                 this.notmove = true;
@@ -142,7 +129,9 @@ public class Player_script : MonoBehaviour {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
 
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(this.moveX, 0, this.moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -155,7 +144,7 @@ public class Player_script : MonoBehaviour {
         {
             this.moveX = -1;
             transform.eulerAngles = new Vector3(0, 180, 0);
-            if (map_creat.map_ex[(int)playerpos.position.x　+ moveX, (int)playerpos.position.z].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 0)
+            if (map_creat.map_ex[(int)transform.position.x　+ moveX, (int)transform.position.z].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0)
             {
                 
                 this.notmove = true;
@@ -164,7 +153,9 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(this.moveX, 0, this.moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -177,7 +168,7 @@ public class Player_script : MonoBehaviour {
         {
             this.moveX = 1;
             transform.eulerAngles = new Vector3(0, 0, 0);
-            if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z].number == 0)
+            if (map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0)
             {
                
                 this.notmove = true;
@@ -186,7 +177,9 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(this.moveX, 0, this.moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -199,7 +192,7 @@ public class Player_script : MonoBehaviour {
         {
             this.moveY = -1;
             transform.eulerAngles = new Vector3(0, 90, 0);
-            if (map_creat.map_ex[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x, (int)playerpos.position.z + moveY].number == 0)
+            if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
                 
                 this.notmove = true;
@@ -208,7 +201,9 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(this.moveX, 0, this.moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -228,7 +223,7 @@ public class Player_script : MonoBehaviour {
             }
             else
             {
-                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                if (map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 0)
                 {
                     this.notmove = true;
                 }
@@ -238,7 +233,9 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(this.moveX, 0, this.moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -258,7 +255,7 @@ public class Player_script : MonoBehaviour {
             }
             else
             {
-                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                if (map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 0)
                 {
                     this.notmove = true;
                 }
@@ -268,7 +265,9 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(this.moveX, 0, this.moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -288,7 +287,7 @@ public class Player_script : MonoBehaviour {
             }
             else
             {
-                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                if (map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 0)
                 {
                     this.notmove = true;
                 }
@@ -298,7 +297,9 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                playerpos.position += new Vector3(this.moveX, 0, this.moveY);
+                transform.position += new Vector3(this.moveX, 0, this.moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -318,7 +319,7 @@ public class Player_script : MonoBehaviour {
             }
             else
             {
-                if (map_creat.map_ex[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 6 || map_creat.map[(int)playerpos.position.x + moveX, (int)playerpos.position.z + moveY].number == 0)
+                if (map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z + moveY].number == 0)
                 {
                     this.notmove = true;
                 }
@@ -329,6 +330,8 @@ public class Player_script : MonoBehaviour {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
                 transform.position += new Vector3(moveX,0,moveY);
+
+                PickUpItem();
 
                 GameManager.instance.Playerturn = false;
             }
@@ -410,7 +413,14 @@ public class Player_script : MonoBehaviour {
         GameManager.instance.Playerturn = false;
     }
 
-    
+    public void PickUpItem()
+    {
+        if(map_creat.map_item[(int)transform.position.x , (int)transform.position.z].exist == true){
+        GameManager.instance.AddListItem(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
+        Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
+        map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+        }
+    }
 
 
     //階段
@@ -418,8 +428,6 @@ public class Player_script : MonoBehaviour {
     {
         if (other.tag == "kaidan")
         {
-            GameManager.instance.Pose = true;
-           
             GameManager.instance.Playerturn = false;
 
             

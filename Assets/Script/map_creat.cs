@@ -1251,7 +1251,8 @@ public class map_creat : MonoBehaviour {
         {
             map_item[(int)pos.x, (int)pos.z] = new item3();
         }
-        Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
+        GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
+        map_item[(int)pos.x, (int)pos.z].obj = obj2;
     }
 
     //部屋にランダムに敵を生成
@@ -1277,11 +1278,6 @@ public class map_creat : MonoBehaviour {
         
         map_ex[(int)pos.x, (int)pos.z].obj = obj2;
             map_ex[(int)pos.x, (int)pos.z].enemy_script = obj2.GetComponent<Enemy_script>();
-    }
-
-    private void Addentrancelist(float x , float z)
-    {
-
     }
     
 
