@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+using UnityEngine.UI;
+
 public class map_creat : MonoBehaviour {
+
+    
+
+    private GameObject FloorText;
 
     public GameObject wallObject;
     public GameObject wallObject1;
@@ -19,6 +25,11 @@ public class map_creat : MonoBehaviour {
     public GameObject Item2;
     public GameObject Item3;
     public GameObject Kaidan;
+    public GameObject Cannon;
+    public GameObject Equipment;
+    public GameObject Material1;
+    public GameObject Material2;
+    public GameObject Material3;
     
 
     public Vector3 entrancevec;
@@ -42,6 +53,7 @@ public class map_creat : MonoBehaviour {
     public static map_state[,] map;
     public static map_exist[,] map_ex;
     public static map_item[,] map_item;
+    public static map_weapon[,] map_weapon;
 
     void Start()
     {
@@ -51,8 +63,11 @@ public class map_creat : MonoBehaviour {
     // Use this for initialization
     public void Mapcreat()
     {
+        FloorText = GameObject.Find("FloorLevel");
+            GameManager.instance.floorlevel++;
         
-            GameManager.instance.roomlist.Clear();
+        
+        GameManager.instance.roomlist.Clear();
             GameManager.instance.entrancelist_0.Clear();
             GameManager.instance.entrancelist_1.Clear();
             GameManager.instance.entrancelist_2.Clear();
@@ -62,7 +77,8 @@ public class map_creat : MonoBehaviour {
             GameManager.instance.entrancelist_6.Clear();
             GameManager.instance.entrancelist_7.Clear();
             GameManager.instance.entrancelist_8.Clear();
-        
+
+
         map = new map_state[MAX_X + 4, MAX_Y + 4];
         room_x = new int[3, 2, 3];
         room_y = new int[3, 2, 3];
@@ -70,6 +86,8 @@ public class map_creat : MonoBehaviour {
         map_ex = new map_exist[MAX_X + 4, MAX_Y + 4];
 
         map_item = new map_item[MAX_X + 4, MAX_Y + 4];
+
+        map_weapon = new map_weapon[MAX_X + 4, MAX_Y + 4];
 
 
         for (i1 = 0; i1 < MAX_X + 4; i1++)
@@ -79,6 +97,7 @@ public class map_creat : MonoBehaviour {
                 map[i1, i2] = new wall();
                 map_ex[i1, i2] = new clear();
                 map_item[i1, i2] = new clean();
+                map_weapon[i1, i2] = new clean_w();
             }
         }//map全て壁にする、map_ex全て空欄に
 
@@ -1047,7 +1066,6 @@ public class map_creat : MonoBehaviour {
             }
         }
 
-
         //通路の交差点は残す
         for (i1 = 0; i1 < 2; i1++)
         {
@@ -1181,60 +1199,62 @@ public class map_creat : MonoBehaviour {
               
             }
         }
-       
+
         //階段を部屋に配置
-        InstantiateInRoom(Kaidan);
+        InstantiateInRoom_map_item(Kaidan);
 
         //アイテムを部屋に配置
         int itemnumber = Random.Range(5, 15);
         for(int i = 0; i < itemnumber; i++)
         {
-            int a = Random.Range(0, 5);
+            int a = Random.Range(0, 9);
             if(0 <= a && a < 2)
             {
-                InstantiateInRoom(Item1);
+                InstantiateInRoom_map_item(Item1);
             }
             else if(a == 2)
             {
-                InstantiateInRoom(Item2);
+                InstantiateInRoom_map_item(Item2);
             }
-            else if(3 <= a)
+            else if(a == 3)
             {
-                InstantiateInRoom(Item3);
+                InstantiateInRoom_map_item(Item3);
+            }else if(a == 4)
+            {
+                InstantiateInRoom_map_weapon(Material1);
+            }else if(a == 5)
+            {
+                InstantiateInRoom_map_weapon(Material2);
+            }else if(a == 6)
+            {
+                InstantiateInRoom_map_weapon(Material3);
+            }else if(a == 7)
+            {
+                InstantiateInRoom_map_weapon(Equipment);
+            }else if(a == 8)
+            {
+                InstantiateInRoom_map_weapon(Cannon);
             }
         }
 
         //敵をランダムに配置
         enemynumber = Random.Range(5, 9);
-        for (int i = 0; i < enemynumber; i++)
-        {
-            int a = Random.Range(0, 10);
-            if(0 <= a && a < 4) {
-                InstantiateEnemyInRoom(Enemy);
-            }
-            else if(4 <= a && a < 7)
-            {
-                InstantiateEnemyInRoom(Enemy2);
-            }
-            else if(7 <= a && a < 9)
-            {
-                InstantiateEnemyInRoom(Enemy2);
-            }
-            else
-            {
-                InstantiateEnemyInRoom(Enemy3);
-            }
-        }
+        Random_Enemy_Instantiate(enemynumber);
+
+
+        FloorText.GetComponent<Text>().text = GameManager.instance.floorlevel +"階";
     }
 
-    private void InstantiateInRoom(GameObject obj)
+    
+
+    private void InstantiateInRoom_map_item(GameObject obj)
     {
         Vector3 pos;
         do
         {
             pos = GameManager.instance.roomlist[Random.Range(0, GameManager.instance.roomlist.Count)];
 
-        } while (map_item[(int)pos.x, (int)pos.z].exist == true || map[(int)pos.x, (int)pos.z].number == 5 || map[(int)pos.x, (int)pos.z].number == 0);
+        } while (map_weapon[(int)pos.x, (int)pos.z].exist == true || map_item[(int)pos.x, (int)pos.z].exist == true || map[(int)pos.x, (int)pos.z].number == 5 || map[(int)pos.x, (int)pos.z].number == 0);
 
         if (obj.tag == "Kaidan")
         {
@@ -1254,6 +1274,66 @@ public class map_creat : MonoBehaviour {
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
         map_item[(int)pos.x, (int)pos.z].obj = obj2;
     }
+    private void InstantiateInRoom_map_weapon(GameObject obj)
+    {
+        Vector3 pos;
+        do
+        {
+            pos = GameManager.instance.roomlist[Random.Range(0, GameManager.instance.roomlist.Count)];
+
+        } while (map_weapon[(int)pos.x , (int)pos.z].exist == true ||map_item[(int)pos.x, (int)pos.z].exist == true || map[(int)pos.x, (int)pos.z].number == 5 || map[(int)pos.x, (int)pos.z].number == 0);
+
+        if (obj.tag == "Material1")
+        {
+            map_weapon[(int)pos.x, (int)pos.z] = new material();
+            map_weapon[(int)pos.x, (int)pos.z].material_no = 1;
+        }
+        else if (obj.tag == "Material2")
+        {
+            map_weapon[(int)pos.x, (int)pos.z] = new material();
+            map_weapon[(int)pos.x, (int)pos.z].material_no = 2;
+        }
+        else if (obj.tag == "Material3")
+        {
+            map_weapon[(int)pos.x, (int)pos.z] = new material();
+            map_weapon[(int)pos.x, (int)pos.z].material_no = 3;
+        }
+        else if (obj.tag == "Equipment")
+        {
+            map_weapon[(int)pos.x, (int)pos.z] = new equipment();
+        }
+        else if (obj.tag == "Cannon")
+        {
+            map_weapon[(int)pos.x, (int)pos.z] = new cannon();
+        }
+        GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
+        map_weapon[(int)pos.x, (int)pos.z].obj = obj2;
+    }
+
+    //敵の種類を決定
+    public void Random_Enemy_Instantiate(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            int a = Random.Range(0, 10);
+            if (0 <= a && a < 4)
+            {
+                InstantiateEnemyInRoom(Enemy);
+            }
+            else if (4 <= a && a < 7)
+            {
+                InstantiateEnemyInRoom(Enemy2);
+            }
+            else if (7 <= a && a < 9)
+            {
+                InstantiateEnemyInRoom(Enemy2);
+            }
+            else
+            {
+                InstantiateEnemyInRoom(Enemy3);
+            }
+        }
+    }
 
     //部屋にランダムに敵を生成
     private void InstantiateEnemyInRoom(GameObject obj)
@@ -1262,7 +1342,7 @@ public class map_creat : MonoBehaviour {
         do
         {
             pos = GameManager.instance.roomlist[Random.Range(0, GameManager.instance.roomlist.Count)];
-        } while (map_ex[(int)pos.x, (int)pos.z].number == 5 || map_ex[(int)pos.x, (int)pos.z].number == 6 || map[(int)pos.x, (int)pos.z].number == 0);
+        } while (map_ex[(int)pos.x, (int)pos.z].number == 5 || map_ex[(int)pos.x, (int)pos.z].number == 6 || map[(int)pos.x, (int)pos.z].number == 3 || map[(int)pos.x , (int)pos.z].room_No == player.exist_room_no);
         
         if (obj.tag == "Enemy")
         {

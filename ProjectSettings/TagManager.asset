@@ -11,6 +11,11 @@ TagManager:
   - Item1
   - Item2
   - Item3
+  - Cannon
+  - Equipment
+  - Material1
+  - Material2
+  - Material3
   layers:
   - Default
   - TransparentFX

@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Player_script : MonoBehaviour {
-    
+
+    private bool kaidan;
     private int moveX;
     private int moveY;
     private bool attack;
     private int attack_x, attack_y,x,z;
     
+
     public bool notmove,vectorchange;
     
     public GameObject Player;
@@ -18,6 +20,7 @@ public class Player_script : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        this.kaidan = false;
         this.notmove = false;
 
         //プレイヤーをマップ内に移動
@@ -30,6 +33,7 @@ public class Player_script : MonoBehaviour {
         map_creat.map_ex[x, z] = new player();
         map_creat.map_ex[x, z].obj = Player;
         map_creat.map_ex[x, z].player_script = Player.GetComponent<Player_script>();
+        player.exist_room_no = map_creat.map[x, z].room_No;
         transform.position = new Vector3( x, 0, z);
     }
 
@@ -37,12 +41,12 @@ public class Player_script : MonoBehaviour {
     public void Update()
     {
         //プレイヤーターンでないときまたはポーズ時は動かない
-        if (GameManager.instance.Playerturn == false||GameManager.instance.Menu == true)
+        if (GameManager.instance.Playerturn == false||GameManager.instance.Menu == true || GameManager.instance.Pose == true)
         {
             return;
         }
-
         GameManager.instance.PlayerMoving = true;
+        
 
         //Cキーを押している間、vectorchangeを有効に
         if (Input.GetKey(KeyCode.C) && GameManager.instance.Menu == false)
@@ -70,6 +74,8 @@ public class Player_script : MonoBehaviour {
                 PlayerMove();
             }
         }
+        
+
         GameManager.instance.PlayerMoving = false;
     }
 
@@ -129,7 +135,7 @@ public class Player_script : MonoBehaviour {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
 
-                transform.position += new Vector3(this.moveX, 0, this.moveY);
+                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
 
                 PickUpItem();
 
@@ -153,7 +159,7 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position += new Vector3(this.moveX, 0, this.moveY);
+                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
 
                 PickUpItem();
 
@@ -177,7 +183,7 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position += new Vector3(this.moveX, 0, this.moveY);
+                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
 
                 PickUpItem();
 
@@ -201,7 +207,7 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position += new Vector3(this.moveX, 0, this.moveY);
+                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
 
                 PickUpItem();
 
@@ -233,7 +239,7 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position += new Vector3(this.moveX, 0, this.moveY);
+                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
 
                 PickUpItem();
 
@@ -265,7 +271,7 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position += new Vector3(this.moveX, 0, this.moveY);
+                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
 
                 PickUpItem();
 
@@ -297,7 +303,7 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position += new Vector3(this.moveX, 0, this.moveY);
+                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
 
                 PickUpItem();
 
@@ -408,7 +414,7 @@ public class Player_script : MonoBehaviour {
         {
             this.attack = false;
             map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].hp = map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].hp , map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].attack , map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].defence);
+                enemydamage(map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].hp , player.player_attack);
         }
         GameManager.instance.Playerturn = false;
     }
@@ -416,24 +422,78 @@ public class Player_script : MonoBehaviour {
     public void PickUpItem()
     {
         if(map_creat.map_item[(int)transform.position.x , (int)transform.position.z].exist == true){
-        GameManager.instance.AddListItem(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
-        Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
-        map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+            if (GameManager.instance.possessionitemlist.Count < GameManager.instance.MAX_ITEM)
+            {
+                GameManager.instance.AddListItem(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
+                Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
+                map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+            }
+            else
+            {
+                //何もない
+            }
         }
     }
 
+    public void playerdamage(int hp, int attack)
+    {
+        int damage = attack;
+        player.player_hp -= damage;
+        if(player.player_hp <= 0)
+        {
+            Debug.Log("GAME OVER");
+        }
+    }
 
-    //階段
-    public void OnTriggerEnter(Collider other)
+    public void experience_get(int experience)
+    {
+        player.player_experience += experience;
+
+    }
+
+    IEnumerator SmoothMovement(Vector3 end)
+    {
+        //現在地から目的地を引き、2点間の距離を求める(Vector3型)
+        //sqrMagnitudeはベクトルを2乗したあと2点間の距離に変換する(float型)
+        float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+        //2点間の距離が0になった時、ループを抜ける
+        //Epsilon : ほとんど0に近い数値を表す
+        while (sqrRemainingDistance > float.Epsilon)
+        {
+            //現在地と移動先の間を1秒間にinverseMoveTime分だけ移動する場合の、
+            //1フレーム分の移動距離を算出する
+            Vector3 newPosition = Vector3.MoveTowards(transform.position, end, GameManager.instance.inverseMoveTime * Time.deltaTime);
+            //算出した移動距離分、移動する
+            transform.position = newPosition;
+            //現在地が目的地寄りになった結果、sqrRemainDistanceが小さくなる
+            sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+            //1フレーム待ってから、while文の先頭へ戻る
+            yield return null;
+        }
+    }
+        //階段
+        public void OnTriggerEnter(Collider other)
     {
         if (other.tag == "kaidan")
         {
-            GameManager.instance.Playerturn = false;
+            if (kaidan == false)
+            {
+                kaidan = true;
 
-            
-            GameManager.instance.enemies.Clear();
+                //シーン移動時、instanceのGamaManagerは残り続けるから、Awake,Startは読み込まない、なのでここでデータを変える
+                GameManager.instance.Pose = true;
+                GameManager.instance.Playerturn = true;
+                GameManager.instance.one = true;
 
-            SceneManager.LoadScene("Dangyon");
+                GameManager.instance.emoveX = 0;
+                GameManager.instance.emoveY = 0;
+
+                player.exist_room_no = 10;
+
+                GameManager.instance.enemies.Clear();
+
+                SceneManager.LoadScene("Dangyon");
+            }
             
         }
     }

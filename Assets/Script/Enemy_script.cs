@@ -14,6 +14,7 @@ public class Enemy_script : MonoBehaviour
     private Vector3 destination;
 
     private GameObject Player;
+    private Player_script player_script;
 
     private map_creat mapscript;
     
@@ -24,6 +25,7 @@ public class Enemy_script : MonoBehaviour
         GameManager.instance.AddListenemy(this);
 
         Player = GameObject.Find("Player");
+        player_script = Player.GetComponent<Player_script>();
         this.enotmove = false;
         this.playerfind = false;
         destination = new Vector3(0,0,0);
@@ -35,7 +37,7 @@ public class Enemy_script : MonoBehaviour
     public void Emove()
     {
         GameManager.instance.Enemymoving = true;
-        //FindPlayer();
+        FindPlayer();
         enemypos = transform.position;
         
         
@@ -60,14 +62,13 @@ public class Enemy_script : MonoBehaviour
             }
         }
 
-        EnemyDebug();
-
         this.enemyattack = false;
         this.enotmove = false;
         this.emoveX = 0;
         this.emoveY = 0;
 
         GameManager.instance.Enemymoving = false;
+
         //完全ランダム移動
         /*while (this.enotmove == true)
         { 
@@ -330,7 +331,7 @@ public class Enemy_script : MonoBehaviour
             if (enotmove == false) { 
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position = enemypos;
+                StartCoroutine(SmoothMovement(enemypos));
             }
             else if (enotmove == true)//正面が移動できないものならターン
             {
@@ -346,7 +347,7 @@ public class Enemy_script : MonoBehaviour
                 {
                     map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                     map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                    transform.position = enemypos;
+                    StartCoroutine(SmoothMovement(enemypos));
                 }
             }
             destination = new Vector3(0, 0, 0);
@@ -552,7 +553,7 @@ public class Enemy_script : MonoBehaviour
             {
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position = enemypos;
+                StartCoroutine(SmoothMovement(enemypos));
 
             }
             else if (enotmove == true)//正面が移動できないものならターン
@@ -570,8 +571,8 @@ public class Enemy_script : MonoBehaviour
                 {
                     map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                     map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                    transform.position = enemypos;
-                    
+                    StartCoroutine(SmoothMovement(enemypos));
+
                 }
             }
         }
@@ -792,11 +793,11 @@ public class Enemy_script : MonoBehaviour
             {
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position = enemypos;
+                StartCoroutine(SmoothMovement(enemypos));
             }
         }else if(enemyattack == true)
         {
-            //攻撃処理
+            player_script.playerdamage(player.player_hp, map_creat.map_ex[(int)transform.position.x , (int)transform.position.z].attack);
         }
     }
 
@@ -841,7 +842,7 @@ public class Enemy_script : MonoBehaviour
         if (enotmove == false) {
             map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
             map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-            transform.position = enemypos;
+            StartCoroutine(SmoothMovement(enemypos));
 
         }
         else if(enotmove == true)//正面が移動できないものならターン
@@ -858,7 +859,7 @@ public class Enemy_script : MonoBehaviour
             {
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position = enemypos;
+                StartCoroutine(SmoothMovement(enemypos));
             }
         }
     }
@@ -952,9 +953,9 @@ public class Enemy_script : MonoBehaviour
     }
 
 
-    public int enemydamage(int hp, int attack, int defence)
+    public int enemydamage(int hp, int attack)
     {
-        int damage = attack - defence;
+        int damage = attack;
         hp -= damage;
         if (hp <= 0)
         {
@@ -965,8 +966,28 @@ public class Enemy_script : MonoBehaviour
         return hp;
     }
 
+    IEnumerator SmoothMovement(Vector3 end)
+    {
+        //現在地から目的地を引き、2点間の距離を求める(Vector3型)
+        //sqrMagnitudeはベクトルを2乗したあと2点間の距離に変換する(float型)
+        float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+        //2点間の距離が0になった時、ループを抜ける
+        //Epsilon : ほとんど0に近い数値を表す
+        while (sqrRemainingDistance > float.Epsilon)
+        {
+            //現在地と移動先の間を1秒間にinverseMoveTime分だけ移動する場合の、
+            //1フレーム分の移動距離を算出する
+            Vector3 newPosition = Vector3.MoveTowards(transform.position, end, GameManager.instance.inverseMoveTime * Time.deltaTime);
+            //算出した移動距離分、移動する
+            transform.position = newPosition;
+            //現在地が目的地寄りになった結果、sqrRemainDistanceが小さくなる
+            sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+            //1フレーム待ってから、while文の先頭へ戻る
+            yield return null;
+        }
+    }
 
-
+    /*クラスを移動先に移してから徐々に移動なので使用不可
     private void EnemyDebug()
     {
         if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].number != 6)
@@ -977,6 +998,6 @@ public class Enemy_script : MonoBehaviour
         {
             Debug.Log("バグ、壁の中");
         }
-    }
+    }*/
 }
 

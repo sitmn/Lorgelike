@@ -10,10 +10,15 @@ public class MenuController : MonoBehaviour {
     public GameObject MenuScreen;
     public GameObject ItemScreen;
     public GameObject WeaponScreen;
+    public GameObject ItemView;
+    public GameObject WeaponView;
 
     public GameObject Player;
 
     private Player_script player_script;
+    private ScrollButton button_script;
+
+
     
 
 	// Use this for initialization
@@ -25,6 +30,7 @@ public class MenuController : MonoBehaviour {
         WeaponScreen.SetActive(false);
 
         player_script = Player.GetComponent<Player_script>();
+        button_script = ItemView.GetComponent<ScrollButton>();
         
 	}
 	
@@ -50,6 +56,9 @@ public class MenuController : MonoBehaviour {
     {   if (GameManager.instance.Playerturn == true && GameManager.instance.PlayerMoving == false)
         {
             GameManager.instance.Menu = true;
+
+            button_script.ListRegistration();
+
             MenuScreen.SetActive(true);
         }
     }
@@ -91,14 +100,11 @@ public class MenuController : MonoBehaviour {
     public void PickUpButton()
     {   if (itemscreen == false && weaponscreen == false)
         {
-            if (map_creat.map_item[(int)Player.transform.position.x, (int)Player.transform.position.z].number != 20)
-            {
                 BackButton();
 
                 player_script.PickUpItem();
 
                 GameManager.instance.Playerturn = false;
-            }
         }
     }
 }
