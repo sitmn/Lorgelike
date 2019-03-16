@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
+    
 
     public int floorlevel;
     public static GameManager instance = null;
@@ -15,11 +16,12 @@ public class GameManager : MonoBehaviour {
 
     public bool Playerturn;
     public bool PlayerMoving;
-    public bool Enemymoving;
+    public int EnemyMoving;
     public bool Menu;
     public bool coroutine;
     public bool Pose;
     public bool one;
+    public bool space;
 
     public int emoveY;
     public int emoveX;
@@ -50,8 +52,10 @@ public class GameManager : MonoBehaviour {
     public List<Vector3> entrancelist_8;
 
     public List<map_item> possessionitemlist;
+    public List<map_item> possessionweaponlist; 
     
     public int MAX_ITEM = 20;
+    public int MAX_WEAPON = 20;
 
     void Awake()
     {
@@ -73,6 +77,7 @@ public class GameManager : MonoBehaviour {
 
         //itemをListで管理
         possessionitemlist = new List<map_item>();
+        possessionweaponlist = new List<map_item>();
 
         roomlist = new List<Vector3>();
         entrancelist_0 = new List<Vector3>();
@@ -92,13 +97,13 @@ public class GameManager : MonoBehaviour {
         
             //マップ生成
             mapscript.Mapcreat();
-        
 
+        instance.PlayerMoving = false;
         instance.Playerturn = true;
         instance.Menu = false;
-        instance.PlayerMoving = false;
-        instance.Enemymoving = false;
+        instance.EnemyMoving = 0;
         coroutine = false;
+        space = false;
 
         one = true;
         enemy_probability = 2;
@@ -112,11 +117,12 @@ public class GameManager : MonoBehaviour {
 
         inverseMoveTime = 1f / moveTime;
     }
+    
 
     // Update is called once per frame
     void Update ()
     {
-        if (instance.Playerturn == true || instance.Enemymoving == true|| instance.Menu ==true || instance.Pose == true || coroutine == true)
+        if (instance.Playerturn == true || instance.Menu ==true || instance.Pose == true || coroutine == true || GameManager.instance.PlayerMoving == true)
         {
             return;
         }
@@ -124,12 +130,15 @@ public class GameManager : MonoBehaviour {
         if(one == true)
         {
             //Awake、Startの代わり
+            
             one = false;
             Player = GameObject.Find("Player");
             player_script = Player.GetComponent<Player_script>();
         }
 
-        if (map_creat.map[(int)Player.transform.position.x, (int)Player.transform.position.z].number == 2 || map_creat.map[(int)Player.transform.position.x, (int)Player.transform.position.z].number == 10)
+        if (coroutine == false)
+        {
+            if (map_creat.map[(int)Player.transform.position.x, (int)Player.transform.position.z].number == 2 || map_creat.map[(int)Player.transform.position.x, (int)Player.transform.position.z].number == 10)
         {
             player.exist_room_no = 10;
         }
@@ -137,19 +146,10 @@ public class GameManager : MonoBehaviour {
         {
             player.exist_room_no = map_creat.map[(int)Player.transform.position.x, (int)Player.transform.position.z].room_No;
         }
+
         
 
-        //ランダムで敵を生成
-        int random_enemy = Random.Range(0, 100);
-        if(random_enemy <= enemy_probability)
-        {
-
-          mapscript.Random_Enemy_Instantiate(1);
-        }
-
-
-        if (coroutine == false)
-        {
+        
             coroutine = true;
             StartCoroutine(MoveEnemies());
         }
@@ -159,23 +159,60 @@ public class GameManager : MonoBehaviour {
     IEnumerator MoveEnemies()
     {
         //1ターンの最小時間を0.1秒に、Space押しながらで加速
-        if (Input.GetKey(KeyCode.Space) == false /*&& map_creat.map[(int)Player.transform.position.x , (int)Player.transform.position.z] != 3*/ )
+        /*if (GameManager.instance.space == false /*&& map_creat.map[(int)Player.transform.position.x , (int)Player.transform.position.z] != 3 )
         {
             yield return new WaitForSeconds(0.1f);
+        }*/
+        
+        //敵がいない際、動きが早くなるのを防ぐ
+        if(GameManager.instance.enemies.Count == 0)
+        {
+            yield return null;
+            yield return null;
+            yield return null;
+            yield return null;
+                
         }
-        
-        
+
         //Enemyを1体ずつ移動
         for (int i = 0; i < enemies.Count; i++)
-        {
+            {
+            //Debug.Log("A");
             enemies[i].Emove();
+            //Debug.Log("F");
+            /*if (Input.GetKey(KeyCode.Space)== false /*&& map_creat.map[(int)Player.transform.position.x , (int)Player.transform.position.z] != 3 )
+                {
+                    yield return null;
+                    
+                }
+        */
+                
+            }
+
+        //Playerが動ききってからプレイヤーのターンにする
+        while (instance.EnemyMoving != GameManager.instance.enemies.Count)
+        {
+            yield return null;
+
         }
+
+        //Debug.Log("G");
+
+        //ランダムで敵を生成
+        int random_enemy = Random.Range(0, 100);
+        if (random_enemy <= enemy_probability)
+        {
+            int random = Random.Range(1, 3);
+            mapscript.Random_Enemy_Instantiate(random);
+        }
+
+        GameManager.instance.EnemyMoving = 0;
 
 
         instance.Playerturn = true;
-        instance.Enemymoving = false;
         coroutine = false;
-    }
+        
+        }
     
 
     //Enemyをリストに追加
@@ -189,8 +226,13 @@ public class GameManager : MonoBehaviour {
             possessionitemlist.Add(item);
     }
 
+    public void AddListWeapon(map_item weapon)
+    {
+        possessionweaponlist.Add(weapon);
+    }
 
-    public void use(int listnum)
+
+    public void itemuse(int listnum)
     {
         GameManager.instance.menuscript.BackButton();
         GameManager.instance.menuscript.BackButton();
@@ -199,16 +241,14 @@ public class GameManager : MonoBehaviour {
 
         GameManager.instance.Playerturn = false;
     }
-
-    public void attack_range_type(int range_x, int range_z, bool range_all)
+    public void weaponuse(int listnum)
     {
-        if(range_all == true){
+        GameManager.instance.menuscript.BackButton();
+        GameManager.instance.menuscript.BackButton();
 
-        }else if(range_all == false)
-        {
-
-        }
+        GameManager.instance.Playerturn = false;
     }
+    
     
 
 }
@@ -267,7 +307,7 @@ public class map_item
     public bool exist;
     public GameObject obj;
 
-
+    
 }
 
 public class item1 : map_item
@@ -282,14 +322,14 @@ public class item1 : map_item
     public void healuse(int listnum)
     {
         //〇アイテム効果
-        int healpoint = 5;
+        int healpoint = 30;
         player.player_hp += healpoint;
         if(player.player_hp > player.player_MAX_hp)
         {
             player.player_hp = player.player_MAX_hp;
         }
 
-        GameManager.instance.use(listnum);
+        GameManager.instance.itemuse(listnum);
     }
 }
 public class item2 : map_item
@@ -297,7 +337,7 @@ public class item2 : map_item
     public item2()
     {
         name = "爆弾";
-        number = 1;
+        number = 0;
         exist = true;
     }
     public void attackuse(int listnum)
@@ -305,7 +345,7 @@ public class item2 : map_item
         //〇アイテム効果
 
         Debug.Log("爆弾");
-        GameManager.instance.use(listnum);
+        GameManager.instance.itemuse(listnum);
     }
 }
 public class item3 : map_item
@@ -313,7 +353,7 @@ public class item3 : map_item
     public item3()
     {
         name = "場所替え";
-        number = 2;
+        number = 0;
         exist = true;
     }
     public void changeuse(int listnum)
@@ -321,7 +361,118 @@ public class item3 : map_item
         //〇アイテム効果
 
         Debug.Log("場所替え");
-        GameManager.instance.use(listnum);
+        GameManager.instance.itemuse(listnum);
+    }
+}
+
+public class material1 : map_item
+{
+    public material1()
+    {
+        number = 1;
+        exist = true;
+    }
+}
+public class material2: map_item
+{
+    public material2()
+    {
+        number = 1;
+        exist = true;
+    }
+}
+public class material3 : map_item
+{
+    public material3()
+    {
+        number = 1;
+        exist = true;
+    }
+}
+
+public class weapon : map_item
+{
+    //↓武器用
+
+    public int HP_W;
+    public int ATTACK_W;
+    public int DEFENSE_W;
+
+    public int ATTACK_RANGE_W;
+    public int ATTACK_TYPE_W;
+    public bool ATTACK_THROUGH_W;
+    public bool SLANTING_WALL_W;
+
+    public void installing(int listnum)
+    {
+        player.player_MAX_hp = player.player_origin_hp + HP_W;
+        if(player.player_MAX_hp <= player.player_hp)
+        {
+            player.player_hp = player.player_MAX_hp;
+        }
+        player.player_attack = player.player_origin_attack + ATTACK_W;
+        player.player_defense = player.player_origin_defense + DEFENSE_W;
+
+        player.player_attack_range = ATTACK_RANGE_W;
+        player.player_attack_type = ATTACK_TYPE_W;
+        player.player_attack_through = ATTACK_THROUGH_W;
+        player.player_slanting_wall = SLANTING_WALL_W;
+
+        GameManager.instance.weaponuse(listnum);
+    }
+}
+public class weapon1 : weapon
+{
+    public weapon1(string NAME, int hp_w, int attack_w , int defense_w , int attack_range_w , int attack_type_w , bool attack_through_w , bool slanting_wall_w)
+    {
+        exist = true;
+        number = 2;
+        name = NAME;
+
+        HP_W = hp_w;
+        ATTACK_W = attack_w;
+        DEFENSE_W = defense_w;
+
+        ATTACK_RANGE_W = attack_range_w;
+        ATTACK_TYPE_W = attack_type_w;
+        ATTACK_THROUGH_W = attack_through_w;
+        SLANTING_WALL_W = slanting_wall_w;
+    }   
+}
+public class weapon2 : weapon
+{
+    public weapon2(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w)
+    {
+        exist = true;
+        number = 2;
+        name = NAME;
+
+        HP_W = hp_w;
+        ATTACK_W = attack_w;
+        DEFENSE_W = defense_w;
+
+        ATTACK_RANGE_W = attack_range_w;
+        ATTACK_TYPE_W = attack_type_w;
+        ATTACK_THROUGH_W = attack_through_w;
+        SLANTING_WALL_W = slanting_wall_w;
+    }
+}
+public class weapon3 : weapon
+{
+    public weapon3(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w)
+    {
+        exist = true;
+        number = 2;
+        name = NAME; ;
+
+        HP_W = hp_w;
+        ATTACK_W = attack_w;
+        DEFENSE_W = defense_w;
+
+        ATTACK_RANGE_W = attack_range_w;
+        ATTACK_TYPE_W = attack_type_w;
+        ATTACK_THROUGH_W = attack_through_w;
+        SLANTING_WALL_W = slanting_wall_w;
     }
 }
 public class clean : map_item
@@ -333,46 +484,7 @@ public class clean : map_item
     }
 }
 
-public class map_weapon
-{
-    public GameObject obj;
 
-    public bool cannon;
-    public bool exist;
-    public int attack_w;
-    public int material_no;
-    
-}
-public class equipment : map_weapon
-{
-    public equipment()
-    {
-        exist = true;
-        cannon = false;
-    }
-}
-public class cannon : map_weapon
-{
-    public cannon()
-    {
-        exist = true;
-        cannon = true;
-    }
-}
-public class clean_w : map_weapon
-{
-    public clean_w()
-    {
-        exist = false;
-    }
-}
-public class material : map_weapon
-{
-    public material()
-    {
-        exist = true;
-    }
-}
 
 public class test : map_state
 {
@@ -392,62 +504,51 @@ public class aisle : map_state
 public class map_exist
 {
     public int number;
-
-    public int MAX_HP;
-    public int hp;
-    public int attack;
-    public int defence;
-
+    
     public GameObject obj;
     public Player_script player_script;
     public Enemy_script enemy_script;
-    
+
+    public enemystate state;
 }
 
 public class player : map_exist
 {
-    public static int player_hp = 10;
-    public static int player_MAX_hp = 10;
-    public static int player_attack = 1;
-    public static int player_MAX_attack = 1;
+    //初期ステータス
+    public static int player_MAX_hp = 100;
+    public static int player_origin_hp = 100;
+    public static int player_hp = 100;
+    public static int player_MAX_mp = 100;
+    public static int player_origin_mp = 100;
+    public static int player_mp = 100;
+    public static int player_origin_attack = 3;
+    public static int player_attack = 3;
+    public static int player_origin_defense = 2;
+    public static int player_defense = 2;
+
+    //装備で変わる攻撃タイプ
+    public static bool player_attack_through = false;
+    public static int player_attack_range = 1;
+    public static int player_attack_type = 0;
+    public static bool player_slanting_wall = false;
 
     public static int player_experience = 0;
     public static int player_level = 1;
     public static int exist_room_no;
+
+    public static weapon weapon;
 
     public player()
     {
         number = 5;
     }
 }
-public class enemy1 : map_exist
+public class enemy : map_exist
 {
-
-    public enemy1()
+    public enemy()
     {
         number = 6;
-        hp = 1;
-        attack = 1;
-    }
-}
-public class enemy2 : map_exist
-{
 
-    public enemy2()
-    {
-        number = 6;
-        hp = 2;
-        attack = 1;
-    }
-}
-public class enemy3 : map_exist
-{
-
-    public enemy3()
-    {
-        number = 6;
-        hp = 3;
-        attack = 1;
     }
 }
 public class clear : map_exist
@@ -455,5 +556,35 @@ public class clear : map_exist
     public clear()
     {
         number = 10;
+    }
+}
+
+public class enemystate
+{
+    public int MAX_HP;
+    public int HP;
+    public int MAX_MP;
+    public int MP;
+    public int MAX_ATTACK;
+    public int ATTACK;
+    public int MAX_DEFENSE;
+    public int DEFENSE;
+    public int RANGE_ATTACK;
+    public int ATTACK_TYPE;
+    public bool SLANTING_WALL;
+    
+    public enemystate(int max_hp,int hp,int max_mp,int mp,int max_attack, int attack, int max_defense, int defense, int range_attack, int attack_type , bool slanting_wall)
+    {
+        MAX_HP = max_hp;
+        HP = hp;
+        MAX_MP = max_mp;
+        MP = mp;
+        MAX_ATTACK = max_attack;
+        ATTACK = attack;
+        MAX_DEFENSE = max_defense;
+        DEFENSE = defense;
+        RANGE_ATTACK = range_attack;
+        ATTACK_TYPE = attack_type;
+        SLANTING_WALL = slanting_wall;
     }
 }

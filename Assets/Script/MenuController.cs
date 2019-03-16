@@ -16,7 +16,8 @@ public class MenuController : MonoBehaviour {
     public GameObject Player;
 
     private Player_script player_script;
-    private ScrollButton button_script;
+    private ScrollItemButton item_button_script;
+    private ScrollWeaponButton weapon_button_script;
 
 
     
@@ -30,8 +31,8 @@ public class MenuController : MonoBehaviour {
         WeaponScreen.SetActive(false);
 
         player_script = Player.GetComponent<Player_script>();
-        button_script = ItemView.GetComponent<ScrollButton>();
-        
+        item_button_script = ItemView.GetComponent<ScrollItemButton>();
+        weapon_button_script = WeaponView.GetComponent<ScrollWeaponButton>();
 	}
 	
 	// Update is called once per frame
@@ -43,13 +44,7 @@ public class MenuController : MonoBehaviour {
         }
         
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            if (weaponscreen == false && itemscreen == false)
-            {
-                GameManager.instance.Menu = false;
-            }
-        }
+        
 	}
 
     public void MenuButton() 
@@ -57,7 +52,8 @@ public class MenuController : MonoBehaviour {
         {
             GameManager.instance.Menu = true;
 
-            button_script.ListRegistration();
+            item_button_script.ListItemRegistration();
+            weapon_button_script.ListWeaponRegistration();
 
             MenuScreen.SetActive(true);
         }

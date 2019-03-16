@@ -16,6 +16,9 @@ TagManager:
   - Material1
   - Material2
   - Material3
+  - weapon1
+  - weapon2
+  - weapon3
   layers:
   - Default
   - TransparentFX

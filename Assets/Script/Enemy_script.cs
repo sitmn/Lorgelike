@@ -9,6 +9,7 @@ public class Enemy_script : MonoBehaviour
     private int emoveX, emoveY;
     
     private bool enotmove,playerfind, enemyattack;
+    private bool smoothmove;
     
     private Vector3 enemypos;
     private Vector3 destination;
@@ -29,6 +30,7 @@ public class Enemy_script : MonoBehaviour
         this.enotmove = false;
         this.playerfind = false;
         destination = new Vector3(0,0,0);
+        this.smoothmove = false;
 
     }
 
@@ -36,22 +38,24 @@ public class Enemy_script : MonoBehaviour
     //敵の行動
     public void Emove()
     {
-        GameManager.instance.Enemymoving = true;
         FindPlayer();
         enemypos = transform.position;
-        
-        
+
+        //Debug.Log("A");
 
         if (this.playerfind == true)
         {
             FindPlayerMove();
+            
         }
         else
         {
             if (map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 2 ||map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 10)
             {
                 AisleMove();
-                if(map_creat.map[(int)transform.position.x , (int)transform.position.z].number == 3)
+                
+
+                if (map_creat.map[(int)transform.position.x , (int)transform.position.z].number == 3)
                 {
                     destination = new Vector3(0, 0, 0);
                 }
@@ -62,12 +66,15 @@ public class Enemy_script : MonoBehaviour
             }
         }
 
+        if(smoothmove == false)
+        {
+            GameManager.instance.EnemyMoving++;
+        }
+
         this.enemyattack = false;
         this.enotmove = false;
         this.emoveX = 0;
         this.emoveY = 0;
-
-        GameManager.instance.Enemymoving = false;
 
         //完全ランダム移動
         /*while (this.enotmove == true)
@@ -331,7 +338,17 @@ public class Enemy_script : MonoBehaviour
             if (enotmove == false) { 
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(enemypos));
+                //加速と通常時の移動
+                if (GameManager.instance.space == true)
+                {
+                    transform.position = enemypos;
+
+                }
+                else if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(enemypos));
+                }
+
             }
             else if (enotmove == true)//正面が移動できないものならターン
             {
@@ -347,7 +364,16 @@ public class Enemy_script : MonoBehaviour
                 {
                     map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                     map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                    StartCoroutine(SmoothMovement(enemypos));
+                    //加速と通常時の移動
+                    if (GameManager.instance.space == true)
+                    {
+                        transform.position = enemypos;
+
+                    }
+                    else if (GameManager.instance.space == false)
+                    {
+                        StartCoroutine(SmoothMovement(enemypos));
+                    }
                 }
             }
             destination = new Vector3(0, 0, 0);
@@ -553,8 +579,16 @@ public class Enemy_script : MonoBehaviour
             {
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(enemypos));
+                //加速と通常時の移動
+                if (GameManager.instance.space == true)
+                {
+                    transform.position = enemypos;
 
+                }
+                else if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(enemypos));
+                }
             }
             else if (enotmove == true)//正面が移動できないものならターン
             {
@@ -571,8 +605,16 @@ public class Enemy_script : MonoBehaviour
                 {
                     map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                     map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                    StartCoroutine(SmoothMovement(enemypos));
+                    //加速と通常時の移動
+                    if (GameManager.instance.space == true)
+                    {
+                        transform.position = enemypos;
 
+                    }
+                    else if (GameManager.instance.space == false)
+                    {
+                        StartCoroutine(SmoothMovement(enemypos));
+                    }
                 }
             }
         }
@@ -581,23 +623,15 @@ public class Enemy_script : MonoBehaviour
     //プレイヤーを見つけたときの移動
     private void FindPlayerMove()
     {
+        int attack_range = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.RANGE_ATTACK;
+        int attack_type = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.ATTACK_TYPE;
         int distance_x = (int)(transform.position.x - Player.transform.position.x);
         int distance_y = (int)(transform.position.z - Player.transform.position.z);
+        bool slanting_wall = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.SLANTING_WALL;
+
+        EnemyAttack(attack_range, attack_type, distance_x, distance_y , slanting_wall);
         
-        if(Mathf.Abs(distance_x) <= 1 && Mathf.Abs(distance_y) <= 1)
-        {
-            if ((distance_x == -1 && distance_y == -1 &&(map_creat.map[(int)transform.position.x + 1 , (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
-                (distance_x == -1 && distance_y == 1 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
-                (distance_x == 1 && distance_y == -1 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
-                (distance_x == 1 && distance_y == 1 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)))
-            {
-                enemyattack = false;
-            }
-            else
-            {
-                enemyattack = true;
-            }
-        }
+        
         if(enemyattack == false) {          //プレイやーとの位置関係によって角度を変更
             if (distance_x == 0)
             {
@@ -793,11 +827,25 @@ public class Enemy_script : MonoBehaviour
             {
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(enemypos));
+                //加速と通常時の移動
+                if (GameManager.instance.space == true)
+                {
+                    transform.position = enemypos;
+
+                }
+                else if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(enemypos));
+                }
             }
         }else if(enemyattack == true)
         {
-            player_script.playerdamage(player.player_hp, map_creat.map_ex[(int)transform.position.x , (int)transform.position.z].attack);
+            //敵攻撃中は加速停止
+            GameManager.instance.space = false;
+
+            //〇プレイヤー方向を向く
+
+            player_script.playerdamage(player.player_hp, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.ATTACK);
         }
     }
 
@@ -842,8 +890,16 @@ public class Enemy_script : MonoBehaviour
         if (enotmove == false) {
             map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
             map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-            StartCoroutine(SmoothMovement(enemypos));
+            //加速と通常時の移動
+            if (GameManager.instance.space == true)
+            {
+                transform.position = enemypos;
 
+            }
+            else if (GameManager.instance.space == false)
+            {
+                StartCoroutine(SmoothMovement(enemypos));
+            }
         }
         else if(enotmove == true)//正面が移動できないものならターン
         {
@@ -859,7 +915,16 @@ public class Enemy_script : MonoBehaviour
             {
                 map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(enemypos));
+                //加速と通常時の移動
+                if (GameManager.instance.space == true)
+                {
+                    transform.position = enemypos;
+
+                }
+                else if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(enemypos));
+                }
             }
         }
     }
@@ -953,9 +1018,9 @@ public class Enemy_script : MonoBehaviour
     }
 
 
-    public int enemydamage(int hp, int attack)
+    public int enemydamage(int hp, int attack , int defense)
     {
-        int damage = attack;
+        int damage = attack - defense;
         hp -= damage;
         if (hp <= 0)
         {
@@ -963,11 +1028,14 @@ public class Enemy_script : MonoBehaviour
             GameManager.instance.enemies.Remove(this);
             Destroy(this.gameObject);
         }
+        
         return hp;
     }
 
     IEnumerator SmoothMovement(Vector3 end)
     {
+        smoothmove = true;
+        //Debug.Log("B");
         //現在地から目的地を引き、2点間の距離を求める(Vector3型)
         //sqrMagnitudeはベクトルを2乗したあと2点間の距離に変換する(float型)
         float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
@@ -984,20 +1052,201 @@ public class Enemy_script : MonoBehaviour
             sqrRemainingDistance = (transform.position - end).sqrMagnitude;
             //1フレーム待ってから、while文の先頭へ戻る
             yield return null;
+            //Debug.Log(transform.position.x + "X");
+            //Debug.Log(transform.position.z + "Z");
         }
+        //Debug.Log("C");
+        smoothmove = false;
+        GameManager.instance.EnemyMoving++;
+        
+        //Debug.Log("D");
+        transform.position = new Vector3((int)end.x, 0, (int)end.z);
+        
+        if(map_creat.map_ex[(int)transform.position.x,(int)transform.position.z].number != 6)
+        {
+            Debug.Log(gameObject);
+        }
+
     }
 
-    /*クラスを移動先に移してから徐々に移動なので使用不可
-    private void EnemyDebug()
+    IEnumerable AttackAnimation()
     {
-        if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].number != 6)
+        this.smoothmove = true;
+
+        //アニメーション
+        yield return null;
+
+
+        this.smoothmove = false;
+    }
+    
+
+    //プレイヤーが攻撃範囲にいるか？壁は邪魔じゃないか？
+    private void EnemyAttack(int attack_range, int attack_type ,int distance_x , int distance_z , bool slanting_wall)
+    {
+        enemyattack = true;
+
+        //直線1本攻撃のとき
+        if (attack_type == 0)
         {
-            Debug.Log("バグ、敵のクラスがなくなった");
+
+            //斜め範囲にいるとき（横壁は貫通）
+            if (Mathf.Abs(distance_x) == Mathf.Abs(distance_z) && Mathf.Abs(distance_x) <= attack_range)
+            {
+                if (distance_x > 0 && distance_z > 0)
+                {
+                    for (int i = 1; (int)transform.position.x - i >= (int)Player.transform.position.x; i++)
+                    {
+                        //プレイヤーと敵の直線上に壁がある場合
+                        if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i].number == 0)
+                        {
+                            enemyattack = false;
+                        }
+
+                        //斜め時、隣の壁があると攻撃できない場合
+                        if (slanting_wall == false)
+                        {
+                            if ((map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z - i].number == 0) || (map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i + 1].number == 0))
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                }
+                else if (distance_x > 0 && distance_z < 0)
+                {
+                    for (int i = 1; (int)transform.position.x - i >= (int)Player.transform.position.x; i++)
+                    {
+                        if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i].number == 0)
+                        {
+                            enemyattack = false;
+                        }
+
+                        //斜め時、隣の壁があると攻撃できない場合
+                        if (slanting_wall == false)
+                        {
+                            if ((map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z + i].number == 0) || (map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i - 1].number == 0))
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                }
+                else if (distance_x < 0 && distance_z > 0)
+                {
+                    for (int i = 1; (int)transform.position.x + i <= (int)Player.transform.position.x; i++)
+                    {
+                        if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i].number == 0)
+                        {
+                            enemyattack = false;
+                        }
+
+                        //斜め時、隣の壁があると攻撃できない場合
+                        if (slanting_wall == false)
+                        {
+                            if ((map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z - i].number == 0) || (map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i + 1].number == 0))
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                }
+                else if (distance_x < 0 && distance_z < 0)
+                {
+                    for (int i = 1; (int)transform.position.x + i <= (int)Player.transform.position.x; i++)
+                    {
+                        if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i].number == 0)
+                        {
+                            enemyattack = false;
+                        }
+
+                        //斜め時、隣の壁があると攻撃できない場合
+                        if (slanting_wall == false)
+                        {
+                            if ((map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z + i].number == 0) || (map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i - 1].number == 0))
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            //十字範囲にいるとき
+            else if ((distance_x == 0 && Mathf.Abs(distance_z) <= attack_range) || (distance_z == 0 && Mathf.Abs(distance_x) <= attack_range))
+            {
+                if (distance_x == 0)
+                {
+                    if (distance_z < 0)
+                    {
+                        for (int i = 1; (int)transform.position.z + i < (int)Player.transform.position.z; i++)
+                        {
+                            if (map_creat.map[(int)transform.position.x, (int)transform.position.z + i].number == 0)
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                    else if (distance_z > 0)
+                    {
+                        for (int i = 1; (int)transform.position.z - i > (int)Player.transform.position.z; i++)
+                        {
+                            if (map_creat.map[(int)transform.position.x, (int)transform.position.z - i].number == 0)
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                }
+                else if (distance_z == 0)
+                {
+                    if (distance_x < 0)
+                    {
+                        for (int i = 1; (int)transform.position.x + i < (int)Player.transform.position.x; i++)
+                        {
+                            if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z].number == 0)
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                    else if (distance_x > 0)
+                    {
+                        for (int i = 1; (int)transform.position.x - i > (int)Player.transform.position.x; i++)
+                        {
+                            if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z].number == 0)
+                            {
+                                enemyattack = false;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                enemyattack = false;
+            }
         }
-        if (map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 0)
+
+    }
+
+    /*int distance_x = (int)(transform.position.x - Player.transform.position.x);
+    int distance_y = (int)(transform.position.z - Player.transform.position.z);
+        
+        if(Mathf.Abs(distance_x) <= map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.RANGE_ATTACK && Mathf.Abs(distance_y) <= map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.RANGE_ATTACK)
         {
-            Debug.Log("バグ、壁の中");
-        }
-    }*/
+            if ((distance_x == -1 && distance_y == -1 &&(map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
+                (distance_x == -1 && distance_y == 1 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
+                (distance_x == 1 && distance_y == -1 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
+                (distance_x == 1 && distance_y == 1 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)))
+            {
+                enemyattack = false;
+            }
+            else
+            {
+                enemyattack = true;
+            }
+        }*/
 }
 

@@ -6,8 +6,60 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class map_creat : MonoBehaviour {
+    //敵ステータス
+    public const int ENEMY1_HP = 8;
+    public const int ENEMY1_MP = 2;
+    public const int ENEMY1_ATTACK = 2;
+    public const int ENEMY1_DEFENSE = 0;
+    public const int ENEMY1_ATTACK_RANGE = 1;
+    public const int ENEMY1_ATTACK_TYPE = 0;
+    public const bool ENEMY1_SLANTING_WALL = true;
 
-    
+    public const int ENEMY2_HP = 2;
+    public const int ENEMY2_MP = 2;
+    public const int ENEMY2_ATTACK = 5;
+    public const int ENEMY2_DEFENSE = 0;
+    public const int ENEMY2_ATTACK_RANGE = 1;
+    public const int ENEMY2_ATTACK_TYPE = 0;
+    public const bool ENEMY2_SLANTING_WALL = false;
+
+    public const int ENEMY3_HP = 5;
+    public const int ENEMY3_MP = 2;
+    public const int ENEMY3_ATTACK = 3;
+    public const int ENEMY3_DEFENSE = 0;
+    public const int ENEMY3_ATTACK_RANGE = 2;
+    public const int ENEMY3_ATTACK_TYPE = 0;
+    public const bool ENEMY3_SLANTING_WALL = true;
+
+
+    //武器ステータス
+    public const string NAME_W1 = "ロングソード";
+    public const int HP_W1 = 100;
+    public const int ATTACK_W1 = 5;
+    public const int DEFENSE_W1 = 3;
+    public const int ATTACK_RANGE_W1 = 2;
+    public const int ATTACK_TYPE_W1 = 0;
+    public const bool ATTACK_THROUGH_W1 = false;
+    public const bool SLANTING_WALL_W1 = false;
+
+    public const string NAME_W2 = "ショットガン";
+    public const int HP_W2 = 20;
+    public const int ATTACK_W2 = 2;
+    public const int DEFENSE_W2 = 1;
+    public const int ATTACK_RANGE_W2 = 2;
+    public const int ATTACK_TYPE_W2 = 1;
+    public const bool ATTACK_THROUGH_W2 = false;
+    public const bool SLANTING_WALL_W2 = true;
+
+    public const string NAME_W3 = "ライフル";
+    public const int HP_W3 = 0;
+    public const int ATTACK_W3 = 5;
+    public const int DEFENSE_W3 = 0;
+    public const int ATTACK_RANGE_W3 = 3;
+    public const int ATTACK_TYPE_W3 = 0;
+    public const bool ATTACK_THROUGH_W3 = true;
+    public const bool SLANTING_WALL_W3 = true;
+
 
     private GameObject FloorText;
 
@@ -25,11 +77,12 @@ public class map_creat : MonoBehaviour {
     public GameObject Item2;
     public GameObject Item3;
     public GameObject Kaidan;
-    public GameObject Cannon;
-    public GameObject Equipment;
     public GameObject Material1;
     public GameObject Material2;
     public GameObject Material3;
+    public GameObject Weapon1;
+    public GameObject Weapon2;
+    public GameObject Weapon3;
     
 
     public Vector3 entrancevec;
@@ -53,7 +106,6 @@ public class map_creat : MonoBehaviour {
     public static map_state[,] map;
     public static map_exist[,] map_ex;
     public static map_item[,] map_item;
-    public static map_weapon[,] map_weapon;
 
     void Start()
     {
@@ -87,8 +139,6 @@ public class map_creat : MonoBehaviour {
 
         map_item = new map_item[MAX_X + 4, MAX_Y + 4];
 
-        map_weapon = new map_weapon[MAX_X + 4, MAX_Y + 4];
-
 
         for (i1 = 0; i1 < MAX_X + 4; i1++)
         {
@@ -97,7 +147,6 @@ public class map_creat : MonoBehaviour {
                 map[i1, i2] = new wall();
                 map_ex[i1, i2] = new clear();
                 map_item[i1, i2] = new clean();
-                map_weapon[i1, i2] = new clean_w();
             }
         }//map全て壁にする、map_ex全て空欄に
 
@@ -1207,7 +1256,7 @@ public class map_creat : MonoBehaviour {
         int itemnumber = Random.Range(5, 15);
         for(int i = 0; i < itemnumber; i++)
         {
-            int a = Random.Range(0, 9);
+            int a = Random.Range(0, 30);
             if(0 <= a && a < 2)
             {
                 InstantiateInRoom_map_item(Item1);
@@ -1221,19 +1270,22 @@ public class map_creat : MonoBehaviour {
                 InstantiateInRoom_map_item(Item3);
             }else if(a == 4)
             {
-                InstantiateInRoom_map_weapon(Material1);
+                InstantiateInRoom_map_item(Material1);
             }else if(a == 5)
             {
-                InstantiateInRoom_map_weapon(Material2);
+                InstantiateInRoom_map_item(Material2);
             }else if(a == 6)
             {
-                InstantiateInRoom_map_weapon(Material3);
-            }else if(a == 7)
+                InstantiateInRoom_map_item(Material3);
+            }else if(a >= 7 && a<= 15)
             {
-                InstantiateInRoom_map_weapon(Equipment);
-            }else if(a == 8)
+                InstantiateInRoom_map_item(Weapon1);
+            }else if(a >= 16 && a<= 23)
             {
-                InstantiateInRoom_map_weapon(Cannon);
+                InstantiateInRoom_map_item(Weapon2);
+            }else if(a >= 24 && a<= 30)
+            {
+                InstantiateInRoom_map_item(Weapon3);
             }
         }
 
@@ -1254,7 +1306,7 @@ public class map_creat : MonoBehaviour {
         {
             pos = GameManager.instance.roomlist[Random.Range(0, GameManager.instance.roomlist.Count)];
 
-        } while (map_weapon[(int)pos.x, (int)pos.z].exist == true || map_item[(int)pos.x, (int)pos.z].exist == true || map[(int)pos.x, (int)pos.z].number == 5 || map[(int)pos.x, (int)pos.z].number == 0);
+        } while (map_item[(int)pos.x, (int)pos.z].exist == true || map[(int)pos.x, (int)pos.z].number == 5 || map[(int)pos.x, (int)pos.z].number == 0);
 
         if (obj.tag == "Kaidan")
         {
@@ -1270,11 +1322,34 @@ public class map_creat : MonoBehaviour {
         else if (obj.tag == "Item3")
         {
             map_item[(int)pos.x, (int)pos.z] = new item3();
+        }else if(obj.tag == "material1")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new material1();
+        }
+        else if(obj.tag == "material2")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new material2();
+        }
+        else if(obj.tag == "material3")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new material3();
+        }
+        else if(obj.tag == "weapon1")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new weapon1(NAME_W1, HP_W1 , ATTACK_W1 , DEFENSE_W1, ATTACK_RANGE_W1 , ATTACK_TYPE_W1 , ATTACK_THROUGH_W1 , SLANTING_WALL_W1);
+        }
+        else if(obj.tag == "weapon2")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new weapon2(NAME_W2, HP_W2, ATTACK_W2, DEFENSE_W2, ATTACK_RANGE_W2, ATTACK_TYPE_W2, ATTACK_THROUGH_W2, SLANTING_WALL_W2);
+        }
+        else if(obj.tag == "weapon3")
+        {
+            map_item[(int)pos.x, (int)pos.z] = new weapon3(NAME_W3, HP_W3, ATTACK_W3, DEFENSE_W3, ATTACK_RANGE_W3, ATTACK_TYPE_W3, ATTACK_THROUGH_W3, SLANTING_WALL_W3);
         }
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
         map_item[(int)pos.x, (int)pos.z].obj = obj2;
     }
-    private void InstantiateInRoom_map_weapon(GameObject obj)
+    /*private void InstantiateInRoom_map_weapon(GameObject obj)
     {
         Vector3 pos;
         do
@@ -1308,7 +1383,7 @@ public class map_creat : MonoBehaviour {
         }
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
         map_weapon[(int)pos.x, (int)pos.z].obj = obj2;
-    }
+    }*/
 
     //敵の種類を決定
     public void Random_Enemy_Instantiate(int amount)
@@ -1346,13 +1421,19 @@ public class map_creat : MonoBehaviour {
         
         if (obj.tag == "Enemy")
         {
-            map_ex[(int)pos.x, (int)pos.z] = new enemy1();
-        }else if(obj.tag == "Enemy2")
+            //マップ管理のクラスと、敵のステータスを入れる
+            map_ex[(int)pos.x, (int)pos.z] = new enemy();
+            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY1_HP, ENEMY1_HP, ENEMY1_MP, ENEMY1_MP, ENEMY1_ATTACK, ENEMY1_ATTACK, ENEMY1_DEFENSE, ENEMY1_DEFENSE, ENEMY1_ATTACK_RANGE, ENEMY1_ATTACK_TYPE, ENEMY1_SLANTING_WALL);
+        }
+        else if(obj.tag == "Enemy2")
         {
-            map_ex[(int)pos.x, (int)pos.z] = new enemy2();
-        }else if(obj.tag == "Enemy3")
+            map_ex[(int)pos.x, (int)pos.z] = new enemy();
+            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY2_HP, ENEMY2_HP, ENEMY2_MP, ENEMY2_MP, ENEMY2_ATTACK, ENEMY2_ATTACK, ENEMY2_DEFENSE, ENEMY2_DEFENSE, ENEMY2_ATTACK_RANGE, ENEMY2_ATTACK_TYPE, ENEMY2_SLANTING_WALL);
+        }
+        else if(obj.tag == "Enemy3")
         {
-            map_ex[(int)pos.x, (int)pos.z] = new enemy3();
+            map_ex[(int)pos.x, (int)pos.z] = new enemy();
+            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY3_HP, ENEMY3_HP, ENEMY3_MP, ENEMY3_MP, ENEMY3_ATTACK, ENEMY3_ATTACK, ENEMY3_DEFENSE, ENEMY3_DEFENSE, ENEMY3_ATTACK_RANGE, ENEMY3_ATTACK_TYPE, ENEMY3_SLANTING_WALL);
         }
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
         

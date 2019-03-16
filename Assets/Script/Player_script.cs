@@ -41,12 +41,16 @@ public class Player_script : MonoBehaviour {
     public void Update()
     {
         //プレイヤーターンでないときまたはポーズ時は動かない
-        if (GameManager.instance.Playerturn == false||GameManager.instance.Menu == true || GameManager.instance.Pose == true)
+        if (GameManager.instance.Playerturn == false||GameManager.instance.Menu == true || GameManager.instance.Pose == true || GameManager.instance.PlayerMoving == true)
         {
             return;
         }
-        GameManager.instance.PlayerMoving = true;
         
+        //分岐点で停止
+        if (map_creat.map[(int)transform.position.x , (int)transform.position.z].number == 2 || map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 3 || map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 4 || map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 5)
+        {
+            GameManager.instance.space = false;
+        }
 
         //Cキーを押している間、vectorchangeを有効に
         if (Input.GetKey(KeyCode.C) && GameManager.instance.Menu == false)
@@ -60,6 +64,16 @@ public class Player_script : MonoBehaviour {
             //〇マス目表示を消す
         }
 
+        //Spaceを押している間、加速
+        if (Input.GetKey(KeyCode.Space))
+        {
+            GameManager.instance.space = true;
+        }
+        else
+        {
+            GameManager.instance.space = false;
+        }
+
         
         //向きのみ変更
         if (this.vectorchange == true && GameManager.instance.Menu==false)
@@ -69,14 +83,19 @@ public class Player_script : MonoBehaviour {
         else if(GameManager.instance.Menu == false) {
             if (Input.GetKey(KeyCode.Z))
             {
-                Attack();
+                int attack_range = player.player_attack_range;
+                int attack_type = player.player_attack_type;
+                bool slanting_wall = player.player_slanting_wall;
+
+
+                GameManager.instance.space = false;
+                Attack(attack_range , attack_type , slanting_wall);
             } else{
                 PlayerMove();
             }
         }
         
-
-        GameManager.instance.PlayerMoving = false;
+        
     }
 
 
@@ -135,9 +154,15 @@ public class Player_script : MonoBehaviour {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
 
-                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
-
-                PickUpItem();
+                //加速移動と通常移動
+                if (Input.GetKey(KeyCode.Space) == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }else if(Input.GetKey(KeyCode.Space))
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
 
                 GameManager.instance.Playerturn = false;
             }
@@ -159,9 +184,16 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
-
-                PickUpItem();
+                //加速移動と通常移動
+                if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }
+                else if (GameManager.instance.space == true)
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
 
                 GameManager.instance.Playerturn = false;
             }
@@ -183,9 +215,16 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
-
-                PickUpItem();
+                //加速移動と通常移動
+                if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }
+                else if (GameManager.instance.space == true)
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
 
                 GameManager.instance.Playerturn = false;
             }
@@ -207,9 +246,16 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
-
-                PickUpItem();
+                //加速移動と通常移動
+                if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }
+                else if (GameManager.instance.space == true)
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
 
                 GameManager.instance.Playerturn = false;
             }
@@ -239,9 +285,16 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
-
-                PickUpItem();
+                //加速移動と通常移動
+                if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }
+                else if (GameManager.instance.space == true)
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
 
                 GameManager.instance.Playerturn = false;
             }
@@ -271,9 +324,16 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
-
-                PickUpItem();
+                //加速移動と通常移動
+                if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }
+                else if (GameManager.instance.space == true)
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
 
                 GameManager.instance.Playerturn = false;
             }
@@ -303,9 +363,16 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
-
-                PickUpItem();
+                //加速移動と通常移動
+                if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }
+                else if (GameManager.instance.space == true)
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
 
                 GameManager.instance.Playerturn = false;
             }
@@ -335,10 +402,17 @@ public class Player_script : MonoBehaviour {
             {
                 map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z + moveY] = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z];
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-                transform.position += new Vector3(moveX,0,moveY);
-
-                PickUpItem();
-
+                //加速移動と通常移動
+                if (GameManager.instance.space == false)
+                {
+                    StartCoroutine(SmoothMovement(transform.position + new Vector3(moveX, 0, moveY)));
+                }
+                else if (GameManager.instance.space == true)
+                {
+                    transform.position += new Vector3(moveX, 0, moveY);
+                    PickUpItem();
+                }
+                
                 GameManager.instance.Playerturn = false;
             }
             else if (this.notmove == true)
@@ -355,82 +429,42 @@ public class Player_script : MonoBehaviour {
         this.moveY = 0;
     }
 
-    //プレイヤーの向いている方向に攻撃
-    private void Attack()
-    {
-        if(transform.eulerAngles == new Vector3(0, 0, 0)) {
-            this.attack_x = 1;
-            this.attack_y = 0;
-        }else if (transform.eulerAngles == new Vector3(0, 90, 0))
-        {
-            this.attack_x = 0;
-            this.attack_y = -1;
-        }else if (transform.eulerAngles == new Vector3(0, 180, 0))
-        {
-            this.attack_x = -1;
-            this.attack_y = 0;
-        }else if (transform.eulerAngles == new Vector3(0, 270, 0))
-        {
-            this.attack_x = 0;
-            this.attack_y = 1;
-        }
-        else if (transform.eulerAngles == new Vector3(0, 45, 0))
-        {
-            this.attack_x = 1;
-            this.attack_y = -1;
-        }
-        else if (transform.eulerAngles == new Vector3(0, 135, 0))
-        {
-            this.attack_x = -1;
-            this.attack_y = -1;
-        }
-        else if (transform.eulerAngles == new Vector3(0, 225, 0))
-        {
-            this.attack_x = -1;
-            this.attack_y = 1;
-        }
-        else if (transform.eulerAngles == new Vector3(0, 315, 0))
-        {
-            this.attack_x = 1;
-            this.attack_y = 1;
-        }
-
-        //向いてる方向に攻撃
-        if(transform.eulerAngles == new Vector3(0,45,0) && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)||
-            transform.eulerAngles == new Vector3(0, 135, 0) && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)||
-            transform.eulerAngles == new Vector3(0, 225, 0) && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)||
-                transform.eulerAngles == new Vector3(0, 315, 0) && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0))
-        {
-
-        }
-        else
-        {
-            if (map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].number == 6)
-            {
-                this.attack = true;
-            }
-        }
-        if (this.attack == true)
-        {
-            this.attack = false;
-            map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].hp = map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + this.attack_x, (int)transform.position.z + this.attack_y].hp , player.player_attack);
-        }
-        GameManager.instance.Playerturn = false;
-    }
+    
 
     public void PickUpItem()
     {
+        Debug.Log(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].exist);
+
+
         if(map_creat.map_item[(int)transform.position.x , (int)transform.position.z].exist == true){
-            if (GameManager.instance.possessionitemlist.Count < GameManager.instance.MAX_ITEM)
+            if (map_creat.map_item[(int)transform.position.x, (int)transform.position.z].number == 0)
             {
-                GameManager.instance.AddListItem(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
-                Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
-                map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+                if (GameManager.instance.possessionitemlist.Count < GameManager.instance.MAX_ITEM)
+                {
+                    GameManager.instance.AddListItem(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
+                    Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
+                    map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+                }
+                else
+                {
+                    //何もない
+                }
             }
-            else
+            else if(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].number == 1)
             {
-                //何もない
+
+            }else if(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].number == 2)
+            {
+                if (GameManager.instance.possessionweaponlist.Count < GameManager.instance.MAX_WEAPON)
+                {
+                    GameManager.instance.AddListWeapon(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
+                    Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
+                    map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+                }
+                else
+                {
+                    //何もない
+                }
             }
         }
     }
@@ -443,6 +477,7 @@ public class Player_script : MonoBehaviour {
         {
             Debug.Log("GAME OVER");
         }
+        
     }
 
     public void experience_get(int experience)
@@ -453,6 +488,7 @@ public class Player_script : MonoBehaviour {
 
     IEnumerator SmoothMovement(Vector3 end)
     {
+        GameManager.instance.PlayerMoving = true;
         //現在地から目的地を引き、2点間の距離を求める(Vector3型)
         //sqrMagnitudeはベクトルを2乗したあと2点間の距離に変換する(float型)
         float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
@@ -469,6 +505,17 @@ public class Player_script : MonoBehaviour {
             sqrRemainingDistance = (transform.position - end).sqrMagnitude;
             //1フレーム待ってから、while文の先頭へ戻る
             yield return null;
+            
+        }
+        PickUpItem();
+
+        GameManager.instance.PlayerMoving = false;
+        
+        transform.position = new Vector3((int)end.x, 0, (int)end.z);
+
+        if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].number != 5)
+        {
+            Debug.Log(gameObject);
         }
     }
         //階段
@@ -495,6 +542,296 @@ public class Player_script : MonoBehaviour {
                 SceneManager.LoadScene("Dangyon");
             }
             
+        }
+    }
+
+    
+
+    //プレイヤーの向いている方向に攻撃
+    private void Attack(int attack_range, int attack_type, bool slanting_wall)
+    {
+        if (attack_type == 0)
+        {
+            if (transform.eulerAngles == new Vector3(0, 0, 0))
+            {
+                line_attack_0(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 90, 0))
+            {
+                line_attack_90(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 180, 0))
+            {
+                line_attack_180(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 270, 0))
+            {
+                line_attack_270(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 45, 0))
+            {
+                line_attack_45(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 135, 0))
+            {
+                line_attack_135(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
+            {
+                line_attack_225(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 315, 0))
+            {
+                line_attack_315(attack_range, attack_type, slanting_wall);
+            }
+        }
+        else if (attack_type == 1)
+        {
+            if (transform.eulerAngles == new Vector3(0, 0, 0))
+            {
+                line_attack_0(attack_range, attack_type, slanting_wall);
+
+                line_attack_315(attack_range, attack_type, slanting_wall);
+
+                line_attack_45(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 90, 0))
+            {
+                line_attack_90(attack_range, attack_type, slanting_wall);
+
+                line_attack_45(attack_range, attack_type, slanting_wall);
+
+                line_attack_135(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 180, 0))
+            {
+                line_attack_180(attack_range, attack_type, slanting_wall);
+
+                line_attack_135(attack_range, attack_type, slanting_wall);
+
+                line_attack_225(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 270, 0))
+            {
+                line_attack_270(attack_range, attack_type, slanting_wall);
+
+                line_attack_225(attack_range, attack_type, slanting_wall);
+
+                line_attack_315(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 45, 0))
+            {
+                line_attack_45(attack_range, attack_type, slanting_wall);
+
+                line_attack_0(attack_range, attack_type, slanting_wall);
+
+                line_attack_90(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 135, 0))
+            {
+                line_attack_135(attack_range, attack_type, slanting_wall);
+
+                line_attack_90(attack_range, attack_type, slanting_wall);
+
+                line_attack_180(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
+            {
+                line_attack_225(attack_range, attack_type, slanting_wall);
+
+                line_attack_180(attack_range, attack_type, slanting_wall);
+
+                line_attack_270(attack_range, attack_type, slanting_wall);
+            }
+            else if (transform.eulerAngles == new Vector3(0, 315, 0))
+            {
+                line_attack_315(attack_range, attack_type, slanting_wall);
+
+                line_attack_270(attack_range, attack_type, slanting_wall);
+
+                line_attack_0(attack_range, attack_type, slanting_wall);
+            }
+        }
+
+
+        GameManager.instance.Playerturn = false;
+    }
+
+
+    private void line_attack_0(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z].number == 0)
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    private void line_attack_90(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x, (int)transform.position.z - i].number == 0)
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    private void line_attack_180(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z].number == 0)
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    private void line_attack_270(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x, (int)transform.position.z + i].number == 0)
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    private void line_attack_45(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i].number == 0)
+            {
+                break;
+            }//横壁があるとき攻撃が通らない
+            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i + 1].number == 0))
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    private void line_attack_135(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i].number == 0)
+            {
+                break;
+            }//横壁があるとき攻撃が通らない
+            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i + 1].number == 0))
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    private void line_attack_225(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i].number == 0)
+            {
+                break;
+            }//横壁があるとき攻撃が通らない
+            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i - 1].number == 0))
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    private void line_attack_315(int attack_range, int attack_type, bool slanting_wall)
+    {
+        for (int i = 1; i <= attack_range; i++)
+        {
+            if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i].number == 0)
+            {
+                break;
+            }//横壁があるとき攻撃が通らない
+            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i - 1].number == 0))
+            {
+                break;
+            }
+            if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].number == 6)
+            {
+                map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].enemy_script.
+                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.DEFENSE);
+
+                if (player.player_attack_through == false)
+                {
+                    break;
+                }
+            }
         }
     }
 }
