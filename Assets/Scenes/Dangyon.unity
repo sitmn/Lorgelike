@@ -1128,7 +1128,29 @@ MonoBehaviour:
   ButtonPrefab: {fileID: 1226491620819600, guid: 2560c2443d5383e46acca2ab4e8615da,
     type: 2}
   ItemContent: {fileID: 2120239699}
+  WeaponContent: {fileID: 1584555551}
   scrollitembuttons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  scrollweaponbuttons:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -2127,7 +2149,7 @@ GameObject:
   - component: {fileID: 1584555554}
   - component: {fileID: 1584555553}
   m_Layer: 5
-  m_Name: Content
+  m_Name: WeaponContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3139,12 +3161,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 1873375978}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd65923a7eec91f40acbde2f4778a9fe, type: 3}
+  m_Script: {fileID: 11500000, guid: db7e0cb6591786b4aa0f544f6b411e65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ButtonPrefab: {fileID: 1226491620819600, guid: 2560c2443d5383e46acca2ab4e8615da,
     type: 2}
+  ItemContent: {fileID: 2120239699}
   WeaponContent: {fileID: 1584555551}
+  scrollitembuttons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   scrollweaponbuttons:
   - {fileID: 0}
   - {fileID: 0}
@@ -3498,7 +3542,7 @@ GameObject:
   - component: {fileID: 2120239702}
   - component: {fileID: 2120239701}
   m_Layer: 5
-  m_Name: Content
+  m_Name: ItemContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
