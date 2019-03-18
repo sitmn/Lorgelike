@@ -405,20 +405,50 @@ public class weapon : map_item
 
     public void installing(int listnum)
     {
-        player.player_MAX_hp = player.player_origin_hp + HP_W;
-        if(player.player_MAX_hp <= player.player_hp)
+        if (GameManager.instance.possessionweaponlist[listnum].name.Contains("E:") == false)
         {
-            player.player_hp = player.player_MAX_hp;
+            player.player_MAX_hp = player.player_origin_hp + HP_W;
+            if (player.player_MAX_hp <= player.player_hp)
+            {
+                player.player_hp = player.player_MAX_hp;
+            }
+            player.player_attack = player.player_origin_attack + ATTACK_W;
+            player.player_defense = player.player_origin_defense + DEFENSE_W;
+
+            player.player_attack_range = ATTACK_RANGE_W;
+            player.player_attack_type = ATTACK_TYPE_W;
+            player.player_attack_through = ATTACK_THROUGH_W;
+            player.player_slanting_wall = SLANTING_WALL_W;
+
+            for (int i = 0; i < GameManager.instance.possessionweaponlist.Count; i++)
+            {
+                if (GameManager.instance.possessionweaponlist[i].name.Contains("E:") == true)
+                {
+                    GameManager.instance.possessionweaponlist[i].name = GameManager.instance.possessionweaponlist[i].name.Replace("E:", "");
+                }
+            }
+            GameManager.instance.possessionweaponlist[listnum].name = GameManager.instance.possessionweaponlist[listnum].name.Insert(0, "E:");
+
+            GameManager.instance.weaponuse(listnum);
+        }else if(GameManager.instance.possessionweaponlist[listnum].name.Contains("E:") == true)
+        {
+            player.player_MAX_hp = player.player_origin_hp;
+            if (player.player_MAX_hp <= player.player_hp)
+            {
+                player.player_hp = player.player_MAX_hp;
+            }
+            player.player_attack = player.player_origin_attack;
+            player.player_defense = player.player_origin_defense;
+
+            player.player_attack_range = 1;
+            player.player_attack_type = 0;
+            player.player_attack_through = false;
+            player.player_slanting_wall = false;
+
+            GameManager.instance.possessionweaponlist[listnum].name = GameManager.instance.possessionweaponlist[listnum].name.Replace("E:", "");
+
+            GameManager.instance.weaponuse(listnum);
         }
-        player.player_attack = player.player_origin_attack + ATTACK_W;
-        player.player_defense = player.player_origin_defense + DEFENSE_W;
-
-        player.player_attack_range = ATTACK_RANGE_W;
-        player.player_attack_type = ATTACK_TYPE_W;
-        player.player_attack_through = ATTACK_THROUGH_W;
-        player.player_slanting_wall = SLANTING_WALL_W;
-
-        GameManager.instance.weaponuse(listnum);
     }
 }
 public class weapon1 : weapon

@@ -93,17 +93,17 @@ public class ScrollItemButton : MonoBehaviour {
 
             int argument = i + 0;   //AddListenerで呼び出す関数の引数は、ガウスを使用しているため（？）一度0をプラスして正常な数字に
 
-            if (GameManager.instance.possessionweaponlist[i].name == "ロングソード")
+            if (GameManager.instance.possessionweaponlist[i].name.Contains("ロングソード") == true)
             {
                 weapon weapon1 = GameManager.instance.possessionweaponlist[i] as weapon;
                 scrollweaponbuttons[i].transform.GetComponent<Button>().onClick.AddListener(() => weapon1.installing(argument));
             }
-            else if (GameManager.instance.possessionweaponlist[i].name == "ショットガン")
+            else if (GameManager.instance.possessionweaponlist[i].name.Contains("ショットガン") == true)
             {
                 weapon weapon2 = GameManager.instance.possessionweaponlist[i] as weapon;
                 scrollweaponbuttons[i].transform.GetComponent<Button>().onClick.AddListener(() => weapon2.installing(argument));
             }
-            else if (GameManager.instance.possessionweaponlist[i].name == "ライフル")
+            else if (GameManager.instance.possessionweaponlist[i].name.Contains("ライフル") == true)
             {
                 weapon weapon3 = GameManager.instance.possessionweaponlist[i] as weapon;
                 scrollweaponbuttons[i].transform.GetComponent<Button>().onClick.AddListener(() => weapon3.installing(argument));
