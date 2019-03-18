@@ -87,8 +87,8 @@ public class map_creat : MonoBehaviour {
 
     public Vector3 entrancevec;
 
-    static int MAX_X = 55;
-    static int MAX_Y = 55;
+    public static int MAX_X = 40;
+    public static int MAX_Y = 40;
 
     public int[] Xline;
     public int[] Yline;
@@ -151,11 +151,11 @@ public class map_creat : MonoBehaviour {
         }//map全て壁にする、map_ex全て空欄に
 
 
-        Xline[0] = Random.Range(5, 26);
-        Xline[1] = Random.Range(Xline[0] + 6, Xline[0] + 25);
+        Xline[0] = Random.Range(5, MAX_X - 29);
+        Xline[1] = Random.Range(Xline[0] + 6, Xline[0] + MAX_X - 29);
 
-        Yline[0] = Random.Range(5, 26);
-        Yline[1] = Random.Range(Yline[0] + 6, Yline[0] + 25);
+        Yline[0] = Random.Range(5, MAX_Y - 29);
+        Yline[1] = Random.Range(Yline[0] + 6, Yline[0] + MAX_Y - 29);
         //部屋を分割
 
 
@@ -1130,29 +1130,29 @@ public class map_creat : MonoBehaviour {
         i1 = 0;
         while (true)
         {
-            if (map[Xline[0], 58 - i1].number == 2 || i1 == 58)
+            if (map[Xline[0], MAX_X + 3 - i1].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
-            map[Xline[0], 58 - i1] = new wall();
+            map[Xline[0], MAX_X + 3 - i1] = new wall();
             i1++;
         }
 
         i1 = 0;
         while (true)
         {
-            if (map[Xline[1], 58 - i1].number == 2 || i1 == 58)
+            if (map[Xline[1], MAX_X + 3 - i1].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
-            map[Xline[1], 58 - i1] = new wall();
+            map[Xline[1], MAX_X + 3 - i1] = new wall();
             i1++;
         }
 
         i1 = 0;
         while (true)
         {
-            if (map[Xline[0], i1].number == 2 || i1 == 58)
+            if (map[Xline[0], i1].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
@@ -1163,7 +1163,7 @@ public class map_creat : MonoBehaviour {
         i1 = 0;
         while (true)
         {
-            if (map[Xline[1], i1].number == 2 || i1 == 58)
+            if (map[Xline[1], i1].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
@@ -1174,7 +1174,7 @@ public class map_creat : MonoBehaviour {
         i1 = 0;
         while (true)
         {
-            if (map[i1, Yline[0]].number == 2 || i1 == 58)
+            if (map[i1, Yline[0]].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
@@ -1185,7 +1185,7 @@ public class map_creat : MonoBehaviour {
         i1 = 0;
         while (true)
         {
-            if (map[i1, Yline[1]].number == 2 || i1 == 58)
+            if (map[i1, Yline[1]].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
@@ -1196,30 +1196,30 @@ public class map_creat : MonoBehaviour {
         i1 = 0;
         while (true)
         {
-            if (map[58 - i1, Yline[0]].number == 2 || i1 == 58)
+            if (map[MAX_X + 3 - i1, Yline[0]].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
-            map[58 - i1, Yline[0]] = new wall();
+            map[MAX_X + 3 - i1, Yline[0]] = new wall();
             i1++;
         }
 
         i1 = 0;
         while (true)
         {
-            if (map[58 - i1, Yline[1]].number == 2 || i1 == 58)
+            if (map[MAX_X + 3 - i1, Yline[1]].number == 2 || i1 == MAX_X + 3)
             {
                 break;
             }
-            map[58 - i1, Yline[1]] = new wall();
+            map[MAX_X + 3 - i1, Yline[1]] = new wall();
             i1++;
         }
 
         
 
-        for (int x = 0; x < 59; x++)
+        for (int x = 0; x < MAX_X + 4; x++)
         {
-            for (int y = 0; y < 59; y++)
+            for (int y = 0; y < MAX_X + 4; y++)
             {
                 if (map[x, y].number == 0)
                 {

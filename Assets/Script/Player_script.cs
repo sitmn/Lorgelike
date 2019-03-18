@@ -26,8 +26,8 @@ public class Player_script : MonoBehaviour {
         //プレイヤーをマップ内に移動
         do
         {
-          x = Random.Range(1, 58);
-          z = Random.Range(1, 58);
+          x = Random.Range(1, map_creat.MAX_X + 3);
+          z = Random.Range(1, map_creat.MAX_Y + 3);
         } while (map_creat.map[x, z].number != 1 || map_creat.map_ex[x,z].number == 6);
 
         map_creat.map_ex[x, z] = new player();
