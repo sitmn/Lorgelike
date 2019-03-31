@@ -40,7 +40,17 @@ public class GameManager : MonoBehaviour {
     public GameObject Menuobj;
 
     public List<Enemy_script> enemies;
+    public List<GameObject> minimap_enemies;
     public List<Vector3> roomlist;
+    public List<Vector3> roomlist_0;
+    public List<Vector3> roomlist_1;
+    public List<Vector3> roomlist_2;
+    public List<Vector3> roomlist_3;
+    public List<Vector3> roomlist_4;
+    public List<Vector3> roomlist_5;
+    public List<Vector3> roomlist_6;
+    public List<Vector3> roomlist_7;
+    public List<Vector3> roomlist_8;
     public List<Vector3> entrancelist_0;
     public List<Vector3> entrancelist_1;
     public List<Vector3> entrancelist_2;
@@ -75,11 +85,23 @@ public class GameManager : MonoBehaviour {
         //EnemyをListで管理
         enemies = new List<Enemy_script>();
 
+        minimap_enemies = new List<GameObject>();
+
         //itemをListで管理
         possessionitemlist = new List<map_item>();
         possessionweaponlist = new List<map_item>();
 
         roomlist = new List<Vector3>();
+        roomlist_0 = new List<Vector3>();
+        roomlist_1 = new List<Vector3>();
+        roomlist_2 = new List<Vector3>();
+        roomlist_3 = new List<Vector3>();
+        roomlist_4 = new List<Vector3>();
+        roomlist_5 = new List<Vector3>();
+        roomlist_6 = new List<Vector3>();
+        roomlist_7 = new List<Vector3>();
+        roomlist_8 = new List<Vector3>();
+
         entrancelist_0 = new List<Vector3>();
         entrancelist_1 = new List<Vector3>();
         entrancelist_2 = new List<Vector3>();
@@ -216,9 +238,10 @@ public class GameManager : MonoBehaviour {
     
 
     //Enemyをリストに追加
-    public void AddListenemy(Enemy_script script)
+    public void AddListenemy(Enemy_script script , GameObject minimap_enemy)
     {
         enemies.Add(script);
+        minimap_enemies.Add(minimap_enemy);
     }
 
     public void AddListItem(map_item item)

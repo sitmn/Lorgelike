@@ -16,14 +16,17 @@ public class Enemy_script : MonoBehaviour
 
     private GameObject Player;
     private Player_script player_script;
+    public GameObject minimap_enemy;
 
     private map_creat mapscript;
     
     
     void Start()
     {
+        GameObject obj2 = Instantiate(minimap_enemy, new Vector3((int)transform.position.x + map_creat.minimapdistance, 1, (int)transform.position.z + map_creat.minimapdistance), Quaternion.identity);
+        obj2.transform.parent = transform;
         //このEnemyが生成された時、このスクリプトをListに追加
-        GameManager.instance.AddListenemy(this);
+        GameManager.instance.AddListenemy(this , obj2);
 
         Player = GameObject.Find("Player");
         player_script = Player.GetComponent<Player_script>();
@@ -341,7 +344,7 @@ public class Enemy_script : MonoBehaviour
                 //加速と通常時の移動
                 if (GameManager.instance.space == true)
                 {
-                    transform.position = enemypos;
+                    transform.localPosition = enemypos;
 
                 }
                 else if (GameManager.instance.space == false)
@@ -367,7 +370,7 @@ public class Enemy_script : MonoBehaviour
                     //加速と通常時の移動
                     if (GameManager.instance.space == true)
                     {
-                        transform.position = enemypos;
+                        transform.localPosition = enemypos;
 
                     }
                     else if (GameManager.instance.space == false)
@@ -582,7 +585,7 @@ public class Enemy_script : MonoBehaviour
                 //加速と通常時の移動
                 if (GameManager.instance.space == true)
                 {
-                    transform.position = enemypos;
+                    transform.localPosition = enemypos;
 
                 }
                 else if (GameManager.instance.space == false)
@@ -608,7 +611,7 @@ public class Enemy_script : MonoBehaviour
                     //加速と通常時の移動
                     if (GameManager.instance.space == true)
                     {
-                        transform.position = enemypos;
+                        transform.localPosition = enemypos;
 
                     }
                     else if (GameManager.instance.space == false)
@@ -830,7 +833,7 @@ public class Enemy_script : MonoBehaviour
                 //加速と通常時の移動
                 if (GameManager.instance.space == true)
                 {
-                    transform.position = enemypos;
+                    transform.localPosition = enemypos;
 
                 }
                 else if (GameManager.instance.space == false)
@@ -893,7 +896,7 @@ public class Enemy_script : MonoBehaviour
             //加速と通常時の移動
             if (GameManager.instance.space == true)
             {
-                transform.position = enemypos;
+                transform.localPosition = enemypos;
 
             }
             else if (GameManager.instance.space == false)
@@ -918,7 +921,7 @@ public class Enemy_script : MonoBehaviour
                 //加速と通常時の移動
                 if (GameManager.instance.space == true)
                 {
-                    transform.position = enemypos;
+                    transform.localPosition = enemypos;
 
                 }
                 else if (GameManager.instance.space == false)
@@ -1025,6 +1028,8 @@ public class Enemy_script : MonoBehaviour
         if (hp <= 0)
         {
             map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
+            
+
             GameManager.instance.enemies.Remove(this);
             Destroy(this.gameObject);
         }
@@ -1047,7 +1052,7 @@ public class Enemy_script : MonoBehaviour
             //1フレーム分の移動距離を算出する
             Vector3 newPosition = Vector3.MoveTowards(transform.position, end, GameManager.instance.inverseMoveTime * Time.deltaTime);
             //算出した移動距離分、移動する
-            transform.position = newPosition;
+            transform.localPosition = newPosition;
             //現在地が目的地寄りになった結果、sqrRemainDistanceが小さくなる
             sqrRemainingDistance = (transform.position - end).sqrMagnitude;
             //1フレーム待ってから、while文の先頭へ戻る
@@ -1060,7 +1065,7 @@ public class Enemy_script : MonoBehaviour
         GameManager.instance.EnemyMoving++;
         
         //Debug.Log("D");
-        transform.position = new Vector3((int)end.x, 0, (int)end.z);
+        transform.localPosition = new Vector3((int)end.x, 0, (int)end.z);
         
         if(map_creat.map_ex[(int)transform.position.x,(int)transform.position.z].number != 6)
         {

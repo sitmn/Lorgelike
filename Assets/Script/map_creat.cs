@@ -83,7 +83,13 @@ public class map_creat : MonoBehaviour {
     public GameObject Weapon1;
     public GameObject Weapon2;
     public GameObject Weapon3;
-    
+
+    //ミニマップ
+    public GameObject MiniMapWall;
+    public GameObject MiniMapFloor;
+    public GameObject MiniMapClear;
+    public static GameObject MiniMapPlayer;
+    public static int minimapdistance  = 100;
 
     public Vector3 entrancevec;
 
@@ -107,6 +113,8 @@ public class map_creat : MonoBehaviour {
     public static map_exist[,] map_ex;
     public static map_item[,] map_item;
 
+    public static GameObject[,] mini_map;
+
     void Start()
     {
     
@@ -120,7 +128,16 @@ public class map_creat : MonoBehaviour {
         
         
         GameManager.instance.roomlist.Clear();
-            GameManager.instance.entrancelist_0.Clear();
+        GameManager.instance.roomlist_0.Clear();
+        GameManager.instance.roomlist_1.Clear();
+        GameManager.instance.roomlist_2.Clear();
+        GameManager.instance.roomlist_3.Clear();
+        GameManager.instance.roomlist_4.Clear();
+        GameManager.instance.roomlist_5.Clear();
+        GameManager.instance.roomlist_6.Clear();
+        GameManager.instance.roomlist_7.Clear();
+        GameManager.instance.roomlist_8.Clear();
+        GameManager.instance.entrancelist_0.Clear();
             GameManager.instance.entrancelist_1.Clear();
             GameManager.instance.entrancelist_2.Clear();
             GameManager.instance.entrancelist_3.Clear();
@@ -139,6 +156,7 @@ public class map_creat : MonoBehaviour {
 
         map_item = new map_item[MAX_X + 4, MAX_Y + 4];
 
+        mini_map = new GameObject[MAX_X + 4,MAX_Y + 4];
 
         for (i1 = 0; i1 < MAX_X + 4; i1++)
         {
@@ -218,38 +236,47 @@ public class map_creat : MonoBehaviour {
                             if (i1 == 0 && i2 == 2)
                             {
                                 map[i3, i4].room_No = 0;
+                                GameManager.instance.roomlist_0.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 1 && i2 == 2)
                             {
                                 map[i3, i4].room_No = 1;
+                                GameManager.instance.roomlist_1.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 2 && i2 == 2)
                             {
                                 map[i3, i4].room_No = 2;
+                                GameManager.instance.roomlist_2.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 0 && i2 == 1)
                             {
                                 map[i3, i4].room_No = 3;
+                                GameManager.instance.roomlist_3.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 1 && i2 == 1)
                             {
                                 map[i3, i4].room_No = 4;
+                                GameManager.instance.roomlist_4.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 2 && i2 == 1)
                             {
                                 map[i3, i4].room_No = 5;
+                                GameManager.instance.roomlist_5.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 0 && i2 == 0)
                             {
                                 map[i3, i4].room_No = 6;
+                                GameManager.instance.roomlist_6.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 1 && i2 == 0)
                             {
                                 map[i3, i4].room_No = 7;
+                                GameManager.instance.roomlist_7.Add(new Vector3(i3, 0, i4));
                             }
                             else if (i1 == 2 && i2 == 0)
                             {
                                 map[i3, i4].room_No = 8;
+                                GameManager.instance.roomlist_8.Add(new Vector3(i3, 0, i4));
                             }
                             
                             GameManager.instance.roomlist.Add(new Vector3(i3, 0, i4));
@@ -1224,6 +1251,15 @@ public class map_creat : MonoBehaviour {
                 if (map[x, y].number == 0)
                 {
                     Instantiate(wallObject, new Vector3(x, 0, y), Quaternion.identity);
+
+                    mini_map[x,y] = Instantiate(MiniMapWall, new Vector3(x + minimapdistance, 0, y + minimapdistance), Quaternion.identity);
+                    mini_map[x, y].SetActive(false);
+                }
+
+                if (map[x, y].number == 1 || map[x, y].number == 2 || map[x, y].number == 3 || map[x, y].number == 10)
+                {
+                    mini_map[x, y] = Instantiate(MiniMapFloor, new Vector3(x + minimapdistance, 0 , y + minimapdistance), Quaternion.identity);
+                    mini_map[x, y].SetActive(false);
                 }
                 
                 if (map[x, y].number == 99)
@@ -1245,12 +1281,22 @@ public class map_creat : MonoBehaviour {
                 */
 
                   Instantiate(floor, new Vector3(x, -1, y), Quaternion.identity);
-              
+
+
+                
             }
         }
 
-        //階段を部屋に配置
-        InstantiateInRoom_map_item(Kaidan);
+        for (int x = -25; x < MAX_X + 25; x++)
+        {
+            for (int y = -25; y < MAX_X + 25; y++)
+            {
+                //ミニマップの何もない場所
+                Instantiate(MiniMapClear, new Vector3(x + minimapdistance, -1, y + minimapdistance), Quaternion.identity);
+            }
+        }
+                //階段を部屋に配置
+                InstantiateInRoom_map_item(Kaidan);
 
         //アイテムを部屋に配置
         int itemnumber = Random.Range(5, 15);

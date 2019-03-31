@@ -16,6 +16,8 @@ public class Player_script : MonoBehaviour {
     
     public GameObject Player;
     public GameObject MenuScreen;
+
+    public GameObject MiniMapPlayerObject;
     
     // Use this for initialization
     void Start()
@@ -33,8 +35,9 @@ public class Player_script : MonoBehaviour {
         map_creat.map_ex[x, z] = new player();
         map_creat.map_ex[x, z].obj = Player;
         map_creat.map_ex[x, z].player_script = Player.GetComponent<Player_script>();
+        map_creat.MiniMapPlayer = Instantiate(MiniMapPlayerObject, new Vector3(x + map_creat.minimapdistance, 1, z + map_creat.minimapdistance), Quaternion.identity);
         player.exist_room_no = map_creat.map[x, z].room_No;
-        transform.position = new Vector3( x, 0, z);
+        transform.localPosition = new Vector3( x, 0, z);
     }
 
     // Update is called once per frame
@@ -433,7 +436,6 @@ public class Player_script : MonoBehaviour {
 
     public void PickUpItem()
     {
-        Debug.Log(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].exist);
 
 
         if(map_creat.map_item[(int)transform.position.x , (int)transform.position.z].exist == true){
@@ -500,7 +502,7 @@ public class Player_script : MonoBehaviour {
             //1フレーム分の移動距離を算出する
             Vector3 newPosition = Vector3.MoveTowards(transform.position, end, GameManager.instance.inverseMoveTime * Time.deltaTime);
             //算出した移動距離分、移動する
-            transform.position = newPosition;
+            transform.localPosition = newPosition;
             //現在地が目的地寄りになった結果、sqrRemainDistanceが小さくなる
             sqrRemainingDistance = (transform.position - end).sqrMagnitude;
             //1フレーム待ってから、while文の先頭へ戻る
@@ -511,7 +513,7 @@ public class Player_script : MonoBehaviour {
 
         GameManager.instance.PlayerMoving = false;
         
-        transform.position = new Vector3((int)end.x, 0, (int)end.z);
+        transform.localPosition = new Vector3((int)end.x, 0, (int)end.z);
 
         if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].number != 5)
         {
@@ -538,6 +540,7 @@ public class Player_script : MonoBehaviour {
                 player.exist_room_no = 10;
 
                 GameManager.instance.enemies.Clear();
+                GameManager.instance.minimap_enemies.Clear();
 
                 SceneManager.LoadScene("Dangyon");
             }
