@@ -26,7 +26,7 @@ public class Enemy_script : MonoBehaviour
         GameObject obj2 = Instantiate(minimap_enemy, new Vector3((int)transform.position.x + map_creat.minimapdistance, 1, (int)transform.position.z + map_creat.minimapdistance), Quaternion.identity);
         obj2.transform.parent = transform;
         //このEnemyが生成された時、このスクリプトをListに追加
-        GameManager.instance.AddListenemy(this , obj2);
+        GameManager.instance.AddListenemy(this);
 
         Player = GameObject.Find("Player");
         player_script = Player.GetComponent<Player_script>();
@@ -37,7 +37,27 @@ public class Enemy_script : MonoBehaviour
 
     }
 
-    
+    void Update()
+    {
+        transform.GetChild(0).transform.position = new Vector3(transform.position.x + map_creat.minimapdistance, 1, transform.position.z + map_creat.minimapdistance);
+
+        //マッピング外の場合オブジェクトを消しておく
+        if (map_creat.mini_map[(int)transform.position.x , (int)transform.position.z].activeSelf == true)
+        {
+            if(transform.GetChild(0).gameObject.activeSelf == false)
+            {
+                transform.GetChild(0).gameObject.SetActive(true);
+            }
+        }else if (map_creat.mini_map[(int)transform.position.x, (int)transform.position.z].activeSelf == false)
+        {
+            if (transform.GetChild(0).gameObject.activeSelf == true)
+            {
+                transform.GetChild(0).gameObject.SetActive(false);
+            }
+        }
+    }
+
+
     //敵の行動
     public void Emove()
     {

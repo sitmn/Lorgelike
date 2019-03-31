@@ -89,6 +89,8 @@ public class map_creat : MonoBehaviour {
     public GameObject MiniMapFloor;
     public GameObject MiniMapClear;
     public static GameObject MiniMapPlayer;
+    public GameObject MiniMapKaidan;
+    public GameObject MiniMapItem;
     public static int minimapdistance  = 100;
 
     public Vector3 entrancevec;
@@ -1242,7 +1244,9 @@ public class map_creat : MonoBehaviour {
             i1++;
         }
 
-        
+
+        //階段を部屋に配置
+        InstantiateInRoom_map_item(Kaidan);
 
         for (int x = 0; x < MAX_X + 4; x++)
         {
@@ -1256,9 +1260,12 @@ public class map_creat : MonoBehaviour {
                     mini_map[x, y].SetActive(false);
                 }
 
-                if (map[x, y].number == 1 || map[x, y].number == 2 || map[x, y].number == 3 || map[x, y].number == 10)
+                if (map[x, y].number == 1 || map[x, y].number == 2 || map[x, y].number == 3 || map[x, y].number == 5 || map[x, y].number == 10)
                 {
-                    mini_map[x, y] = Instantiate(MiniMapFloor, new Vector3(x + minimapdistance, 0 , y + minimapdistance), Quaternion.identity);
+                    if (map[x, y].number != 5)
+                    {
+                        mini_map[x, y] = Instantiate(MiniMapFloor, new Vector3(x + minimapdistance, 0, y + minimapdistance), Quaternion.identity);
+                    }
                     mini_map[x, y].SetActive(false);
                 }
                 
@@ -1295,8 +1302,6 @@ public class map_creat : MonoBehaviour {
                 Instantiate(MiniMapClear, new Vector3(x + minimapdistance, -1, y + minimapdistance), Quaternion.identity);
             }
         }
-                //階段を部屋に配置
-                InstantiateInRoom_map_item(Kaidan);
 
         //アイテムを部屋に配置
         int itemnumber = Random.Range(5, 15);
@@ -1354,9 +1359,10 @@ public class map_creat : MonoBehaviour {
 
         } while (map_item[(int)pos.x, (int)pos.z].exist == true || map[(int)pos.x, (int)pos.z].number == 5 || map[(int)pos.x, (int)pos.z].number == 0);
 
-        if (obj.tag == "Kaidan")
+        if (obj.tag == "kaidan")
         {
             map[(int)pos.x , (int)pos.z] = new kaidan();
+            map[(int)pos.x , (int)pos.z].number = 5;
         }else if(obj.tag == "Item1")
         {
             map_item[(int)pos.x, (int)pos.z] = new item1();
@@ -1393,7 +1399,17 @@ public class map_creat : MonoBehaviour {
             map_item[(int)pos.x, (int)pos.z] = new weapon3(NAME_W3, HP_W3, ATTACK_W3, DEFENSE_W3, ATTACK_RANGE_W3, ATTACK_TYPE_W3, ATTACK_THROUGH_W3, SLANTING_WALL_W3);
         }
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
-        map_item[(int)pos.x, (int)pos.z].obj = obj2;
+
+        if (obj.tag != "kaidan")
+        {
+            //ミニマップも含めてアイテムを生成
+            Instantiate_item(obj2, (int)pos.x, (int)pos.z);
+            
+        }
+        else if(obj.tag == "kaidan")
+        {
+            mini_map[(int)pos.x , (int)pos.z] = Instantiate(MiniMapKaidan, new Vector3(pos.x + map_creat.minimapdistance, 0, pos.z + map_creat.minimapdistance) , Quaternion.identity);
+        }
     }
     /*private void InstantiateInRoom_map_weapon(GameObject obj)
     {
@@ -1430,6 +1446,15 @@ public class map_creat : MonoBehaviour {
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
         map_weapon[(int)pos.x, (int)pos.z].obj = obj2;
     }*/
+    
+    private void Instantiate_item(GameObject Map_item , int pos_x , int pos_z)
+    {
+        //アイテムを生成し、そのアイテムの子オブジェクトにミニマップ用のオブジェクトを追加
+        map_item[pos_x, pos_z].obj = Map_item;
+        map_item[pos_x, pos_z].minimap_item = Instantiate(MiniMapItem, new Vector3(pos_x + map_creat.minimapdistance, 1, pos_z + map_creat.minimapdistance), Quaternion.identity);
+        map_item[pos_x, pos_z].minimap_item.transform.parent = map_item[pos_x, pos_z].obj.transform;
+        map_item[pos_x, pos_z].minimap_item.SetActive(false);
+    }
 
     //敵の種類を決定
     public void Random_Enemy_Instantiate(int amount)

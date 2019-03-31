@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using UnityEngine.UI;
+
 public class GameManager : MonoBehaviour {
     
 
@@ -40,7 +42,6 @@ public class GameManager : MonoBehaviour {
     public GameObject Menuobj;
 
     public List<Enemy_script> enemies;
-    public List<GameObject> minimap_enemies;
     public List<Vector3> roomlist;
     public List<Vector3> roomlist_0;
     public List<Vector3> roomlist_1;
@@ -62,7 +63,10 @@ public class GameManager : MonoBehaviour {
     public List<Vector3> entrancelist_8;
 
     public List<map_item> possessionitemlist;
-    public List<map_item> possessionweaponlist; 
+    public List<map_item> possessionweaponlist;
+
+    public List<Text> MainTexts;
+    public int MAX_TEXT = 50;
     
     public int MAX_ITEM = 20;
     public int MAX_WEAPON = 20;
@@ -80,12 +84,12 @@ public class GameManager : MonoBehaviour {
         }
 
         DontDestroyOnLoad(gameObject);
-        
+
+        MainTexts = new List<Text>();
 
         //EnemyをListで管理
         enemies = new List<Enemy_script>();
-
-        minimap_enemies = new List<GameObject>();
+        
 
         //itemをListで管理
         possessionitemlist = new List<map_item>();
@@ -238,10 +242,9 @@ public class GameManager : MonoBehaviour {
     
 
     //Enemyをリストに追加
-    public void AddListenemy(Enemy_script script , GameObject minimap_enemy)
+    public void AddListenemy(Enemy_script script)
     {
         enemies.Add(script);
-        minimap_enemies.Add(minimap_enemy);
     }
 
     public void AddListItem(map_item item)
@@ -329,7 +332,7 @@ public class map_item
     public int number;
     public bool exist;
     public GameObject obj;
-
+    public GameObject minimap_item;
     
 }
 

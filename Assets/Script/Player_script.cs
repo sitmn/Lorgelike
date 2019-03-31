@@ -540,7 +540,6 @@ public class Player_script : MonoBehaviour {
                 player.exist_room_no = 10;
 
                 GameManager.instance.enemies.Clear();
-                GameManager.instance.minimap_enemies.Clear();
 
                 SceneManager.LoadScene("Dangyon");
             }

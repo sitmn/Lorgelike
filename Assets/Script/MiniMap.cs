@@ -85,29 +85,7 @@ public class MiniMap : MonoBehaviour {
 
 
         map_creat.MiniMapPlayer.transform.localPosition = new Vector3(Player.transform.position.x + map_creat.minimapdistance , 1 , Player.transform.position.z + map_creat.minimapdistance);
-
-
-        for (int i = 0; i < GameManager.instance.enemies.Count; i++)
-        {
-            if (GameManager.instance.minimap_enemies[i] != null)
-            {
-                if (GameManager.instance.minimap_enemies[i].activeSelf == true)
-                {
-                    if (map_creat.mini_map[(int)GameManager.instance.enemies[i].transform.position.x, (int)GameManager.instance.enemies[i].transform.position.z].activeSelf == false)
-                    {
-                        GameManager.instance.minimap_enemies[i].SetActive(false);
-                    }
-                    GameManager.instance.minimap_enemies[i].transform.position = new Vector3((int)(GameManager.instance.enemies[i].transform.position.x) + map_creat.minimapdistance, 1, (int)(GameManager.instance.enemies[i].transform.position.z) + map_creat.minimapdistance);
-                }
-                else if (GameManager.instance.minimap_enemies[i].activeSelf == false)
-                {
-                    if (map_creat.mini_map[(int)GameManager.instance.enemies[i].transform.position.x, (int)GameManager.instance.enemies[i].transform.position.z].activeSelf == true)
-                    {
-                        GameManager.instance.minimap_enemies[i].SetActive(true);
-                    }
-                }
-            }
-        }
+        
 	}
 
     private void Open_Mini_Map(int x , int z)
