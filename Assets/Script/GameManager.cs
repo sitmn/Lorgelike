@@ -66,10 +66,15 @@ public class GameManager : MonoBehaviour {
     public List<map_item> possessionweaponlist;
 
     public List<Text> MainTexts;
+    public Text[] MainText = new Text[3];
+    
     public int MAX_TEXT = 50;
     
     public int MAX_ITEM = 20;
     public int MAX_WEAPON = 20;
+
+    private int q = 0;
+    public Text T;
 
     void Awake()
     {
@@ -115,6 +120,7 @@ public class GameManager : MonoBehaviour {
         entrancelist_6 = new List<Vector3>();
         entrancelist_7 = new List<Vector3>();
         entrancelist_8 = new List<Vector3>();
+        
 
         //コンポーネントを取得
 
@@ -148,6 +154,7 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
+
         if (instance.Playerturn == true || instance.Menu ==true || instance.Pose == true || coroutine == true || GameManager.instance.PlayerMoving == true)
         {
             return;
@@ -257,6 +264,44 @@ public class GameManager : MonoBehaviour {
         possessionweaponlist.Add(weapon);
     }
 
+    //文章の表示
+    public void AddMainText(string sentence)
+    {
+        Text TEXT = Instantiate(T);
+        TEXT.text = sentence;
+
+        MainTexts.Add(TEXT);
+
+        if (MainTexts.Count > 2)
+        {
+            MainText[0].text = MainTexts[MainTexts.Count - 3].text;
+            MainText[1].text = MainTexts[MainTexts.Count - 2].text;
+            MainText[2].text = MainTexts[MainTexts.Count - 1].text;
+        }else if (MainTexts.Count == 2)
+        {
+            MainText[0].text = MainTexts[MainTexts.Count - 2].text;
+            MainText[1].text = MainTexts[MainTexts.Count - 1].text;
+        }
+        else if (MainTexts.Count == 1)
+        {
+            MainText[0].text = MainTexts[MainTexts.Count - 1].text;
+        }
+
+        //保存した文章を古いものから削除
+        if(MainTexts.Count > MAX_TEXT)
+        {
+            MainTexts.RemoveAt(0);
+        }
+
+        Invoke("Text_Chancel", 3);
+    }
+    //文章の表示を削除
+    void Text_Chancel()
+    {
+        MainText[0].text = null;
+        MainText[1].text = null;
+        MainText[2].text = null;
+    }
 
     public void itemuse(int listnum)
     {

@@ -1045,8 +1045,12 @@ public class Enemy_script : MonoBehaviour
     {
         int damage = attack - defense;
         hp -= damage;
+
+        GameManager.instance.AddMainText(damage + "のダメージを与えた");
+
         if (hp <= 0)
         {
+            GameManager.instance.AddMainText("倒れた");
             map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
             
 

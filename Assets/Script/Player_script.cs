@@ -475,9 +475,12 @@ public class Player_script : MonoBehaviour {
     {
         int damage = attack;
         player.player_hp -= damage;
-        if(player.player_hp <= 0)
+
+        GameManager.instance.AddMainText(damage + "のダメージを受けた");
+
+        if (player.player_hp <= 0)
         {
-            Debug.Log("GAME OVER");
+            GameManager.instance.AddMainText("GAME OVER");
         }
         
     }
