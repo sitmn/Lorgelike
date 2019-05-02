@@ -17,13 +17,25 @@ public class Player_script : MonoBehaviour {
     public GameObject Player;
     public GameObject MenuScreen;
 
+    public GameObject HPBAR;
+    public GameObject HPTEXT;
+
     public GameObject MiniMapPlayerObject;
+
+    private HpBar HPBar;
+    private HPText_script HPText;
     
     // Use this for initialization
     void Start()
     {
         this.kaidan = false;
         this.notmove = false;
+
+        HPBar = HPBAR.GetComponent<HpBar>();
+        HPText = HPTEXT.GetComponent<HPText_script>();
+        
+        HPBar.Hp_Bar();
+        HPText.HP_Text();
 
         //プレイヤーをマップ内に移動
         do
@@ -37,7 +49,7 @@ public class Player_script : MonoBehaviour {
         map_creat.map_ex[x, z].player_script = Player.GetComponent<Player_script>();
         map_creat.MiniMapPlayer = Instantiate(MiniMapPlayerObject, new Vector3(x + map_creat.minimapdistance, 1, z + map_creat.minimapdistance), Quaternion.identity);
         player.exist_room_no = map_creat.map[x, z].room_No;
-        transform.localPosition = new Vector3( x, 0, z);
+        transform.position = new Vector3( x, 0, z);
     }
 
     // Update is called once per frame
@@ -59,12 +71,36 @@ public class Player_script : MonoBehaviour {
         if (Input.GetKey(KeyCode.C) && GameManager.instance.Menu == false)
         {
             this.vectorchange = true;
-            //〇マス目を表示
+
+            if (map_creat.map[x, z].obj.transform.GetChild(0).gameObject.activeSelf == false)
+            {
+
+                //〇マス目を表示
+                for (int x = 0; x < 44; x++)
+                {
+                    for (int z = 0; z < 44; z++)
+                    {
+                        map_creat.map[x, z].obj.transform.GetChild(0).gameObject.SetActive(true);
+                    }
+                }
+            }
         }
         else
         {
             this.vectorchange = false;
-            //〇マス目表示を消す
+
+            if (map_creat.map[x, z].obj.transform.GetChild(0).gameObject.activeSelf == true)
+            {
+
+                //〇マス目表示を消す
+                for (int x = 0; x < 44; x++)
+                {
+                    for (int z = 0; z < 44; z++)
+                    {
+                        map_creat.map[x, z].obj.transform.GetChild(0).gameObject.SetActive(false);
+                    }
+                }
+            }
         }
 
         //Spaceを押している間、加速
@@ -92,7 +128,7 @@ public class Player_script : MonoBehaviour {
 
 
                 GameManager.instance.space = false;
-                Attack(attack_range , attack_type , slanting_wall);
+                Attack(attack_range , attack_type , player.player_slanting_wall , player.player_attack_through ,player.player_attack);
             } else{
                 PlayerMove();
             }
@@ -443,6 +479,9 @@ public class Player_script : MonoBehaviour {
             {
                 if (GameManager.instance.possessionitemlist.Count < GameManager.instance.MAX_ITEM)
                 {
+                    GameManager.instance.AddMainText(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].name + "を拾った");
+                    
+
                     GameManager.instance.AddListItem(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
                     Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
                     map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
@@ -459,6 +498,8 @@ public class Player_script : MonoBehaviour {
             {
                 if (GameManager.instance.possessionweaponlist.Count < GameManager.instance.MAX_WEAPON)
                 {
+                    GameManager.instance.AddMainText(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].name + "を拾った");
+
                     GameManager.instance.AddListWeapon(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
                     Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
                     map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
@@ -477,6 +518,9 @@ public class Player_script : MonoBehaviour {
         player.player_hp -= damage;
 
         GameManager.instance.AddMainText(damage + "のダメージを受けた");
+
+        HPBar.Hp_Bar();
+        HPText.HP_Text();
 
         if (player.player_hp <= 0)
         {
@@ -553,108 +597,109 @@ public class Player_script : MonoBehaviour {
     
 
     //プレイヤーの向いている方向に攻撃
-    private void Attack(int attack_range, int attack_type, bool slanting_wall)
+    public void Attack(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
     {
+        Debug.Log("Attack");
         if (attack_type == 0)
         {
             if (transform.eulerAngles == new Vector3(0, 0, 0))
             {
-                line_attack_0(attack_range, attack_type, slanting_wall);
+                line_attack_0(attack_range, attack_type, slanting_wall , attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 90, 0))
             {
-                line_attack_90(attack_range, attack_type, slanting_wall);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 180, 0))
             {
-                line_attack_180(attack_range, attack_type, slanting_wall);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 270, 0))
             {
-                line_attack_270(attack_range, attack_type, slanting_wall);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 45, 0))
             {
-                line_attack_45(attack_range, attack_type, slanting_wall);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 135, 0))
             {
-                line_attack_135(attack_range, attack_type, slanting_wall);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
             {
-                line_attack_225(attack_range, attack_type, slanting_wall);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 315, 0))
             {
-                line_attack_315(attack_range, attack_type, slanting_wall);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
         }
         else if (attack_type == 1)
         {
             if (transform.eulerAngles == new Vector3(0, 0, 0))
             {
-                line_attack_0(attack_range, attack_type, slanting_wall);
+                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_315(attack_range, attack_type, slanting_wall);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_45(attack_range, attack_type, slanting_wall);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 90, 0))
             {
-                line_attack_90(attack_range, attack_type, slanting_wall);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_45(attack_range, attack_type, slanting_wall);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_135(attack_range, attack_type, slanting_wall);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 180, 0))
             {
-                line_attack_180(attack_range, attack_type, slanting_wall);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_135(attack_range, attack_type, slanting_wall);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_225(attack_range, attack_type, slanting_wall);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 270, 0))
             {
-                line_attack_270(attack_range, attack_type, slanting_wall);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_225(attack_range, attack_type, slanting_wall);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_315(attack_range, attack_type, slanting_wall);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 45, 0))
             {
-                line_attack_45(attack_range, attack_type, slanting_wall);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_0(attack_range, attack_type, slanting_wall);
+                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_90(attack_range, attack_type, slanting_wall);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 135, 0))
             {
-                line_attack_135(attack_range, attack_type, slanting_wall);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_90(attack_range, attack_type, slanting_wall);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_180(attack_range, attack_type, slanting_wall);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
             {
-                line_attack_225(attack_range, attack_type, slanting_wall);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_180(attack_range, attack_type, slanting_wall);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_270(attack_range, attack_type, slanting_wall);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
             else if (transform.eulerAngles == new Vector3(0, 315, 0))
             {
-                line_attack_315(attack_range, attack_type, slanting_wall);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_270(attack_range, attack_type, slanting_wall);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
 
-                line_attack_0(attack_range, attack_type, slanting_wall);
+                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
             }
         }
 
@@ -663,7 +708,7 @@ public class Player_script : MonoBehaviour {
     }
 
 
-    private void line_attack_0(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_0(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -674,16 +719,16 @@ public class Player_script : MonoBehaviour {
             if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }
             }
         }
     }
-    private void line_attack_90(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_90(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -694,16 +739,16 @@ public class Player_script : MonoBehaviour {
             if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }
             }
         }
     }
-    private void line_attack_180(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_180(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -714,16 +759,16 @@ public class Player_script : MonoBehaviour {
             if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }
             }
         }
     }
-    private void line_attack_270(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_270(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -734,16 +779,16 @@ public class Player_script : MonoBehaviour {
             if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }
             }
         }
     }
-    private void line_attack_45(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_45(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -751,23 +796,23 @@ public class Player_script : MonoBehaviour {
             {
                 break;
             }//横壁があるとき攻撃が通らない
-            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i + 1].number == 0))
+            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i + 1].number == 0))
             {
                 break;
             }
             if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }
             }
         }
     }
-    private void line_attack_135(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_135(int attack_range, int attack_type, bool slanting_wall ,bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -775,23 +820,23 @@ public class Player_script : MonoBehaviour {
             {
                 break;
             }//横壁があるとき攻撃が通らない
-            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i + 1].number == 0))
+            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i + 1].number == 0))
             {
                 break;
             }
             if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }
             }
         }
     }
-    private void line_attack_225(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_225(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -799,23 +844,23 @@ public class Player_script : MonoBehaviour {
             {
                 break;
             }//横壁があるとき攻撃が通らない
-            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i - 1].number == 0))
+            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i - 1].number == 0))
             {
                 break;
             }
             if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }
             }
         }
     }
-    private void line_attack_315(int attack_range, int attack_type, bool slanting_wall)
+    private void line_attack_315(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
     {
         for (int i = 1; i <= attack_range; i++)
         {
@@ -823,16 +868,16 @@ public class Player_script : MonoBehaviour {
             {
                 break;
             }//横壁があるとき攻撃が通らない
-            else if (player.player_slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i - 1].number == 0))
+            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i - 1].number == 0))
             {
                 break;
             }
             if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].number == 6)
             {
                 map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP, player.player_attack, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.DEFENSE);
+                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.DEFENSE);
 
-                if (player.player_attack_through == false)
+                if (attack_through == false)
                 {
                     break;
                 }

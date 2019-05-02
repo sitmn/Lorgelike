@@ -267,28 +267,44 @@ public class GameManager : MonoBehaviour {
     //文章の表示
     public void AddMainText(string sentence)
     {
+        CancelInvoke("Text_Chancel");
+
         Text TEXT = Instantiate(T);
         TEXT.text = sentence;
 
         MainTexts.Add(TEXT);
 
-        if (MainTexts.Count > 2)
-        {
-            MainText[0].text = MainTexts[MainTexts.Count - 3].text;
-            MainText[1].text = MainTexts[MainTexts.Count - 2].text;
-            MainText[2].text = MainTexts[MainTexts.Count - 1].text;
-        }else if (MainTexts.Count == 2)
-        {
+        Debug.Log(MainText[0].text);
+
+        if(MainText[0].text == "")
+        {Debug.Log("A");
+            MainText[0].text = MainTexts[MainTexts.Count - 1].text;
+        }else if(MainText[1].text == ""){
+            Debug.Log("B");
             MainText[0].text = MainTexts[MainTexts.Count - 2].text;
             MainText[1].text = MainTexts[MainTexts.Count - 1].text;
         }
-        else if (MainTexts.Count == 1)
+        else
         {
-            MainText[0].text = MainTexts[MainTexts.Count - 1].text;
+            Debug.Log("C");
+            if (MainTexts.Count > 2)
+            {
+                MainText[0].text = MainTexts[MainTexts.Count - 3].text;
+                MainText[1].text = MainTexts[MainTexts.Count - 2].text;
+                MainText[2].text = MainTexts[MainTexts.Count - 1].text;
+            }
+            else if (MainTexts.Count == 2)
+            {
+                MainText[0].text = MainTexts[MainTexts.Count - 2].text;
+                MainText[1].text = MainTexts[MainTexts.Count - 1].text;
+            }
+            else if (MainTexts.Count == 1)
+            {
+                MainText[0].text = MainTexts[MainTexts.Count - 1].text;
+            }
         }
-
         //保存した文章を古いものから削除
-        if(MainTexts.Count > MAX_TEXT)
+        if (MainTexts.Count > MAX_TEXT)
         {
             MainTexts.RemoveAt(0);
         }
@@ -298,9 +314,9 @@ public class GameManager : MonoBehaviour {
     //文章の表示を削除
     void Text_Chancel()
     {
-        MainText[0].text = null;
-        MainText[1].text = null;
-        MainText[2].text = null;
+        MainText[0].text = "";
+        MainText[1].text = "";
+        MainText[2].text = "";
     }
 
     public void itemuse(int listnum)
@@ -320,7 +336,10 @@ public class GameManager : MonoBehaviour {
         GameManager.instance.Playerturn = false;
     }
     
-    
+    public void Attack(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage)
+    {
+        player_script.Attack(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+    }
 
 }
 
@@ -329,6 +348,7 @@ public class map_state
     public int number;
     public int room_No;
     public Vector3 entrance_pos;
+    public GameObject obj;
 }
 
 
@@ -393,20 +413,29 @@ public class item1 : map_item
     public void healuse(int listnum)
     {
         //〇アイテム効果
+        GameManager.instance.AddMainText("薬草を使用した");
+
         int healpoint = 30;
         player.player_hp += healpoint;
         if(player.player_hp > player.player_MAX_hp)
         {
             player.player_hp = player.player_MAX_hp;
         }
+        GameManager.instance.AddMainText("ＨＰが" + healpoint + "回復した");
 
         GameManager.instance.itemuse(listnum);
     }
 }
 public class item2 : map_item
 {
+
+    void Awake()
+    {
+    }
+    
     public item2()
     {
+        
         name = "爆弾";
         number = 0;
         exist = true;
@@ -414,8 +443,8 @@ public class item2 : map_item
     public void attackuse(int listnum)
     {
         //〇アイテム効果
-
-        Debug.Log("爆弾");
+        GameManager.instance.AddMainText("爆弾を使用した");
+        GameManager.instance.Attack(1, 1, true, true, 10);
         GameManager.instance.itemuse(listnum);
     }
 }
@@ -431,7 +460,7 @@ public class item3 : map_item
     {
         //〇アイテム効果
 
-        Debug.Log("場所替え");
+        GameManager.instance.AddMainText("場所替えを使用した");
         GameManager.instance.itemuse(listnum);
     }
 }
@@ -498,6 +527,8 @@ public class weapon : map_item
                     GameManager.instance.possessionweaponlist[i].name = GameManager.instance.possessionweaponlist[i].name.Replace("E:", "");
                 }
             }
+            GameManager.instance.AddMainText(GameManager.instance.possessionweaponlist[listnum].name + "を装備した");
+
             GameManager.instance.possessionweaponlist[listnum].name = GameManager.instance.possessionweaponlist[listnum].name.Insert(0, "E:");
 
             GameManager.instance.weaponuse(listnum);
@@ -517,6 +548,8 @@ public class weapon : map_item
             player.player_slanting_wall = false;
 
             GameManager.instance.possessionweaponlist[listnum].name = GameManager.instance.possessionweaponlist[listnum].name.Replace("E:", "");
+
+            GameManager.instance.AddMainText(GameManager.instance.possessionweaponlist[listnum].name + "を外した");
 
             GameManager.instance.weaponuse(listnum);
         }

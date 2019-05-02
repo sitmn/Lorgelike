@@ -1254,7 +1254,7 @@ public class map_creat : MonoBehaviour {
             {
                 if (map[x, y].number == 0)
                 {
-                    Instantiate(wallObject, new Vector3(x, 0, y), Quaternion.identity);
+                    map[x,y].obj = Instantiate(wallObject, new Vector3(x, 0, y), Quaternion.identity);
 
                     mini_map[x,y] = Instantiate(MiniMapWall, new Vector3(x + minimapdistance, 0, y + minimapdistance), Quaternion.identity);
                     mini_map[x, y].SetActive(false);
@@ -1271,7 +1271,7 @@ public class map_creat : MonoBehaviour {
                 
                 if (map[x, y].number == 99)
                 {
-                    Instantiate(wallObject3, new Vector3(x, 0, y), Quaternion.identity);
+                    map[x,y].obj = Instantiate(wallObject3, new Vector3(x, 0, y), Quaternion.identity);
                 }/*壁以外色付け用
                 if (map[x, y] == 2)
                 {
@@ -1287,7 +1287,7 @@ public class map_creat : MonoBehaviour {
                 }
                 */
 
-                  Instantiate(floor, new Vector3(x, -1, y), Quaternion.identity);
+                  map[x,y].obj = Instantiate(floor, new Vector3(x, -1, y), Quaternion.identity);
 
 
                 
@@ -1339,6 +1339,15 @@ public class map_creat : MonoBehaviour {
                 InstantiateInRoom_map_item(Weapon3);
             }
         }
+
+        //グリッドを隠す
+        for (int x = 0; x < 44; x++){
+            for(int z = 0; z < 44; z++)
+            {
+                map[x, z].obj.transform.GetChild(0).gameObject.SetActive(false);
+            }
+        }
+
 
         //敵をランダムに配置
         enemynumber = Random.Range(5, 9);

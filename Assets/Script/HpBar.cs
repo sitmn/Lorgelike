@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HpBar : MonoBehaviour {
-
-    public GameObject Player;
+    
     private Slider slider;
 
     // Use this for initialization
@@ -15,7 +14,12 @@ public class HpBar : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
+	}
+
+    public void Hp_Bar()
+    {
         float hp_bar = (float)player.player_hp / (float)player.player_MAX_hp;
         slider.value = hp_bar;
-	}
+    }
 }

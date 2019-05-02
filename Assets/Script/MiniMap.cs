@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class MiniMap : MonoBehaviour {
 
-    private GameObject Player;
+    public GameObject Player;
 
 	// Use this for initialization
 	void Start () {
-        this.Player = GameObject.Find("Player");
 	}
 	
 	// Update is called once per frame

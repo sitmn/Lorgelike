@@ -25,6 +25,7 @@ public class Enemy_script : MonoBehaviour
     {
         GameObject obj2 = Instantiate(minimap_enemy, new Vector3((int)transform.position.x + map_creat.minimapdistance, 1, (int)transform.position.z + map_creat.minimapdistance), Quaternion.identity);
         obj2.transform.parent = transform;
+        obj2.transform.SetSiblingIndex(0);
         //このEnemyが生成された時、このスクリプトをListに追加
         GameManager.instance.AddListenemy(this);
 
@@ -34,7 +35,7 @@ public class Enemy_script : MonoBehaviour
         this.playerfind = false;
         destination = new Vector3(0,0,0);
         this.smoothmove = false;
-
+        
     }
 
     void Update()
