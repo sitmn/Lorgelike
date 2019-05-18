@@ -95,6 +95,7 @@ public class map_creat : MonoBehaviour {
 
     public Vector3 entrancevec;
 
+
     public static int MAX_X = 40;
     public static int MAX_Y = 40;
 
@@ -116,10 +117,13 @@ public class map_creat : MonoBehaviour {
     public static map_item[,] map_item;
 
     public static GameObject[,] mini_map;
+    public static Renderer[,] grid_color;
+
+    public map_creat map_creat_instance;
 
     void Start()
     {
-    
+        map_creat_instance = this;
 }
 
     // Use this for initialization
@@ -159,6 +163,8 @@ public class map_creat : MonoBehaviour {
         map_item = new map_item[MAX_X + 4, MAX_Y + 4];
 
         mini_map = new GameObject[MAX_X + 4,MAX_Y + 4];
+
+        grid_color = new Renderer[MAX_X + 4, MAX_Y + 4];
 
         for (i1 = 0; i1 < MAX_X + 4; i1++)
         {
@@ -1344,6 +1350,7 @@ public class map_creat : MonoBehaviour {
         for (int x = 0; x < 44; x++){
             for(int z = 0; z < 44; z++)
             {
+                grid_color[x, z] = map[x, z].obj.transform.GetChild(0).GetComponent<Renderer>();
                 map[x, z].obj.transform.GetChild(0).gameObject.SetActive(false);
             }
         }
@@ -1571,6 +1578,8 @@ public class map_creat : MonoBehaviour {
             map[(int)GameManager.instance.entrancelist_8[i].x, (int)GameManager.instance.entrancelist_8[i].z] = new test();
         }
     }
+
+    
 }
 
 

@@ -4,11 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HPText_script : MonoBehaviour {
-    public Text HPText;
+    private Text HPText;
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -18,6 +17,5 @@ public class HPText_script : MonoBehaviour {
 
     public void HP_Text()
     {
-        HPText.text = player.player_hp + "/" + player.player_MAX_hp;
     }
 }

@@ -65,8 +65,14 @@ public class GameManager : MonoBehaviour {
     public List<map_item> possessionitemlist;
     public List<map_item> possessionweaponlist;
 
+
     public List<Text> MainTexts;
     public Text[] MainText = new Text[3];
+    public GameObject HPTEXT;
+    private Text HPText;
+
+    private Slider slider;
+    public GameObject SLIDER;
     
     public int MAX_TEXT = 50;
     
@@ -126,9 +132,10 @@ public class GameManager : MonoBehaviour {
 
         mapscript = GetComponent<map_creat>();
         menuscript = Menuobj.GetComponent<MenuController>();
-        
-            //マップ生成
-            mapscript.Mapcreat();
+        HPText = HPTEXT.GetComponent<Text>();
+        slider = SLIDER.GetComponent<Slider>();
+        //マップ生成
+        mapscript.Mapcreat();
 
         instance.PlayerMoving = false;
         instance.Playerturn = true;
@@ -319,6 +326,17 @@ public class GameManager : MonoBehaviour {
         MainText[2].text = "";
     }
 
+    public void HP_Text()
+    {
+        HPText.text = player.player_hp + "/" + player.player_MAX_hp;
+    }
+
+    public void Hp_Bar()
+    {
+        float hp_bar = (float)player.player_hp / (float)player.player_MAX_hp;
+        slider.value = hp_bar;
+    }
+
     public void itemuse(int listnum)
     {
         GameManager.instance.menuscript.BackButton();
@@ -338,9 +356,20 @@ public class GameManager : MonoBehaviour {
     
     public void Attack(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage)
     {
-        player_script.Attack(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+        player_script.Attack(attack_range, attack_type, slanting_wall, attack_through, attack_damage , Color.white);
     }
 
+    public void Grid_Color(Color color, float position_x, float position_z)
+    {
+        //if ((position_x >= 0 && position_x < map_creat.MAX_X) || (position_z >= 0 && position_z < map_creat.MAX_Y))
+        //{
+            map_creat.grid_color[(int)position_x, (int)position_z].material.color = color;
+        //}
+    }
+    public void Grid_Color_White(float position_x, float position_z)
+    {
+        map_creat.grid_color[(int)position_x, (int)position_z].material.color = Color.white;
+    }
 }
 
 public class map_state
@@ -553,6 +582,8 @@ public class weapon : map_item
 
             GameManager.instance.weaponuse(listnum);
         }
+        GameManager.instance.Hp_Bar();
+        GameManager.instance.HP_Text();
     }
 }
 public class weapon1 : weapon

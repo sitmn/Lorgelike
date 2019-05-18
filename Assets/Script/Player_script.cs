@@ -18,12 +18,13 @@ public class Player_script : MonoBehaviour {
     public GameObject MenuScreen;
 
     public GameObject HPBAR;
-    public GameObject HPTEXT;
 
     public GameObject MiniMapPlayerObject;
 
+    private Animator myAnimator;
+
     private HpBar HPBar;
-    private HPText_script HPText;
+    //private HPText_script HPText;
     
     // Use this for initialization
     void Start()
@@ -32,10 +33,10 @@ public class Player_script : MonoBehaviour {
         this.notmove = false;
 
         HPBar = HPBAR.GetComponent<HpBar>();
-        HPText = HPTEXT.GetComponent<HPText_script>();
+        //HPText = HPTEXT.GetComponent<HPText_script>();
         
-        HPBar.Hp_Bar();
-        HPText.HP_Text();
+        GameManager.instance.Hp_Bar();
+        GameManager.instance.HP_Text();
 
         //プレイヤーをマップ内に移動
         do
@@ -50,6 +51,8 @@ public class Player_script : MonoBehaviour {
         map_creat.MiniMapPlayer = Instantiate(MiniMapPlayerObject, new Vector3(x + map_creat.minimapdistance, 1, z + map_creat.minimapdistance), Quaternion.identity);
         player.exist_room_no = map_creat.map[x, z].room_No;
         transform.position = new Vector3( x, 0, z);
+
+        myAnimator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -83,6 +86,21 @@ public class Player_script : MonoBehaviour {
                         map_creat.map[x, z].obj.transform.GetChild(0).gameObject.SetActive(true);
                     }
                 }
+
+                for(int x = 0; x< 44; x++)
+                {
+                    for(int z = 0; z < 44; z++)
+                    {
+                        GameManager.instance.Grid_Color_White(x, z);
+                    }
+                }
+                //グリッド(Grid)の赤色部分を表示、Attack関数を使っているが、vectorchange==trueのため攻撃はしない
+
+                //Grid,一直線
+                Attack(5, 0, true, true, 10,Color.red);
+
+                //Grid,攻撃範囲
+                Attack(player.player_attack_range, player.player_attack_type, true, true, 10, Color.yellow);
             }
         }
         else
@@ -118,6 +136,19 @@ public class Player_script : MonoBehaviour {
         if (this.vectorchange == true && GameManager.instance.Menu==false)
         {
             VectorChange();
+
+            for (int x = 0; x < 44; x++)
+            {
+                for (int z = 0; z < 44; z++)
+                {
+                    GameManager.instance.Grid_Color_White(x, z);
+                }
+            }
+            //Grid,一直線
+            Attack(5, 0, true, true, 10,Color.red);
+
+            //Grid,攻撃範囲
+            Attack(player.player_attack_range, player.player_attack_type, true, true, 10, Color.yellow);
         }
         else if(GameManager.instance.Menu == false) {
             if (Input.GetKey(KeyCode.Z))
@@ -128,7 +159,8 @@ public class Player_script : MonoBehaviour {
 
 
                 GameManager.instance.space = false;
-                Attack(attack_range , attack_type , player.player_slanting_wall , player.player_attack_through ,player.player_attack);
+                //攻撃
+                Attack(attack_range , attack_type , player.player_slanting_wall , player.player_attack_through ,player.player_attack , Color.white);
             } else{
                 PlayerMove();
             }
@@ -519,8 +551,8 @@ public class Player_script : MonoBehaviour {
 
         GameManager.instance.AddMainText(damage + "のダメージを受けた");
 
-        HPBar.Hp_Bar();
-        HPText.HP_Text();
+        GameManager.instance.Hp_Bar();
+        GameManager.instance.HP_Text();
 
         if (player.player_hp <= 0)
         {
@@ -545,6 +577,8 @@ public class Player_script : MonoBehaviour {
         //Epsilon : ほとんど0に近い数値を表す
         while (sqrRemainingDistance > float.Epsilon)
         {
+            myAnimator.SetInteger("AnimIndex", 2);
+
             //現在地と移動先の間を1秒間にinverseMoveTime分だけ移動する場合の、
             //1フレーム分の移動距離を算出する
             Vector3 newPosition = Vector3.MoveTowards(transform.position, end, GameManager.instance.inverseMoveTime * Time.deltaTime);
@@ -597,290 +631,348 @@ public class Player_script : MonoBehaviour {
     
 
     //プレイヤーの向いている方向に攻撃
-    public void Attack(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
+    public void Attack(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage ,Color grid_color)
     {
         Debug.Log("Attack");
         if (attack_type == 0)
         {
             if (transform.eulerAngles == new Vector3(0, 0, 0))
             {
-                line_attack_0(attack_range, attack_type, slanting_wall , attack_through, attack_damage);
+                line_attack_0(attack_range, attack_type, slanting_wall , attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 90, 0))
             {
-                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 180, 0))
             {
-                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 270, 0))
             {
-                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 45, 0))
             {
-                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 135, 0))
             {
-                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
             {
-                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 315, 0))
             {
-                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
         }
         else if (attack_type == 1)
         {
             if (transform.eulerAngles == new Vector3(0, 0, 0))
             {
-                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 90, 0))
             {
-                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 180, 0))
             {
-                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 270, 0))
             {
-                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 45, 0))
             {
-                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 135, 0))
             {
-                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
             {
-                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
             else if (transform.eulerAngles == new Vector3(0, 315, 0))
             {
-                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
-                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage);
+                line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
         }
 
-
-        GameManager.instance.Playerturn = false;
+        if (vectorchange == false)
+        {
+            GameManager.instance.Playerturn = false;
+        }
     }
 
 
-    private void line_attack_0(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage)
+    private void line_attack_0(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage , Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z].number == 0)
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+            }else if(vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i , (int)transform.position.z);
             }
         }
     }
-    private void line_attack_90(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
+    private void line_attack_90(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage, Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x, (int)transform.position.z - i].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x, (int)transform.position.z - i].number == 0)
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x, (int)transform.position.z - i);
             }
         }
     }
-    private void line_attack_180(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
+    private void line_attack_180(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage, Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z].number == 0)
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z);
             }
         }
     }
-    private void line_attack_270(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
+    private void line_attack_270(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage, Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x, (int)transform.position.z + i].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x, (int)transform.position.z + i].number == 0)
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x, (int)transform.position.z + i);
             }
         }
     }
-    private void line_attack_45(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
+    private void line_attack_45(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage , Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }//横壁があるとき攻撃が通らない
-            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i + 1].number == 0))
-            {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i].number == 0)
+                {
+                    break;
+                }//横壁があるとき攻撃が通らない
+                else if (slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z - i + 1].number == 0))
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i, (int)transform.position.z - i);
             }
         }
     }
-    private void line_attack_135(int attack_range, int attack_type, bool slanting_wall ,bool attack_through, int attack_damage)
+    private void line_attack_135(int attack_range, int attack_type, bool slanting_wall ,bool attack_through, int attack_damage, Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }//横壁があるとき攻撃が通らない
-            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i + 1].number == 0))
-            {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i].number == 0)
+                {
+                    break;
+                }//横壁があるとき攻撃が通らない
+                else if (slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z - i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z - i + 1].number == 0))
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z - i);
             }
         }
     }
-    private void line_attack_225(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
+    private void line_attack_225(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage, Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }//横壁があるとき攻撃が通らない
-            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i - 1].number == 0))
-            {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i].number == 0)
+                {
+                    break;
+                }//横壁があるとき攻撃が通らない
+                else if (slanting_wall == false && (map_creat.map[(int)transform.position.x - i + 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x - i, (int)transform.position.z + i - 1].number == 0))
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z + i);
             }
         }
     }
-    private void line_attack_315(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage)
+    private void line_attack_315(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage, Color grid_color)
     {
         for (int i = 1; i <= attack_range; i++)
         {
-            if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i].number == 0)
+            if (vectorchange == false)
             {
-                break;
-            }//横壁があるとき攻撃が通らない
-            else if (slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i - 1].number == 0))
-            {
-                break;
-            }
-            if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].number == 6)
-            {
-                map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].enemy_script.
-                enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.DEFENSE);
-
-                if (attack_through == false)
+                if (map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i].number == 0)
+                {
+                    break;
+                }//横壁があるとき攻撃が通らない
+                else if (slanting_wall == false && (map_creat.map[(int)transform.position.x + i - 1, (int)transform.position.z + i].number == 0 || map_creat.map[(int)transform.position.x + i, (int)transform.position.z + i - 1].number == 0))
                 {
                     break;
                 }
+                if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].number == 6)
+                {
+                    map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].enemy_script.
+                    enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.DEFENSE);
+
+                    if (attack_through == false)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            {
+                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i, (int)transform.position.z + i);
             }
         }
     }
