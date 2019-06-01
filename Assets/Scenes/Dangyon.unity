@@ -20,11 +20,11 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 4
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
@@ -893,6 +893,10 @@ Prefab:
     - target: {fileID: 100044, guid: e98d03431d919284ebedb75777915ba5, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: e98d03431d919284ebedb75777915ba5, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e98d03431d919284ebedb75777915ba5, type: 3}
@@ -2691,13 +2695,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1587118602}
-  m_LocalRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433915}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
   m_LocalPosition: {x: 30, y: 80, z: 30}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 65, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
 --- !u!114 &1587118607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3227,13 +3231,13 @@ Prefab:
         type: 2}
       propertyPath: Enemy
       value: 
-      objectReference: {fileID: 1491634110333938, guid: 0c865f7224903bb449e715aa05339440,
+      objectReference: {fileID: 1271477772258314, guid: 338a914854c4f104fb7df29c670e0840,
         type: 2}
     - target: {fileID: 114075511026611236, guid: d18c365d4d79b51459e30039fec4952d,
         type: 2}
       propertyPath: Enemy
       value: 
-      objectReference: {fileID: 1491634110333938, guid: 0c865f7224903bb449e715aa05339440,
+      objectReference: {fileID: 1271477772258314, guid: 338a914854c4f104fb7df29c670e0840,
         type: 2}
     - target: {fileID: 114075511026611236, guid: d18c365d4d79b51459e30039fec4952d,
         type: 2}
@@ -3391,7 +3395,7 @@ Prefab:
         type: 2}
       propertyPath: Enemy3
       value: 
-      objectReference: {fileID: 1757746219490252, guid: a9deb37983457d6419f7b53fddc6dd22,
+      objectReference: {fileID: 1149072221093142, guid: b26fa56b74c2e8a44aa28956db3520f9,
         type: 2}
     - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
         type: 2}
@@ -3414,6 +3418,12 @@ Prefab:
       propertyPath: SLIDER
       value: 
       objectReference: {fileID: 238193356}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Enemy2
+      value: 
+      objectReference: {fileID: 1022647445680780, guid: f36c946a35331ea47861f501967dfa2b,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d18c365d4d79b51459e30039fec4952d, type: 2}
   m_IsPrefabAsset: 0
@@ -3500,9 +3510,9 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
@@ -3513,12 +3523,12 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1757765291}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 1
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &1757765294
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -187,9 +187,7 @@ public class GameManager : MonoBehaviour {
             player.exist_room_no = map_creat.map[(int)Player.transform.position.x, (int)Player.transform.position.z].room_No;
         }
 
-        
-
-        
+            
             coroutine = true;
             StartCoroutine(MoveEnemies());
         }
@@ -211,15 +209,12 @@ public class GameManager : MonoBehaviour {
             yield return null;
             yield return null;
             yield return null;
-                
         }
 
         //Enemyを1体ずつ移動
         for (int i = 0; i < enemies.Count; i++)
             {
-            //Debug.Log("A");
             enemies[i].Emove();
-            //Debug.Log("F");
             /*if (Input.GetKey(KeyCode.Space)== false /*&& map_creat.map[(int)Player.transform.position.x , (int)Player.transform.position.z] != 3 )
                 {
                     yield return null;
@@ -235,8 +230,7 @@ public class GameManager : MonoBehaviour {
             yield return null;
 
         }
-
-        //Debug.Log("G");
+        
 
         //ランダムで敵を生成
         int random_enemy = Random.Range(0, 100);
@@ -280,20 +274,18 @@ public class GameManager : MonoBehaviour {
         TEXT.text = sentence;
 
         MainTexts.Add(TEXT);
-
-        Debug.Log(MainText[0].text);
+        
 
         if(MainText[0].text == "")
-        {Debug.Log("A");
+        {
             MainText[0].text = MainTexts[MainTexts.Count - 1].text;
         }else if(MainText[1].text == ""){
-            Debug.Log("B");
+
             MainText[0].text = MainTexts[MainTexts.Count - 2].text;
             MainText[1].text = MainTexts[MainTexts.Count - 1].text;
         }
         else
         {
-            Debug.Log("C");
             if (MainTexts.Count > 2)
             {
                 MainText[0].text = MainTexts[MainTexts.Count - 3].text;

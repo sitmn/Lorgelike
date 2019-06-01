@@ -19,6 +19,12 @@ TagManager:
   - weapon1
   - weapon2
   - weapon3
+  - bat
+  - slime
+  - rabbit
+  - ghost
+  - dragon
+  - golem
   layers:
   - Default
   - TransparentFX

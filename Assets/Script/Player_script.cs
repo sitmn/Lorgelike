@@ -10,6 +10,7 @@ public class Player_script : MonoBehaviour {
     private int moveY;
     private bool attack;
     private int attack_x, attack_y,x,z;
+    public static int asset_rotate;
     
 
     public bool notmove,vectorchange;
@@ -24,11 +25,15 @@ public class Player_script : MonoBehaviour {
     private Animator myAnimator;
 
     private HpBar HPBar;
+
+
     //private HPText_script HPText;
     
     // Use this for initialization
     void Start()
     {
+        asset_rotate = 90;
+
         this.kaidan = false;
         this.notmove = false;
 
@@ -150,17 +155,19 @@ public class Player_script : MonoBehaviour {
             //Grid,攻撃範囲
             Attack(player.player_attack_range, player.player_attack_type, true, true, 10, Color.yellow);
         }
-        else if(GameManager.instance.Menu == false) {
+        else if(GameManager.instance.Menu == false ) {
             if (Input.GetKey(KeyCode.Z))
             {
                 int attack_range = player.player_attack_range;
                 int attack_type = player.player_attack_type;
                 bool slanting_wall = player.player_slanting_wall;
-
-
+                
                 GameManager.instance.space = false;
+
+                myAnimator.SetInteger("AnimIndex", 107);
                 //攻撃
-                Attack(attack_range , attack_type , player.player_slanting_wall , player.player_attack_through ,player.player_attack , Color.white);
+                StartCoroutine(SmoothAttack(attack_range, attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, Color.white));
+                
             } else{
                 PlayerMove();
             }
@@ -174,35 +181,35 @@ public class Player_script : MonoBehaviour {
     {
         if (Input.GetKey(KeyCode.RightArrow) == true)
         {
-            transform.eulerAngles = new Vector3(0, 0, 0);
+            transform.eulerAngles = new Vector3(0, 0 + asset_rotate, 0);
         }
         else if (Input.GetKey(KeyCode.DownArrow) == true)
         {
-            transform.eulerAngles = new Vector3(0, 90, 0);
+            transform.eulerAngles = new Vector3(0, 90 + asset_rotate, 0);
         }
         else if (Input.GetKey(KeyCode.LeftArrow) == true)
         {
-            transform.eulerAngles = new Vector3(0, 180, 0);
+            transform.eulerAngles = new Vector3(0, 180 + asset_rotate, 0);
         }
         else if (Input.GetKey(KeyCode.UpArrow) == true)
         {
-            transform.eulerAngles = new Vector3(0, 270, 0);
+            transform.eulerAngles = new Vector3(0, 270 + asset_rotate, 0);
         }
         else if (Input.GetKey(KeyCode.E) == true)
         {
-            transform.eulerAngles = new Vector3(0, 45, 0);
+            transform.eulerAngles = new Vector3(0, 45 + asset_rotate, 0);
         }
         else if (Input.GetKey(KeyCode.W) == true)
         {
-            transform.eulerAngles = new Vector3(0, 135, 0);
+            transform.eulerAngles = new Vector3(0, 135 + asset_rotate, 0);
         }
         else if (Input.GetKey(KeyCode.Q) == true)
         {
-            transform.eulerAngles = new Vector3(0, 225, 0);
+            transform.eulerAngles = new Vector3(0, 225 + asset_rotate, 0);
         }
         else if (Input.GetKey(KeyCode.R) == true)
         {
-            transform.eulerAngles = new Vector3(0, 315, 0);
+            transform.eulerAngles = new Vector3(0, 315 + asset_rotate, 0);
         }
     }
 
@@ -213,7 +220,7 @@ public class Player_script : MonoBehaviour {
         if (Input.GetKey(KeyCode.UpArrow) == true)
         {
             this.moveY = 1;
-            transform.eulerAngles = new Vector3(0, 270, 0);
+            transform.eulerAngles = new Vector3(0, 270 + asset_rotate, 0);
             //移動先に壁と敵がいるか？
             if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
@@ -245,7 +252,7 @@ public class Player_script : MonoBehaviour {
         else if (Input.GetKey(KeyCode.LeftArrow) == true)
         {
             this.moveX = -1;
-            transform.eulerAngles = new Vector3(0, 180, 0);
+            transform.eulerAngles = new Vector3(0, 180 + asset_rotate, 0);
             if (map_creat.map_ex[(int)transform.position.x　+ moveX, (int)transform.position.z].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0)
             {
                 
@@ -276,7 +283,7 @@ public class Player_script : MonoBehaviour {
         else if (Input.GetKey(KeyCode.RightArrow) == true)
         {
             this.moveX = 1;
-            transform.eulerAngles = new Vector3(0, 0, 0);
+            transform.eulerAngles = new Vector3(0, 0 + asset_rotate, 0);
             if (map_creat.map_ex[(int)transform.position.x + moveX, (int)transform.position.z].number == 6 || map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0)
             {
                
@@ -307,7 +314,7 @@ public class Player_script : MonoBehaviour {
         else if (Input.GetKey(KeyCode.DownArrow) == true)
         {
             this.moveY = -1;
-            transform.eulerAngles = new Vector3(0, 90, 0);
+            transform.eulerAngles = new Vector3(0, 90 + asset_rotate, 0);
             if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + moveY].number == 6 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
                 
@@ -339,7 +346,7 @@ public class Player_script : MonoBehaviour {
         {
             this.moveX = -1;
             this.moveY = 1;
-            transform.eulerAngles = new Vector3(0, 225, 0);
+            transform.eulerAngles = new Vector3(0, 225 + asset_rotate, 0);
             if(map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
                 this.notmove = true;
@@ -378,7 +385,7 @@ public class Player_script : MonoBehaviour {
         {
             this.moveX = -1;
             this.moveY = -1;
-            transform.eulerAngles = new Vector3(0, 135, 0);
+            transform.eulerAngles = new Vector3(0, 135 + asset_rotate, 0);
             if (map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
                 this.notmove = true;
@@ -417,7 +424,7 @@ public class Player_script : MonoBehaviour {
         {
             this.moveX = 1;
             this.moveY = -1;
-            transform.eulerAngles = new Vector3(0, 45, 0);
+            transform.eulerAngles = new Vector3(0, 45 + asset_rotate, 0);
             if (map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
                 this.notmove = true;
@@ -456,7 +463,7 @@ public class Player_script : MonoBehaviour {
         {
             this.moveX = 1;
             this.moveY = 1;
-            transform.eulerAngles = new Vector3(0, 315, 0);
+            transform.eulerAngles = new Vector3(0, 315 + asset_rotate, 0);
             if (map_creat.map[(int)transform.position.x + moveX, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + moveY].number == 0)
             {
                 this.notmove = true;
@@ -593,13 +600,16 @@ public class Player_script : MonoBehaviour {
         PickUpItem();
 
         GameManager.instance.PlayerMoving = false;
-        
+
+        myAnimator.SetInteger("AnimIndex", 0);
+
         transform.localPosition = new Vector3((int)end.x, 0, (int)end.z);
 
         if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].number != 5)
         {
             Debug.Log(gameObject);
         }
+        
     }
         //階段
         public void OnTriggerEnter(Collider other)
@@ -628,50 +638,65 @@ public class Player_script : MonoBehaviour {
         }
     }
 
-    
+    IEnumerator SmoothAttack(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage, Color grid_color)
+    {
+        GameManager.instance.PlayerMoving = true;
+        myAnimator.SetInteger("AnimIndex", 107);
+
+        while (myAnimator.GetCurrentAnimatorStateInfo(0).IsName("0107_Kick") != true)
+        {
+            yield return null;
+
+        }
+        yield return new WaitForSeconds(0.5f);
+        myAnimator.SetInteger("AnimIndex", 0);
+        yield return null;
+        Attack(attack_range, attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, Color.white);
+        GameManager.instance.PlayerMoving = false;
+    }
 
     //プレイヤーの向いている方向に攻撃
     public void Attack(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage ,Color grid_color)
     {
-        Debug.Log("Attack");
         if (attack_type == 0)
         {
-            if (transform.eulerAngles == new Vector3(0, 0, 0))
+
+            if (transform.eulerAngles == new Vector3(0, 0 + asset_rotate, 0))
             {
                 line_attack_0(attack_range, attack_type, slanting_wall , attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 90, 0))
+            else if (transform.eulerAngles == new Vector3(0, 90 + asset_rotate, 0))
             {
                 line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 180, 0))
+            else if (transform.eulerAngles == new Vector3(0, 180 + asset_rotate, 0))
             {
                 line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 270, 0))
+            else if ((transform.eulerAngles.y >= 265 + asset_rotate && transform.eulerAngles.y <= 270 + asset_rotate) || (transform.eulerAngles.y >= 270 + asset_rotate -360 && transform.eulerAngles.y <= 275 + asset_rotate - 360))
             {
                 line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 45, 0))
+            else if (transform.eulerAngles == new Vector3(0, 45 + asset_rotate, 0))
             {
                 line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 135, 0))
+            else if (transform.eulerAngles.y >= 130 + asset_rotate && transform.eulerAngles.y <= 140 + asset_rotate)
             {
                 line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
+            else if (transform.eulerAngles == new Vector3(0, 225 + asset_rotate, 0))
             {
                 line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 315, 0))
+            else if (transform.eulerAngles.y >= 310 + asset_rotate -360 && transform.eulerAngles.y <= 320 + asset_rotate - 360)
             {
                 line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
         }
         else if (attack_type == 1)
         {
-            if (transform.eulerAngles == new Vector3(0, 0, 0))
+            if (transform.eulerAngles == new Vector3(0, 0 + asset_rotate, 0))
             {
                 line_attack_0(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
@@ -679,7 +704,7 @@ public class Player_script : MonoBehaviour {
 
                 line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 90, 0))
+            else if (transform.eulerAngles == new Vector3(0, 90 + asset_rotate, 0))
             {
                 line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
@@ -687,7 +712,7 @@ public class Player_script : MonoBehaviour {
 
                 line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 180, 0))
+            else if (transform.eulerAngles == new Vector3(0, 180 + asset_rotate, 0))
             {
                 line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
@@ -695,7 +720,7 @@ public class Player_script : MonoBehaviour {
 
                 line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 270, 0))
+            else if ((transform.eulerAngles.y >= 265 + asset_rotate && transform.eulerAngles.y <= 270 + asset_rotate) || (transform.eulerAngles.y >= 270 + asset_rotate - 360 && transform.eulerAngles.y <= 275 + asset_rotate - 360))
             {
                 line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
@@ -703,7 +728,7 @@ public class Player_script : MonoBehaviour {
 
                 line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 45, 0))
+            else if (transform.eulerAngles == new Vector3(0, 45 + asset_rotate, 0))
             {
                 line_attack_45(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
@@ -711,7 +736,7 @@ public class Player_script : MonoBehaviour {
 
                 line_attack_90(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 135, 0))
+            else if (transform.eulerAngles.y >= 130 + asset_rotate && transform.eulerAngles.y <= 140 + asset_rotate)
             {
                 line_attack_135(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
@@ -719,7 +744,7 @@ public class Player_script : MonoBehaviour {
 
                 line_attack_180(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles.y >= 224 && transform.eulerAngles.y <= 226)
+            else if (transform.eulerAngles == new Vector3(0, 225 + asset_rotate, 0))
             {
                 line_attack_225(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 
@@ -727,7 +752,7 @@ public class Player_script : MonoBehaviour {
 
                 line_attack_270(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
             }
-            else if (transform.eulerAngles == new Vector3(0, 315, 0))
+            else if (transform.eulerAngles.y >= 310 + asset_rotate - 360 && transform.eulerAngles.y <= 320 + asset_rotate - 360)
             {
                 line_attack_315(attack_range, attack_type, slanting_wall, attack_through, attack_damage, grid_color);
 

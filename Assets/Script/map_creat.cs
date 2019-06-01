@@ -119,6 +119,9 @@ public class map_creat : MonoBehaviour {
     public static GameObject[,] mini_map;
     public static Renderer[,] grid_color;
 
+    public static int player_position_x;
+    public static int player_position_z;
+
     public map_creat map_creat_instance;
 
     void Start()
@@ -1506,18 +1509,18 @@ public class map_creat : MonoBehaviour {
             pos = GameManager.instance.roomlist[Random.Range(0, GameManager.instance.roomlist.Count)];
         } while (map_ex[(int)pos.x, (int)pos.z].number == 5 || map_ex[(int)pos.x, (int)pos.z].number == 6 || map[(int)pos.x, (int)pos.z].number == 3 || map[(int)pos.x , (int)pos.z].room_No == player.exist_room_no);
         
-        if (obj.tag == "Enemy")
+        if (obj.tag == "bat")
         {
             //マップ管理のクラスと、敵のステータスを入れる
             map_ex[(int)pos.x, (int)pos.z] = new enemy();
             map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY1_HP, ENEMY1_HP, ENEMY1_MP, ENEMY1_MP, ENEMY1_ATTACK, ENEMY1_ATTACK, ENEMY1_DEFENSE, ENEMY1_DEFENSE, ENEMY1_ATTACK_RANGE, ENEMY1_ATTACK_TYPE, ENEMY1_SLANTING_WALL);
         }
-        else if(obj.tag == "Enemy2")
+        else if(obj.tag == "slime")
         {
             map_ex[(int)pos.x, (int)pos.z] = new enemy();
             map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY2_HP, ENEMY2_HP, ENEMY2_MP, ENEMY2_MP, ENEMY2_ATTACK, ENEMY2_ATTACK, ENEMY2_DEFENSE, ENEMY2_DEFENSE, ENEMY2_ATTACK_RANGE, ENEMY2_ATTACK_TYPE, ENEMY2_SLANTING_WALL);
         }
-        else if(obj.tag == "Enemy3")
+        else if(obj.tag == "rabbit")
         {
             map_ex[(int)pos.x, (int)pos.z] = new enemy();
             map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY3_HP, ENEMY3_HP, ENEMY3_MP, ENEMY3_MP, ENEMY3_ATTACK, ENEMY3_ATTACK, ENEMY3_DEFENSE, ENEMY3_DEFENSE, ENEMY3_ATTACK_RANGE, ENEMY3_ATTACK_TYPE, ENEMY3_SLANTING_WALL);

@@ -6,7 +6,7 @@ public class MainCamera_script : MonoBehaviour {
 
     private GameObject Player;
 
-    private int distance = 10;
+    private int distance = 6;
 
 	// Use this for initialization
 	void Start () {

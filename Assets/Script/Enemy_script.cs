@@ -420,7 +420,7 @@ public class Enemy_script : MonoBehaviour
                 }
                 else if (entrancedistance_y > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 90, 0);
+                    transform.eulerAngles = new Vector3(0, 90 , 0);
                     if (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                     {
                         playerfind = false;
@@ -958,7 +958,7 @@ public class Enemy_script : MonoBehaviour
     //左回りで分岐探索
     void RotateLeft()
     {
-        int angle = (int)(transform.eulerAngles.y + 0.5);
+        int angle = (int)(transform.eulerAngles.y+ 0.5);
         while (((angle / 45) % 8 == 0 && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0) ||
                     ((angle / 45) % 8 == 2 && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0) ||
                     ((angle / 45) % 8 == 4 && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0) ||
