@@ -1065,6 +1065,7 @@ public class Enemy_script : MonoBehaviour
     IEnumerator SmoothMovement(Vector3 end)
     {
         smoothmove = true;
+        
         //Debug.Log("B");
         //現在地から目的地を引き、2点間の距離を求める(Vector3型)
         //sqrMagnitudeはベクトルを2乗したあと2点間の距離に変換する(float型)
