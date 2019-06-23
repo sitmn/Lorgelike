@@ -7,30 +7,38 @@ using UnityEngine.UI;
 
 public class map_creat : MonoBehaviour {
     //敵ステータス
-    public const int ENEMY1_HP = 8;
-    public const int ENEMY1_MP = 2;
-    public const int ENEMY1_ATTACK = 2;
-    public const int ENEMY1_DEFENSE = 0;
-    public const int ENEMY1_ATTACK_RANGE = 1;
-    public const int ENEMY1_ATTACK_TYPE = 0;
-    public const bool ENEMY1_SLANTING_WALL = true;
+    public const int BAT1_HP = 8;
+    public const int BAT1_MP = 2;
+    public const int BAT1_ATTACK = 2;
+    public const int BAT1_DEFENSE = 0;
+    public const int BAT1_ATTACK_RANGE = 1;
+    public const int BAT1_ATTACK_TYPE = 0;
+    public const bool BAT1_SLANTING_WALL = true;
 
-    public const int ENEMY2_HP = 2;
-    public const int ENEMY2_MP = 2;
-    public const int ENEMY2_ATTACK = 5;
-    public const int ENEMY2_DEFENSE = 0;
-    public const int ENEMY2_ATTACK_RANGE = 1;
-    public const int ENEMY2_ATTACK_TYPE = 0;
-    public const bool ENEMY2_SLANTING_WALL = false;
+    public const int GHOST1_HP = 2;
+    public const int GHOST1_MP = 2;
+    public const int GHOST1_ATTACK = 5;
+    public const int GHOST1_DEFENSE = 0;
+    public const int GHOST1_ATTACK_RANGE = 1;
+    public const int GHOST1_ATTACK_TYPE = 0;
+    public const bool GHOST1_SLANTING_WALL = false;
 
-    public const int ENEMY3_HP = 5;
-    public const int ENEMY3_MP = 2;
-    public const int ENEMY3_ATTACK = 3;
-    public const int ENEMY3_DEFENSE = 0;
-    public const int ENEMY3_ATTACK_RANGE = 2;
-    public const int ENEMY3_ATTACK_TYPE = 0;
-    public const bool ENEMY3_SLANTING_WALL = true;
+    public const int RABBIT1_HP = 5;
+    public const int RABBIT1_MP = 2;
+    public const int RABBIT1_ATTACK = 3;
+    public const int RABBIT1_DEFENSE = 0;
+    public const int RABBIT1_ATTACK_RANGE = 2;
+    public const int RABBIT1_ATTACK_TYPE = 0;
+    public const bool RABBIT1_SLANTING_WALL = true;
 
+
+    public const int SLIME1_HP = 1;
+    public const int SLIME1_MP = 2;
+    public const int SLIME1_ATTACK = 3;
+    public const int SLIME1_DEFENSE = 0; //999
+    public const int SLIME1_ATTACK_RANGE = 1;
+    public const int SLIME1_ATTACK_TYPE = 0;
+    public const bool SLIME1_SLANTING_WALL = true;
 
     //武器ステータス
     public const string NAME_W1 = "ロングソード";
@@ -70,9 +78,23 @@ public class map_creat : MonoBehaviour {
     public GameObject wallObject4;
     public GameObject floor;
     public GameObject Player;
-    public GameObject Enemy;
-    public GameObject Enemy2;
-    public GameObject Enemy3;
+    public GameObject Bat1;
+    public GameObject Bat2;
+    public GameObject Bat3;
+    public GameObject Bat4;
+    public GameObject Ghost1;
+    public GameObject Ghost2;
+    public GameObject Ghost3;
+    public GameObject Ghost4;
+    public GameObject Rabbit1;
+    public GameObject Rabbit2;
+    public GameObject Rabbit3;
+    public GameObject Rabbit4;
+    public GameObject Slime1;
+    public GameObject Slime2;
+    public GameObject Slime3;
+    public GameObject Slime4;
+    public GameObject Golem;
     public GameObject Item1;
     public GameObject Item2;
     public GameObject Item3;
@@ -1481,21 +1503,21 @@ public class map_creat : MonoBehaviour {
         for (int i = 0; i < amount; i++)
         {
             int a = Random.Range(0, 10);
-            if (0 <= a && a < 4)
+            if (0 <= a && a < 5)
             {
-                InstantiateEnemyInRoom(Enemy);
+                InstantiateEnemyInRoom(Bat1);
             }
-            else if (4 <= a && a < 7)
+            else if (5 <= a && a < 7)
             {
-                InstantiateEnemyInRoom(Enemy2);
+                InstantiateEnemyInRoom(Ghost1);
             }
             else if (7 <= a && a < 9)
             {
-                InstantiateEnemyInRoom(Enemy2);
+                InstantiateEnemyInRoom(Rabbit1);
             }
             else
             {
-                InstantiateEnemyInRoom(Enemy3);
+                InstantiateEnemyInRoom(Slime1);
             }
         }
     }
@@ -1513,17 +1535,22 @@ public class map_creat : MonoBehaviour {
         {
             //マップ管理のクラスと、敵のステータスを入れる
             map_ex[(int)pos.x, (int)pos.z] = new enemy();
-            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY1_HP, ENEMY1_HP, ENEMY1_MP, ENEMY1_MP, ENEMY1_ATTACK, ENEMY1_ATTACK, ENEMY1_DEFENSE, ENEMY1_DEFENSE, ENEMY1_ATTACK_RANGE, ENEMY1_ATTACK_TYPE, ENEMY1_SLANTING_WALL);
+            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(BAT1_HP, BAT1_HP, BAT1_MP, BAT1_MP, BAT1_ATTACK, BAT1_ATTACK, BAT1_DEFENSE, BAT1_DEFENSE, BAT1_ATTACK_RANGE, BAT1_ATTACK_TYPE, BAT1_SLANTING_WALL);
         }
         else if(obj.tag == "slime")
         {
             map_ex[(int)pos.x, (int)pos.z] = new enemy();
-            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY2_HP, ENEMY2_HP, ENEMY2_MP, ENEMY2_MP, ENEMY2_ATTACK, ENEMY2_ATTACK, ENEMY2_DEFENSE, ENEMY2_DEFENSE, ENEMY2_ATTACK_RANGE, ENEMY2_ATTACK_TYPE, ENEMY2_SLANTING_WALL);
+            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(GHOST1_HP, GHOST1_HP, GHOST1_MP, GHOST1_MP, GHOST1_ATTACK, GHOST1_ATTACK, GHOST1_DEFENSE, GHOST1_DEFENSE, GHOST1_ATTACK_RANGE, GHOST1_ATTACK_TYPE, GHOST1_SLANTING_WALL);
         }
         else if(obj.tag == "rabbit")
         {
             map_ex[(int)pos.x, (int)pos.z] = new enemy();
-            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(ENEMY3_HP, ENEMY3_HP, ENEMY3_MP, ENEMY3_MP, ENEMY3_ATTACK, ENEMY3_ATTACK, ENEMY3_DEFENSE, ENEMY3_DEFENSE, ENEMY3_ATTACK_RANGE, ENEMY3_ATTACK_TYPE, ENEMY3_SLANTING_WALL);
+            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(RABBIT1_HP, RABBIT1_HP, RABBIT1_MP, RABBIT1_MP, RABBIT1_ATTACK, RABBIT1_ATTACK, RABBIT1_DEFENSE, RABBIT1_DEFENSE, RABBIT1_ATTACK_RANGE, RABBIT1_ATTACK_TYPE, RABBIT1_SLANTING_WALL);
+        }
+        else if (obj.tag == "ghost")
+        {
+            map_ex[(int)pos.x, (int)pos.z] = new enemy();
+            map_ex[(int)pos.x, (int)pos.z].state = new enemystate(SLIME1_HP, SLIME1_HP, SLIME1_MP, SLIME1_MP, SLIME1_ATTACK, SLIME1_ATTACK, SLIME1_DEFENSE, SLIME1_DEFENSE, SLIME1_ATTACK_RANGE, SLIME1_ATTACK_TYPE, SLIME1_SLANTING_WALL);
         }
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
         

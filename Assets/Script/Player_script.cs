@@ -83,7 +83,7 @@ public class Player_script : MonoBehaviour {
             if (map_creat.map[x, z].obj.transform.GetChild(0).gameObject.activeSelf == false)
             {
 
-                //〇マス目を表示
+                //マス目を表示
                 for (int x = 0; x < 44; x++)
                 {
                     for (int z = 0; z < 44; z++)
@@ -115,7 +115,7 @@ public class Player_script : MonoBehaviour {
             if (map_creat.map[x, z].obj.transform.GetChild(0).gameObject.activeSelf == true)
             {
 
-                //〇マス目表示を消す
+                //マス目表示を消す
                 for (int x = 0; x < 44; x++)
                 {
                     for (int z = 0; z < 44; z++)
@@ -584,7 +584,7 @@ public class Player_script : MonoBehaviour {
         //Epsilon : ほとんど0に近い数値を表す
         while (sqrRemainingDistance > float.Epsilon)
         {
-            myAnimator.SetInteger("AnimIndex", 2);
+            myAnimator.SetInteger("AnimIndex", 1);
 
             //現在地と移動先の間を1秒間にinverseMoveTime分だけ移動する場合の、
             //1フレーム分の移動距離を算出する
@@ -641,19 +641,18 @@ public class Player_script : MonoBehaviour {
     IEnumerator SmoothAttack(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage, Color grid_color)
     {
         GameManager.instance.PlayerMoving = true;
-        myAnimator.SetInteger("AnimIndex", 107);
-
-        while (myAnimator.GetCurrentAnimatorStateInfo(0).IsName("0107_Kick") != true)
-        {
-            yield return null;
-
-        }
-        yield return new WaitForSeconds(0.5f);
-        myAnimator.SetInteger("AnimIndex", 0);
+        myAnimator.SetInteger("AnimIndex", 2);
         yield return null;
+        yield return new AnimationWait(myAnimator, 0);
+        myAnimator.SetInteger("AnimIndex", 0);
+
+        yield return new WaitForSeconds(0.5f);
+        //yield return null;
         Attack(attack_range, attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, Color.white);
         GameManager.instance.PlayerMoving = false;
     }
+
+
 
     //プレイヤーの向いている方向に攻撃
     public void Attack(int attack_range, int attack_type, bool slanting_wall , bool attack_through, int attack_damage ,Color grid_color)
@@ -1001,4 +1000,29 @@ public class Player_script : MonoBehaviour {
             }
         }
     }
+}
+
+public class AnimationWait : CustomYieldInstruction
+{
+    Animator m_animator;
+    int m_layerNo;
+    int m_lastStateHash;
+
+    public AnimationWait(Animator animator, int layerNo)
+    {
+        m_animator = animator;
+        m_layerNo = layerNo;
+        m_lastStateHash = m_animator.GetCurrentAnimatorStateInfo(m_layerNo).nameHash;
+    }
+
+    public override bool keepWaiting
+    {
+        get
+        {
+            var currentAnimatorState = m_animator.GetCurrentAnimatorStateInfo(m_layerNo);
+            return currentAnimatorState.fullPathHash == m_lastStateHash &&
+                (currentAnimatorState.normalizedTime < 1);
+        }
+    }
+
 }

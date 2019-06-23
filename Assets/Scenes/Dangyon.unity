@@ -3424,6 +3424,108 @@ Prefab:
       value: 
       objectReference: {fileID: 1022647445680780, guid: f36c946a35331ea47861f501967dfa2b,
         type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Bat1
+      value: 
+      objectReference: {fileID: 1879507925122410, guid: b0c4d55506ac4534da7f746c6f2256a5,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Ghost1
+      value: 
+      objectReference: {fileID: 1897524615400616, guid: b26b0f0248996d240be81fa865488a4b,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Rabbit1
+      value: 
+      objectReference: {fileID: 1609847282802860, guid: 56b2a02f0d16b754492791f4c547f093,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Slime1
+      value: 
+      objectReference: {fileID: 1551967378653762, guid: c704fd1bb85ac834b81342fbb375be29,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Bat2
+      value: 
+      objectReference: {fileID: 1008440347798770, guid: 51c5c1327ad3b424b866392690caa6c9,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Ghost2
+      value: 
+      objectReference: {fileID: 1857494805947136, guid: 1f8b16f8410056e46b1eee1a9310c95f,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Rabbit2
+      value: 
+      objectReference: {fileID: 1891267568458076, guid: 600457ce1497fdd459c6ec143430e1f7,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Slime2
+      value: 
+      objectReference: {fileID: 1142272015676174, guid: 8c5fa9f3c2f571e45ac3b9b12f8d5b08,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Bat3
+      value: 
+      objectReference: {fileID: 1516852154840726, guid: 6591e96adb4946344b54fe276a083d7e,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Ghost3
+      value: 
+      objectReference: {fileID: 1255980937580702, guid: bc2357968cd26ed478f2733d6b4fe177,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Rabbit3
+      value: 
+      objectReference: {fileID: 1350348405470588, guid: edd08c83158bd214c907465df3de5b18,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Slime3
+      value: 
+      objectReference: {fileID: 1896553857730684, guid: 0f364bf417d55264597e690b59e25ae0,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Bat4
+      value: 
+      objectReference: {fileID: 1793130899128454, guid: 9d93342201448a545b76dd7e6d12573a,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Ghost4
+      value: 
+      objectReference: {fileID: 1628728535021196, guid: a1c116176f4d03941a2d2ed23d8c7186,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Rabbit4
+      value: 
+      objectReference: {fileID: 1430889338836290, guid: f1ce4e97c30123c40ac181c9eaceef28,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Slime4
+      value: 
+      objectReference: {fileID: 1699383905627918, guid: e6d89f4d598710749a635cd6f9ebe27c,
+        type: 2}
+    - target: {fileID: 114115753632839456, guid: d18c365d4d79b51459e30039fec4952d,
+        type: 2}
+      propertyPath: Golem
+      value: 
+      objectReference: {fileID: 1917339033529604, guid: 8f416cc1067174b4c919a3b1fff9183b,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d18c365d4d79b51459e30039fec4952d, type: 2}
   m_IsPrefabAsset: 0

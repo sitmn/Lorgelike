@@ -19,6 +19,8 @@ public class Enemy_script : MonoBehaviour
     public GameObject minimap_enemy;
 
     private map_creat mapscript;
+
+    private Animator myAnimator;
     
     
     void Start()
@@ -35,7 +37,8 @@ public class Enemy_script : MonoBehaviour
         this.playerfind = false;
         destination = new Vector3(0,0,0);
         this.smoothmove = false;
-        
+
+        myAnimator = GetComponent<Animator>();
     }
 
     void Update()
@@ -64,9 +67,7 @@ public class Enemy_script : MonoBehaviour
     {
         FindPlayer();
         enemypos = transform.position;
-
-        //Debug.Log("A");
-
+        
         if (this.playerfind == true)
         {
             FindPlayerMove();
@@ -83,7 +84,7 @@ public class Enemy_script : MonoBehaviour
                 {
                     destination = new Vector3(0, 0, 0);
                 }
-            }else if (map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 3)
+            }else if (map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 3 || map_creat.map[(int)transform.position.x, (int)transform.position.z].number == 5)
             {
                 RoomMove();
                 
@@ -329,33 +330,35 @@ public class Enemy_script : MonoBehaviour
         
         if (destination == transform.position)//目的地に着いたとき、部屋から出る
         {
-            int r = Random.Range(0, 2);
-            if (r == 0)
+            int r = Random.Range(0, 11);
+            if (r <= 5)
             {//左回り
-                transform.eulerAngles = new Vector3(0, 270, 0);
-                while (((transform.eulerAngles.y / 90) % 4 == 0 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 3)) ||
-                    ((transform.eulerAngles.y / 90) % 4 == 1 && (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 3)) ||
-                    ((transform.eulerAngles.y / 90) % 4 == 2 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 3)) ||
-                    ((transform.eulerAngles.y / 90) % 4 == 3 && (map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 3)))
+                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate , 0);
+                
+                while ((((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 1 /*0*/ && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number != 10 /*(map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 3)*/) ||
+                    (((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 2 /*1*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number != 10 /*(map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 3)*/) ||
+                    (((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 3 /*2*/ && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number != 10 /*(map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 3)*/) ||
+                    (((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 0 /*3*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number != 10 /*(map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 3)*/))
                 {
                     transform.Rotate(new Vector3(0, 90, 0));
                 }
                 ForwardMove();
                 
             }
-            else if (r == 1)
+            else if (r >= 6)
             {//右回り
-                transform.eulerAngles = new Vector3(0, 90, 0);
-                while (((transform.eulerAngles.y / 90) % 4 == 0 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 3)) ||
-                    ((transform.eulerAngles.y / 90) % 4 == 1 && (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 3)) ||
-                    ((transform.eulerAngles.y / 90) % 4 == 2 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 3)) ||
-                    ((transform.eulerAngles.y / 90) % 4 == 3 && (map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 3)))
+                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
+                
+                while ((((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 1 /*0*/ && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number != 10 /*(map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 3)*/) ||
+                    (((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 2 /*1*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number != 10 /*(map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 3)*/) ||
+                    (((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 3 /*2*/ && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number != 10 /*(map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 1 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 3)*/) ||
+                    (((int)(transform.eulerAngles.y + 0.5) / 90) % 4 == 0 /*3*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number != 10 /*(map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 1 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 3)*/))
                 {
                     transform.Rotate(new Vector3(0, 270, 0));
                 }
                 ForwardMove();
             }//移動先にプレイヤーと敵がいないならば移動
-            if (map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 5 || map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 6)
+            if (map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 5 || map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 6 || map_creat.map[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 0)
             {
                 enotmove = true;
             }
@@ -367,10 +370,13 @@ public class Enemy_script : MonoBehaviour
                 {
                     transform.localPosition = enemypos;
 
+                    destination = new Vector3(0, 0, 0);
                 }
                 else if (GameManager.instance.space == false)
                 {
                     StartCoroutine(SmoothMovement(enemypos));
+
+                    destination = new Vector3(0, 0, 0);
                 }
 
             }
@@ -380,7 +386,7 @@ public class Enemy_script : MonoBehaviour
                 transform.Rotate(new Vector3(0, 90, 0));
                 RotateLeft();
                 ForwardMove();
-                if (map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 5 || map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 6)
+                if (map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 5 || map_creat.map_ex[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 6 || map_creat.map[(int)transform.position.x + emoveX, (int)transform.position.z + emoveY].number == 0)
                 {
                     enotmove = true;
                 }
@@ -393,14 +399,17 @@ public class Enemy_script : MonoBehaviour
                     {
                         transform.localPosition = enemypos;
 
+                        destination = new Vector3(0, 0, 0);
                     }
                     else if (GameManager.instance.space == false)
                     {
                         StartCoroutine(SmoothMovement(enemypos));
+
+
+                        destination = new Vector3(0, 0, 0);
                     }
                 }
             }
-            destination = new Vector3(0, 0, 0);
         }
         else if (transform.position != destination)//目的地でない場合、目的地に向かう
         {
@@ -411,7 +420,7 @@ public class Enemy_script : MonoBehaviour
             {
                 if (entrancedistance_y < 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 270, 0);
+                    transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                     {
                         playerfind = false;
@@ -420,7 +429,7 @@ public class Enemy_script : MonoBehaviour
                 }
                 else if (entrancedistance_y > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 90 , 0);
+                    transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                     {
                         playerfind = false;
@@ -432,7 +441,7 @@ public class Enemy_script : MonoBehaviour
             {
                 if (entrancedistance_x < 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 0, 0);
+                    transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0)
                     {
                         playerfind = false;
@@ -441,7 +450,7 @@ public class Enemy_script : MonoBehaviour
                 }
                 else if (entrancedistance_x > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 180, 0);
+                    transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0)
                     {
                         playerfind = false;
@@ -453,7 +462,7 @@ public class Enemy_script : MonoBehaviour
             {
                 if (entrancedistance_x < 0 && entrancedistance_y < 0)    //斜め移動時、壁があれば十字移動で近づく、近づくための場所全てが壁なら見失う
                 {
-                    transform.eulerAngles = new Vector3(0, 315, 0);
+                    transform.eulerAngles = new Vector3(0, 315 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z + 1].number == 0 && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                     {
                         playerfind = false;
@@ -466,29 +475,29 @@ public class Enemy_script : MonoBehaviour
                         {
                             if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
                 }
                 else if (entrancedistance_x > 0 && entrancedistance_y < 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 225, 0);
+                    transform.eulerAngles = new Vector3(0, 225 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z + 1].number == 0 && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                     {
                         playerfind = false;
@@ -501,29 +510,29 @@ public class Enemy_script : MonoBehaviour
                         {
                             if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
                 }
                 else if (entrancedistance_x > 0 && entrancedistance_y > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 135, 0);
+                    transform.eulerAngles = new Vector3(0, 135 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z - 1].number == 0 && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                     {
                         playerfind = false;
@@ -536,29 +545,29 @@ public class Enemy_script : MonoBehaviour
                         {
                             if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
                 }
                 else if (entrancedistance_x < 0 && entrancedistance_y > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 45, 0);
+                    transform.eulerAngles = new Vector3(0, 45 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z - 1].number == 0 && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                     {
                         playerfind = false;
@@ -571,22 +580,22 @@ public class Enemy_script : MonoBehaviour
                         {
                             if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
@@ -661,7 +670,7 @@ public class Enemy_script : MonoBehaviour
             {
                 if (distance_y < 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 270, 0);
+                    transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                     if(map_creat.map[(int)transform.position.x , (int)transform.position.z + 1].number == 0){
                         playerfind = false;
                         enotmove = true;
@@ -669,7 +678,7 @@ public class Enemy_script : MonoBehaviour
                 }
                 else if (distance_y > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 90, 0);
+                    transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                     {
                         playerfind = false;
@@ -681,7 +690,7 @@ public class Enemy_script : MonoBehaviour
             {
                 if (distance_x < 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 0, 0);
+                    transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0)
                     {
                         playerfind = false;
@@ -690,7 +699,7 @@ public class Enemy_script : MonoBehaviour
                 }
                 else if (distance_x > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 180, 0);
+                    transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0)
                     {
                         playerfind = false;
@@ -702,7 +711,7 @@ public class Enemy_script : MonoBehaviour
             {
                 if(distance_x < 0 && distance_y < 0)    //斜め移動時、壁があれば十字移動で近づく、近づくための場所全てが壁なら見失う
                 {
-                    transform.eulerAngles = new Vector3(0, 315, 0);
+                    transform.eulerAngles = new Vector3(0, 315 + Player_script.asset_rotate, 0);
                     if(map_creat.map[(int)transform.position.x + 1 , (int)transform.position.z + 1].number == 0 && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                     {
                         playerfind = false;
@@ -715,28 +724,28 @@ public class Enemy_script : MonoBehaviour
                         {
                             if(map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
                 }else if(distance_x > 0 && distance_y < 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 225, 0);
+                    transform.eulerAngles = new Vector3(0, 225 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x -1 , (int)transform.position.z + 1].number == 0 && map_creat.map[(int)transform.position.x -1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                     {
                         playerfind = false;
@@ -749,29 +758,29 @@ public class Enemy_script : MonoBehaviour
                         {
                             if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 270, 0);
+                                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
                 }
                 else if(distance_x > 0 && distance_y > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 135, 0);
+                    transform.eulerAngles = new Vector3(0, 135 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z - 1].number == 0 && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                     {
                         playerfind = false;
@@ -784,29 +793,29 @@ public class Enemy_script : MonoBehaviour
                         {
                             if (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 180, 0);
+                                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
                 }
                 else if(distance_x < 0 && distance_y > 0)
                 {
-                    transform.eulerAngles = new Vector3(0, 45, 0);
+                    transform.eulerAngles = new Vector3(0, 45 + Player_script.asset_rotate, 0);
                     if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z - 1].number == 0 && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                     {
                         playerfind = false;
@@ -819,22 +828,22 @@ public class Enemy_script : MonoBehaviour
                         {
                             if (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                         }
                         else
                         {
                             if (map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)
                             {
-                                transform.eulerAngles = new Vector3(0, 0, 0);
+                                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
                             }
                             else
                             {
-                                transform.eulerAngles = new Vector3(0, 90, 0);
+                                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
                             }
                         }
                     }
@@ -869,6 +878,36 @@ public class Enemy_script : MonoBehaviour
 
             //〇プレイヤー方向を向く
 
+            if (distance_x == -1 && distance_y == 0)
+            {
+                transform.eulerAngles = new Vector3(0, 0 + Player_script.asset_rotate, 0);
+            }else if(distance_x == 0 && distance_y == 1)
+            {
+                transform.eulerAngles = new Vector3(0, 90 + Player_script.asset_rotate, 0);
+            }else if(distance_x == 1 && distance_y == 0)
+            {
+                transform.eulerAngles = new Vector3(0, 180 + Player_script.asset_rotate, 0);
+            }else if(distance_x == 0 && distance_y == -1)
+            {
+                transform.eulerAngles = new Vector3(0, 270 + Player_script.asset_rotate, 0);
+            }
+            else if (distance_x == -1 && distance_y == 1)
+            {
+                transform.eulerAngles = new Vector3(0, 45 + Player_script.asset_rotate, 0);
+            }
+            else if (distance_x == 1 && distance_y == 1)
+            {
+                transform.eulerAngles = new Vector3(0, 135 + Player_script.asset_rotate, 0);
+            }
+            else if (distance_x == 1 && distance_y == -1)
+            {
+                transform.eulerAngles = new Vector3(0, 225 + Player_script.asset_rotate, 0);
+            }
+            else if (distance_x == -1 && distance_y == -1)
+            {
+                transform.eulerAngles = new Vector3(0, 315 + Player_script.asset_rotate, 0);
+            }
+            StartCoroutine(AttackAnimation());
             player_script.playerdamage(player.player_hp, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.ATTACK);
         }
     }
@@ -959,14 +998,14 @@ public class Enemy_script : MonoBehaviour
     void RotateLeft()
     {
         int angle = (int)(transform.eulerAngles.y+ 0.5);
-        while (((angle / 45) % 8 == 0 && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0) ||
-                    ((angle / 45) % 8 == 2 && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0) ||
-                    ((angle / 45) % 8 == 4 && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0) ||
-                    ((angle / 45) % 8 == 6 && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0) ||
-                    ((angle / 45) % 8 == 1 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
-                    ((angle / 45) % 8 == 3 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
-                    ((angle / 45) % 8 == 5 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
-                    ((angle / 45) % 8 == 7 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)))
+        while (((angle / 45) % 8 == 2 /*0*/ && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0) ||
+                    ((angle / 45) % 8 == 4 /*2*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0) ||
+                    ((angle / 45) % 8 == 6 /*4*/ && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0) ||
+                    ((angle / 45) % 8 == 0 /*6*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0) ||
+                    ((angle / 45) % 8 == 3 /*1*/ && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
+                    ((angle / 45) % 8 == 5 /*3*/ && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
+                    ((angle / 45) % 8 == 7 /*5*/ && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
+                    ((angle / 45) % 8 == 1 /*7*/ && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)))
         {
             transform.Rotate(new Vector3(0, 45, 0));
             angle = (int)(transform.eulerAngles.y + 0.5);
@@ -975,14 +1014,14 @@ public class Enemy_script : MonoBehaviour
     //右回りで分岐探索
     void RotateRight()
     {   int angle = (int)(transform.eulerAngles.y + 0.5);
-        while (((angle / 45) % 8 == 0 && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0) ||
-                    ((angle / 45) % 8 == 2 && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0) ||
-                    ((angle / 45) % 8 == 4 && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0) ||
-                    ((angle / 45) % 8 == 6 && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0) ||
-                    ((angle / 45) % 8 == 1 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
-                    ((angle / 45) % 8 == 3 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
-                    ((angle / 45) % 8 == 5 && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
-                    ((angle / 45) % 8 == 7 && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)))
+        while (((angle / 45) % 8 == 2 /*0*/ && map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0) ||
+                    ((angle / 45) % 8 == 4 /*2*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0) ||
+                    ((angle / 45) % 8 == 6 /*4*/ && map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0) ||
+                    ((angle / 45) % 8 == 0 /*6*/ && map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0) ||
+                    ((angle / 45) % 8 == 3 /*1*/ && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
+                    ((angle / 45) % 8 == 5 /*3*/ && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z - 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z - 1].number == 0)) ||
+                    ((angle / 45) % 8 == 7 /*5*/ && (map_creat.map[(int)transform.position.x - 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x - 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)) ||
+                    ((angle / 45) % 8 == 1 /*7*/ && (map_creat.map[(int)transform.position.x + 1, (int)transform.position.z + 1].number == 0 || map_creat.map[(int)transform.position.x + 1, (int)transform.position.z].number == 0 || map_creat.map[(int)transform.position.x, (int)transform.position.z + 1].number == 0)))
             {
             transform.Rotate(new Vector3(0, 315, 0));
             angle = (int)(transform.eulerAngles.y + 0.5);
@@ -996,44 +1035,44 @@ public class Enemy_script : MonoBehaviour
         emoveY = 0;
         //intに変換した際数字が切り捨てられるのを防止
         int angle = ((int)(transform.eulerAngles.y + 0.5));
-        if ((angle / 45) % 8 == 0)
+        if ((angle / 45) % 8 == 2 /*0*/)
         {
             this.emoveX = 1;
             enemypos += new Vector3(emoveX, 0, 0);
-        }else if ((angle / 45) % 8 == 2)
+        }else if ((angle / 45) % 8 == 4 /*2*/)
         {
             this.emoveY = -1;
             enemypos += new Vector3(0, 0, emoveY);
         }
-        else if ((angle / 45) % 8 == 4)
+        else if ((angle / 45) % 8 == 6 /*4*/)
         {
             this.emoveX = -1;
             enemypos += new Vector3(emoveX, 0, 0);
         }
-        else if((angle / 45) % 8 == 6)
+        else if((angle / 45) % 8 == 0 /*6*/)
         {
             this.emoveY = 1;
             enemypos += new Vector3(0, 0, emoveY);
         }
-        else if ((angle / 45) % 8 == 1)
+        else if ((angle / 45) % 8 == 3 /*1*/)
         {
             this.emoveX = 1;
             this.emoveY = -1;
             enemypos += new Vector3(emoveX, 0, emoveY);
         }
-        else if ((angle / 45) % 8 == 3)
+        else if ((angle / 45) % 8 == 5 /*3*/)
         {
             this.emoveX = -1;
             this.emoveY = -1;
             enemypos += new Vector3(emoveX, 0, emoveY);
         }
-        else if ((angle / 45) % 8 == 5)
+        else if ((angle / 45) % 8 == 7 /*5*/)
         {
             this.emoveX = -1;
             this.emoveY = 1;
             enemypos += new Vector3(emoveX, 0, emoveY);
         }
-        else if ((angle / 45) % 8 == 7)
+        else if ((angle / 45) % 8 == 1 /*7*/)
         {
             this.emoveX = 1;
             this.emoveY = 1;
@@ -1066,7 +1105,6 @@ public class Enemy_script : MonoBehaviour
     {
         smoothmove = true;
         
-        //Debug.Log("B");
         //現在地から目的地を引き、2点間の距離を求める(Vector3型)
         //sqrMagnitudeはベクトルを2乗したあと2点間の距離に変換する(float型)
         float sqrRemainingDistance = (transform.position - end).sqrMagnitude;
@@ -1074,6 +1112,7 @@ public class Enemy_script : MonoBehaviour
         //Epsilon : ほとんど0に近い数値を表す
         while (sqrRemainingDistance > float.Epsilon)
         {
+            myAnimator.SetInteger("AnimIndex", 1);
             //現在地と移動先の間を1秒間にinverseMoveTime分だけ移動する場合の、
             //1フレーム分の移動距離を算出する
             Vector3 newPosition = Vector3.MoveTowards(transform.position, end, GameManager.instance.inverseMoveTime * Time.deltaTime);
@@ -1086,11 +1125,11 @@ public class Enemy_script : MonoBehaviour
             //Debug.Log(transform.position.x + "X");
             //Debug.Log(transform.position.z + "Z");
         }
-        //Debug.Log("C");
         smoothmove = false;
         GameManager.instance.EnemyMoving++;
-        
-        //Debug.Log("D");
+
+        myAnimator.SetInteger("AnimIndex", 0);
+
         transform.localPosition = new Vector3((int)end.x, 0, (int)end.z);
         
         if(map_creat.map_ex[(int)transform.position.x,(int)transform.position.z].number != 6)
@@ -1100,15 +1139,22 @@ public class Enemy_script : MonoBehaviour
 
     }
 
-    IEnumerable AttackAnimation()
+    IEnumerator AttackAnimation()
     {
         this.smoothmove = true;
 
+        myAnimator.SetInteger("AnimIndex",2);
+        //myAnimator.SetTrigger(tag+"_attack");
         //アニメーション
         yield return null;
+        yield return new AnimationWait(myAnimator, 0);
+        //yield return new WaitForSeconds(3f);
 
-
+        myAnimator.SetInteger("AnimIndex", 0);
+        //yield return new WaitForSeconds(0.5f);
         this.smoothmove = false;
+
+        GameManager.instance.EnemyMoving++;
     }
     
 
@@ -1257,6 +1303,32 @@ public class Enemy_script : MonoBehaviour
             else
             {
                 enemyattack = false;
+            }
+        }
+
+
+    }
+
+    public class AnimationWait : CustomYieldInstruction
+    {
+        Animator m_animator;
+        int m_layerNo;
+        int m_lastStateHash;
+
+        public AnimationWait(Animator animator, int layerNo)
+        {
+            m_animator = animator;
+            m_layerNo = layerNo;
+            m_lastStateHash = m_animator.GetCurrentAnimatorStateInfo(m_layerNo).nameHash;
+        }
+
+        public override bool keepWaiting
+        {
+            get
+            {
+                var currentAnimatorState = m_animator.GetCurrentAnimatorStateInfo(m_layerNo);
+                return currentAnimatorState.fullPathHash == m_lastStateHash &&
+                    (currentAnimatorState.normalizedTime < 1);
             }
         }
 
