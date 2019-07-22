@@ -172,6 +172,7 @@ GameObject:
   - component: {fileID: 4281416382277074}
   - component: {fileID: 95014031220960306}
   - component: {fileID: 114299582332610820}
+  - component: {fileID: 114526173371008890}
   m_Layer: 10
   m_Name: Slime_Blue4
   m_TagString: slime
@@ -537,6 +538,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimap_enemy: {fileID: 1686598272740032, guid: 440d181fad14fcd4b81978cb2b50b2c2,
     type: 2}
+--- !u!114 &114526173371008890
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1699383905627918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd5dce43e14ceb4a8069ff04bed799d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &137896761346201326
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

@@ -41,7 +41,9 @@ public class Player_script : MonoBehaviour {
         //HPText = HPTEXT.GetComponent<HPText_script>();
         
         GameManager.instance.Hp_Bar();
+        GameManager.instance.Mp_Bar();
         GameManager.instance.HP_Text();
+        GameManager.instance.MP_Text();
 
         //プレイヤーをマップ内に移動
         do
@@ -55,7 +57,7 @@ public class Player_script : MonoBehaviour {
         map_creat.map_ex[x, z].player_script = Player.GetComponent<Player_script>();
         map_creat.MiniMapPlayer = Instantiate(MiniMapPlayerObject, new Vector3(x + map_creat.minimapdistance, 1, z + map_creat.minimapdistance), Quaternion.identity);
         player.exist_room_no = map_creat.map[x, z].room_No;
-        transform.position = new Vector3( x, 0, z);
+        transform.position = new Vector3( x, -0.5f, z);
 
         myAnimator = GetComponent<Animator>();
     }
@@ -67,6 +69,34 @@ public class Player_script : MonoBehaviour {
         if (GameManager.instance.Playerturn == false||GameManager.instance.Menu == true || GameManager.instance.Pose == true || GameManager.instance.PlayerMoving == true)
         {
             return;
+        }
+
+        if(map_creat.map[(int)transform.position.x , (int)transform.position.z].number == 5)
+        {
+            //階段
+
+                if (kaidan == false)
+                {
+                    kaidan = true;
+
+                    //シーン移動時、instanceのGamaManagerは残り続けるから、Awake,Startは読み込まない、なのでここでデータを変える
+                    GameManager.instance.Pose = true;
+                    GameManager.instance.Playerturn = true;
+                    GameManager.instance.one = true;
+                    MenuController.menu_one = true;
+
+                    GameManager.instance.emoveX = 0;
+                    GameManager.instance.emoveY = 0;
+
+
+
+                    player.exist_room_no = 10;
+
+                    GameManager.instance.enemies.Clear();
+
+                    SceneManager.LoadScene("Dangyon");
+                }
+                
         }
         
         //分岐点で停止
@@ -158,16 +188,32 @@ public class Player_script : MonoBehaviour {
         else if(GameManager.instance.Menu == false ) {
             if (Input.GetKey(KeyCode.Z))
             {
-                int attack_range = player.player_attack_range;
-                int attack_type = player.player_attack_type;
-                bool slanting_wall = player.player_slanting_wall;
-                
-                GameManager.instance.space = false;
+                if(player.equipment_weapon != null)
+                {
+                    if(player.equipment_weapon.MP_COST_W > player.player_mp)
+                    {
+                        GameManager.instance.AddMainText("ＭＰが足りない");
+                    }
+                    else
+                    {
+                        GameManager.instance.space = false;
 
-                myAnimator.SetInteger("AnimIndex", 107);
-                //攻撃
-                StartCoroutine(SmoothAttack(attack_range, attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, Color.white));
-                
+                        myAnimator.SetInteger("AnimIndex", 107);
+                        //攻撃
+                        Player_Attack_Coroutine(player.player_attack_range, player.player_attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, 0);
+
+                    }
+                }
+                else
+                {
+                    GameManager.instance.space = false;
+
+                    myAnimator.SetInteger("AnimIndex", 107);
+                    //攻撃
+                    Player_Attack_Coroutine(player.player_attack_range, player.player_attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, 0);
+
+                }
+
             } else{
                 PlayerMove();
             }
@@ -512,28 +558,47 @@ public class Player_script : MonoBehaviour {
     public void PickUpItem()
     {
 
-
         if(map_creat.map_item[(int)transform.position.x , (int)transform.position.z].exist == true){
+            
             if (map_creat.map_item[(int)transform.position.x, (int)transform.position.z].number == 0)
             {
                 if (GameManager.instance.possessionitemlist.Count < GameManager.instance.MAX_ITEM)
                 {
                     GameManager.instance.AddMainText(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].name + "を拾った");
                     
-
                     GameManager.instance.AddListItem(map_creat.map_item[(int)transform.position.x, (int)transform.position.z]);
                     Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
                     map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
                 }
                 else
                 {
-                    //何もない
+                    GameManager.instance.AddMainText("持ち物が一杯で拾えない");
                 }
             }
             else if(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].number == 1)
             {
+                GameManager.instance.AddMainText(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].name + "を拾った");
 
-            }else if(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].number == 2)
+                if (map_creat.map_item[(int)transform.position.x, (int)transform.position.z].name == "魔力の結晶（汎）")
+                {
+                    GameManager.instance.possession_material_1++;
+                    Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
+                    map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+                }
+                else if (map_creat.map_item[(int)transform.position.x, (int)transform.position.z].name == "魔力の結晶（稀）")
+                {
+                    GameManager.instance.possession_material_2++;
+                    Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
+                    map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+                }
+                else if (map_creat.map_item[(int)transform.position.x, (int)transform.position.z].name == "魔力の結晶（極稀）")
+                {
+                    GameManager.instance.possession_material_3++;
+                    Destroy(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].obj);
+                    map_creat.map_item[(int)transform.position.x, (int)transform.position.z] = new clean();
+                }
+            }
+            else if(map_creat.map_item[(int)transform.position.x, (int)transform.position.z].number == 2)
             {
                 if (GameManager.instance.possessionweaponlist.Count < GameManager.instance.MAX_WEAPON)
                 {
@@ -545,13 +610,13 @@ public class Player_script : MonoBehaviour {
                 }
                 else
                 {
-                    //何もない
+                    GameManager.instance.AddMainText("持ち物が一杯で拾えない");
                 }
             }
         }
     }
 
-    public void playerdamage(int hp, int attack)
+    public int playerdamage(int hp, int attack)
     {
         int damage = attack;
         player.player_hp -= damage;
@@ -560,12 +625,24 @@ public class Player_script : MonoBehaviour {
 
         GameManager.instance.Hp_Bar();
         GameManager.instance.HP_Text();
+        
+        return damage;
+    }
+
+    public bool playerdie()
+    {
+        bool player_die;
 
         if (player.player_hp <= 0)
         {
-            GameManager.instance.AddMainText("GAME OVER");
+            player_die = true;
         }
-        
+        else
+        {
+            player_die = false;
+        }
+
+        return player_die;
     }
 
     public void experience_get(int experience)
@@ -589,6 +666,8 @@ public class Player_script : MonoBehaviour {
             //現在地と移動先の間を1秒間にinverseMoveTime分だけ移動する場合の、
             //1フレーム分の移動距離を算出する
             Vector3 newPosition = Vector3.MoveTowards(transform.position, end, GameManager.instance.inverseMoveTime * Time.deltaTime);
+            
+
             //算出した移動距離分、移動する
             transform.localPosition = newPosition;
             //現在地が目的地寄りになった結果、sqrRemainDistanceが小さくなる
@@ -603,7 +682,7 @@ public class Player_script : MonoBehaviour {
 
         myAnimator.SetInteger("AnimIndex", 0);
 
-        transform.localPosition = new Vector3((int)end.x, 0, (int)end.z);
+        transform.localPosition = new Vector3((int)end.x, -0.5f, (int)end.z);
 
         if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].number != 5)
         {
@@ -611,44 +690,122 @@ public class Player_script : MonoBehaviour {
         }
         
     }
-        //階段
-        public void OnTriggerEnter(Collider other)
+        
+    
+
+    IEnumerator SmoothAttack(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage, Color grid_color ,int Player_Animation)
     {
-        if (other.tag == "kaidan")
+        GameManager.instance.PlayerMoving = true;
+
+        //攻撃方法によってアニメーション変更
+        if (Player_Animation == 0)
         {
-            if (kaidan == false)
+
+            myAnimator.SetInteger("AnimIndex", 2);
+
+            yield return null;
+            yield return new AnimationWait(myAnimator, 0);
+
+        }else if(Player_Animation == 1)
+        {
+
+        }
+
+        myAnimator.SetInteger("AnimIndex", 0);
+
+        //装備している場合、ＭＰを消費
+        if(player.equipment_weapon != null)
+        {
+            player.player_mp -= player.equipment_weapon.MP_COST_W;
+            GameManager.instance.Mp_Bar();
+            GameManager.instance.MP_Text();
+        }
+
+
+        Attack(attack_range, attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, Color.white);
+
+        for(int i = 0; i < GameManager.instance.damageenemy.Count; i++)
+        {
+            int damage;
+            int previous_hp;
+
+            previous_hp = GameManager.instance.damageenemy[i].state.HP;
+
+            GameManager.instance.damageenemy[i].state.HP = GameManager.instance.damageenemy[i].enemy_script.
+            enemydamage(GameManager.instance.damageenemy[i].state.HP, attack_damage, GameManager.instance.damageenemy[i].state.DEFENSE);
+
+            damage = previous_hp - GameManager.instance.damageenemy[i].state.HP;
+
+            Animator enemyAnimator = GameManager.instance.damageenemy[i].obj.GetComponent<Animator>();
+
+            if (damage <= 0) {
+
+            }else if(damage > 0)
             {
-                kaidan = true;
+                if (GameManager.instance.damageenemy[i].state.HP > 0)
+                {
+                    enemyAnimator.SetInteger("AnimIndex", 3);
 
-                //シーン移動時、instanceのGamaManagerは残り続けるから、Awake,Startは読み込まない、なのでここでデータを変える
-                GameManager.instance.Pose = true;
-                GameManager.instance.Playerturn = true;
-                GameManager.instance.one = true;
+                    yield return null;
+                    yield return new AnimationWait(enemyAnimator, 0);
+                }
+                else if(GameManager.instance.damageenemy[i].state.HP <= 0)
+                {
+                    enemyAnimator.SetInteger("AnimIndex", 4);
 
-                GameManager.instance.emoveX = 0;
-                GameManager.instance.emoveY = 0;
+                    yield return null;
+                    yield return new AnimationWait(enemyAnimator, 0);
+                    yield return null;
+                    GameManager.instance.damageenemy[i].enemy_script.enemydie();
+                }
 
-                player.exist_room_no = 10;
-
-                GameManager.instance.enemies.Clear();
-
-                SceneManager.LoadScene("Dangyon");
+                enemyAnimator.SetInteger("AnimIndex", 0);
             }
             
         }
+
+
+        yield return new WaitForSeconds(0.1f);
+
+        //武器の耐久を減らし、耐久がなくなったら壊れる
+        if (player.equipment_weapon != null)
+        {
+            player.equipment_weapon.ENDURANCE_W--;
+
+            if (player.equipment_weapon.ENDURANCE_W <= 0)
+            {
+                GameManager.instance.Weapon_Destroy();
+
+                GameManager.instance.AddMainText("装備が壊れてしまった");
+            }
+        }
+
+
+        GameManager.instance.damageenemy.Clear();
+
+        GameManager.instance.PlayerMoving = false;
     }
 
-    IEnumerator SmoothAttack(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack_damage, Color grid_color)
+    public void Success_Develop()
     {
-        GameManager.instance.PlayerMoving = true;
-        myAnimator.SetInteger("AnimIndex", 2);
+        StartCoroutine(Smooth_Success_Develop());
+    }
+
+    IEnumerator Smooth_Success_Develop()
+    {
+        Debug.Log("A");
+
+        myAnimator.SetInteger("AnimIndex", 5);
+
         yield return null;
         yield return new AnimationWait(myAnimator, 0);
+
         myAnimator.SetInteger("AnimIndex", 0);
 
-        yield return new WaitForSeconds(0.5f);
-        //yield return null;
-        Attack(attack_range, attack_type, player.player_slanting_wall, player.player_attack_through, player.player_attack, Color.white);
+        yield return new WaitForSeconds(0.1f);
+
+        GameManager.instance.Playerturn = false;
+
         GameManager.instance.PlayerMoving = false;
     }
 
@@ -780,17 +937,22 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z]);
+                    //map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z].state.DEFENSE);
 
                     if (attack_through == false)
                     {
                         break;
                     }
                 }
-            }else if(vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
+            }
+            else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i , (int)transform.position.z);
+                if (transform.position.x + i < 45 && transform.position.z < 45 && transform.position.x + i >= 0 && transform.position.z >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i, (int)transform.position.z);
+                }
             }
         }
     }
@@ -806,8 +968,9 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i]);
+                    //map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z - i].state.DEFENSE);
 
                     if (attack_through == false)
                     {
@@ -817,7 +980,10 @@ public class Player_script : MonoBehaviour {
             }
             else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x, (int)transform.position.z - i);
+                if (transform.position.x < 45 && transform.position.z - i < 45 && transform.position.x >= 0 && transform.position.z - i >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x, (int)transform.position.z - i);
+                }
             }
         }
     }
@@ -833,8 +999,9 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z]);
+                    //map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z].state.DEFENSE);
 
                     if (attack_through == false)
                     {
@@ -844,7 +1011,10 @@ public class Player_script : MonoBehaviour {
             }
             else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z);
+                if (transform.position.x - i < 45 && transform.position.z < 45 && transform.position.x - i >= 0 && transform.position.z >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z);
+                }
             }
         }
     }
@@ -860,8 +1030,9 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i]);
+                    //map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z + i].state.DEFENSE);
 
                     if (attack_through == false)
                     {
@@ -871,7 +1042,10 @@ public class Player_script : MonoBehaviour {
             }
             else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x, (int)transform.position.z + i);
+                if (transform.position.x < 45 && transform.position.z + i < 45 && transform.position.x >= 0 && transform.position.z + i >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x, (int)transform.position.z + i);
+                }
             }
         }
     }
@@ -891,8 +1065,9 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i]);
+                    //map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z - i].state.DEFENSE);
 
                     if (attack_through == false)
                     {
@@ -902,7 +1077,10 @@ public class Player_script : MonoBehaviour {
             }
             else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i, (int)transform.position.z - i);
+                if (transform.position.x + i < 45 && transform.position.z - i < 45 && transform.position.x + i >= 0 && transform.position.z - i >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i, (int)transform.position.z - i);
+                }
             }
         }
     }
@@ -922,8 +1100,9 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i]);
+                    //map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z - i].state.DEFENSE);
 
                     if (attack_through == false)
                     {
@@ -933,7 +1112,10 @@ public class Player_script : MonoBehaviour {
             }
             else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z - i);
+                if (transform.position.x - i < 45 && transform.position.z - i < 45 && transform.position.x - i >= 0 && transform.position.z - i >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z - i);
+                }
             }
         }
     }
@@ -953,8 +1135,9 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i]);
+                    //map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x - i, (int)transform.position.z + i].state.DEFENSE);
 
                     if (attack_through == false)
                     {
@@ -965,7 +1148,10 @@ public class Player_script : MonoBehaviour {
             }
             else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z + i);
+                if (transform.position.x - i < 45 && transform.position.z + i < 45 && transform.position.x - i >= 0 && transform.position.z + i >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x - i, (int)transform.position.z + i);
+                }
             }
         }
     }
@@ -985,8 +1171,9 @@ public class Player_script : MonoBehaviour {
                 }
                 if (map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].number == 6)
                 {
-                    map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].enemy_script.
-                    enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.DEFENSE);
+                    GameManager.instance.Adddamageenemy(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i]);
+                    //map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP = map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].enemy_script.
+                    //enemydamage(map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.HP, attack_damage, map_creat.map_ex[(int)transform.position.x + i, (int)transform.position.z + i].state.DEFENSE);
 
                     if (attack_through == false)
                     {
@@ -996,10 +1183,19 @@ public class Player_script : MonoBehaviour {
             }
             else if (vectorchange == true) //グリッド（Grid）、Cキー押しているときは一直線上のＧｒｉｄの色が変わる
             {
-                GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i, (int)transform.position.z + i);
+                if (transform.position.x + i < 45 && transform.position.z + i < 45 && transform.position.x + i >= 0 && transform.position.z + i >= 0)
+                {
+                    GameManager.instance.Grid_Color(grid_color, (int)transform.position.x + i, (int)transform.position.z + i);
+                }
             }
         }
     }
+
+    public void Player_Attack_Coroutine(int attack_range, int attack_type, bool slanting_wall, bool attack_through, int attack, int attack_animation)
+    {
+        StartCoroutine(SmoothAttack(attack_range, attack_type, slanting_wall, attack_through, attack, Color.white, attack_animation /*通常攻撃*/));
+    }
+
 }
 
 public class AnimationWait : CustomYieldInstruction

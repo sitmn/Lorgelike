@@ -562,6 +562,7 @@ GameObject:
   - component: {fileID: 4745320514558310}
   - component: {fileID: 95388573023459682}
   - component: {fileID: 114193807180998778}
+  - component: {fileID: 114364959597185062}
   m_Layer: 10
   m_Name: Bat_Green4
   m_TagString: bat
@@ -1320,6 +1321,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimap_enemy: {fileID: 1686598272740032, guid: 440d181fad14fcd4b81978cb2b50b2c2,
     type: 2}
+--- !u!114 &114364959597185062
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1793130899128454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd5dce43e14ceb4a8069ff04bed799d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &137505071886892978
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

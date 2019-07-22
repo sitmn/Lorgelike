@@ -156,6 +156,7 @@ GameObject:
   - component: {fileID: 4846400910064332}
   - component: {fileID: 95473637271996584}
   - component: {fileID: 114383638045415598}
+  - component: {fileID: 114561042866597452}
   m_Layer: 10
   m_Name: Ghost_Green2
   m_TagString: ghost
@@ -392,6 +393,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimap_enemy: {fileID: 1686598272740032, guid: 440d181fad14fcd4b81978cb2b50b2c2,
     type: 2}
+--- !u!114 &114561042866597452
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1857494805947136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd5dce43e14ceb4a8069ff04bed799d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &137699378949015652
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

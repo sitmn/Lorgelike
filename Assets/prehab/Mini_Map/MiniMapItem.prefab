@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 33604707048368144}
   - component: {fileID: 23693559735575438}
   - component: {fileID: 135018633931397330}
-  - component: {fileID: 114203123583724630}
   m_Layer: 0
   m_Name: MiniMapItem
   m_TagString: Untagged
@@ -85,17 +84,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1969903096225694}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114203123583724630
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1969903096225694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80a33418766b6a24a80fc7f0692d971d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &135018633931397330
 SphereCollider:
   m_ObjectHideFlags: 1

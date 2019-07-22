@@ -21,7 +21,7 @@ public class Enemy_script : MonoBehaviour
     private map_creat mapscript;
 
     private Animator myAnimator;
-    
+    private Animator playerAnimator;
     
     void Start()
     {
@@ -39,6 +39,7 @@ public class Enemy_script : MonoBehaviour
         this.smoothmove = false;
 
         myAnimator = GetComponent<Animator>();
+        playerAnimator = Player.GetComponent<Animator>();
     }
 
     void Update()
@@ -63,8 +64,16 @@ public class Enemy_script : MonoBehaviour
 
 
     //敵の行動
-    public void Emove()
+    public void Emove(){
+        StartCoroutine(EmoveC());
+    }
+    IEnumerator EmoveC()
     {
+        while (GameManager.instance.enemyattack)
+        {
+            yield return null;
+        }
+
         FindPlayer();
         enemypos = transform.position;
         
@@ -908,7 +917,7 @@ public class Enemy_script : MonoBehaviour
                 transform.eulerAngles = new Vector3(0, 315 + Player_script.asset_rotate, 0);
             }
             StartCoroutine(AttackAnimation());
-            player_script.playerdamage(player.player_hp, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.ATTACK);
+            
         }
     }
 
@@ -1087,18 +1096,19 @@ public class Enemy_script : MonoBehaviour
         hp -= damage;
 
         GameManager.instance.AddMainText(damage + "のダメージを与えた");
+        
+        return hp;
+    }
 
-        if (hp <= 0)
-        {
+    public void enemydie()
+    {
             GameManager.instance.AddMainText("倒れた");
             map_creat.map_ex[(int)transform.position.x, (int)transform.position.z] = new clear();
-            
+
 
             GameManager.instance.enemies.Remove(this);
             Destroy(this.gameObject);
-        }
         
-        return hp;
     }
 
     IEnumerator SmoothMovement(Vector3 end)
@@ -1130,7 +1140,7 @@ public class Enemy_script : MonoBehaviour
 
         myAnimator.SetInteger("AnimIndex", 0);
 
-        transform.localPosition = new Vector3((int)end.x, 0, (int)end.z);
+        transform.localPosition = new Vector3((int)end.x, -0.5f, (int)end.z);
         
         if(map_creat.map_ex[(int)transform.position.x,(int)transform.position.z].number != 6)
         {
@@ -1142,18 +1152,46 @@ public class Enemy_script : MonoBehaviour
     IEnumerator AttackAnimation()
     {
         this.smoothmove = true;
+        GameManager.instance.enemyattack = true;
+
+        yield return new WaitForSeconds(0.1f);
 
         myAnimator.SetInteger("AnimIndex",2);
-        //myAnimator.SetTrigger(tag+"_attack");
+
         //アニメーション
         yield return null;
         yield return new AnimationWait(myAnimator, 0);
-        //yield return new WaitForSeconds(3f);
+
 
         myAnimator.SetInteger("AnimIndex", 0);
-        //yield return new WaitForSeconds(0.5f);
+
+        //プレイヤーダメージ
+        int player_damage = player_script.playerdamage(player.player_hp, map_creat.map_ex[(int)transform.position.x, (int)transform.position.z].state.ATTACK);
+        bool player_die = player_script.playerdie();
+        
+        if(player_damage <= 0) {
+
+        }else if(player_damage > 0)
+        {
+            if (player_die == false)
+            {
+                playerAnimator.SetInteger("AnimIndex", 3);
+            }else if (player_die == true)
+            {
+                playerAnimator.SetInteger("AnimIndex", 4);
+                yield break;
+            }
+        }
+
+        yield return null;
+        yield return new AnimationWait(playerAnimator, 0);
+        
+
+        playerAnimator.SetInteger("AnimIndex", 0);
+
         this.smoothmove = false;
 
+        GameManager.instance.enemyattack = false;
         GameManager.instance.EnemyMoving++;
     }
     

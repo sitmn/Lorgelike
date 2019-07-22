@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
     public bool Playerturn;
     public bool PlayerMoving;
     public int EnemyMoving;
+    public bool enemyattack;
     public bool Menu;
     public bool coroutine;
     public bool Pose;
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour {
     private GameObject Player;
     public GameObject Menuobj;
 
+    public List<map_exist> damageenemy;
     public List<Enemy_script> enemies;
     public List<Vector3> roomlist;
     public List<Vector3> roomlist_0;
@@ -64,12 +66,17 @@ public class GameManager : MonoBehaviour {
 
     public List<map_item> possessionitemlist;
     public List<map_item> possessionweaponlist;
-
+    public List<map_item> developtopiclist;
+    public int possession_material_1;
+    public int possession_material_2;
+    public int possession_material_3;
 
     public List<Text> MainTexts;
     public Text[] MainText = new Text[3];
     public GameObject HPTEXT;
     private Text HPText;
+    public GameObject MPTEXT;
+    private Text MPText;
 
     private Slider slider;
     public GameObject SLIDER;
@@ -105,6 +112,7 @@ public class GameManager : MonoBehaviour {
         //itemをListで管理
         possessionitemlist = new List<map_item>();
         possessionweaponlist = new List<map_item>();
+        developtopiclist = new List<map_item>();
 
         roomlist = new List<Vector3>();
         roomlist_0 = new List<Vector3>();
@@ -126,19 +134,22 @@ public class GameManager : MonoBehaviour {
         entrancelist_6 = new List<Vector3>();
         entrancelist_7 = new List<Vector3>();
         entrancelist_8 = new List<Vector3>();
-        
+
+        damageenemy = new List<map_exist>();
 
         //コンポーネントを取得
 
         mapscript = GetComponent<map_creat>();
         menuscript = Menuobj.GetComponent<MenuController>();
         HPText = HPTEXT.GetComponent<Text>();
+        MPText = MPTEXT.GetComponent<Text>();
         slider = SLIDER.GetComponent<Slider>();
         //マップ生成
         mapscript.Mapcreat();
 
         instance.PlayerMoving = false;
         instance.Playerturn = true;
+        instance.enemyattack = false;
         instance.Menu = false;
         instance.EnemyMoving = 0;
         coroutine = false;
@@ -322,11 +333,19 @@ public class GameManager : MonoBehaviour {
     {
         HPText.text = player.player_hp + "/" + player.player_MAX_hp;
     }
-
+    public void MP_Text()
+    {
+        MPText.text = player.player_mp + "/" + player.player_MAX_mp;
+    }
     public void Hp_Bar()
     {
         float hp_bar = (float)player.player_hp / (float)player.player_MAX_hp;
         slider.value = hp_bar;
+    }
+    public void Mp_Bar()
+    {
+        float mp_bar = (float)player.player_mp / (float)player.player_MAX_mp;
+        slider.value = mp_bar;
     }
 
     public void itemuse(int listnum)
@@ -361,6 +380,44 @@ public class GameManager : MonoBehaviour {
     public void Grid_Color_White(float position_x, float position_z)
     {
         map_creat.grid_color[(int)position_x, (int)position_z].material.color = Color.white;
+    }
+
+    public void Player_Heal_HP(int healpoint)
+    {
+        player.player_hp += healpoint;
+        if (player.player_hp > player.player_MAX_hp)
+        {
+            player.player_hp = player.player_MAX_hp;
+        }
+        GameManager.instance.AddMainText("ＨＰが" + healpoint + "回復した");
+    }
+    public void Player_Heal_MP(int healpoint)
+    {
+        player.player_mp += healpoint;
+        if (player.player_mp > player.player_MAX_mp)
+        {
+            player.player_mp = player.player_MAX_mp;
+        }
+        GameManager.instance.AddMainText("ＭＰが" + healpoint + "回復した");
+    }
+    public void Weapon_Destroy()
+    {
+        int destroy_weapon;
+
+        for(int i = 0;i < possessionweaponlist.Count; i++)
+        {
+            if (possessionweaponlist[i].name.Contains("E:") == true)
+            {
+                destroy_weapon = i;
+            }
+        }
+
+        player.equipment_weapon.installing(i);
+        possessionweaponlist.RemoveAt(i);
+    }
+    public void Adddamageenemy(map_exist enemy)
+    {
+        damageenemy.Add(enemy);
     }
 }
 
@@ -419,63 +476,139 @@ public class map_item
     public bool exist;
     public GameObject obj;
     public GameObject minimap_item;
+
+    public int develop_need_material1;
+    public int develop_need_material2;
+    public int develop_need_material3;
+    public int develop_need_MP;
+    public string item_description;
+    public string develop_description;
+
+    //item1
+    public int heal_point;
+    
+    //item2
+    public int attack_point;
+    public int attack_range;
+    public int attack_type;
+
+    public void use(int listnum) {
+        if(GameManager.instance.possessionitemlist[listnum].name == "回復薬")
+        {
+            GameManager.instance.AddMainText("回復薬を使用した");
+
+            GameManager.instance.Player_Heal_HP(heal_point);
+
+
+
+            GameManager.instance.itemuse(listnum);
+        }
+        else if (GameManager.instance.possessionitemlist[listnum].name == "爆弾")
+        {
+            GameManager.instance.AddMainText("爆弾を使用した");
+            GameManager.instance.Attack(1, 1, true, true, 10);
+            GameManager.instance.itemuse(listnum);
+
+        }else if(GameManager.instance.possessionitemlist[listnum].name == "場所替え")
+        {
+            GameManager.instance.AddMainText("場所替えを使用した");
+            GameManager.instance.itemuse(listnum);
+
+        }else if(GameManager.instance.possessionitemlist[listnum].name == "回復薬（特）")
+        {
+            GameManager.instance.AddMainText("回復薬（特）を使用した");
+
+            GameManager.instance.Player_Heal_HP(heal_point);
+
+
+
+            GameManager.instance.itemuse(listnum);
+        }
+
+
+    }
+
+}
+
+public class item : map_item
+{
     
 }
 
-public class item1 : map_item
+public class item1 : item
 {
-    public item1()
+    public item1(string NAME , int HEAL_POINT , int DEVELOP_MATERIAL_1, int DEVELOP_MATERIAL_2, int DEVELOP_MATERIAL_3 ,int DEVELOP_NEED_MP)
     {
-        name = "薬草";
+        name = "回復薬";
         number = 0;
         exist = true;
+        heal_point = HEAL_POINT;
+        develop_need_material1 = DEVELOP_MATERIAL_1;
+        develop_need_material2 = DEVELOP_MATERIAL_2;
+        develop_need_material3 = DEVELOP_MATERIAL_3;
+        develop_need_MP = DEVELOP_NEED_MP;
+
+        item_description = "ＨＰを３０回復する";
     }
 
-    public void healuse(int listnum)
-    {
-        //〇アイテム効果
-        GameManager.instance.AddMainText("薬草を使用した");
-
-        int healpoint = 30;
-        player.player_hp += healpoint;
-        if(player.player_hp > player.player_MAX_hp)
-        {
-            player.player_hp = player.player_MAX_hp;
-        }
-        GameManager.instance.AddMainText("ＨＰが" + healpoint + "回復した");
-
-        GameManager.instance.itemuse(listnum);
-    }
+    
 }
-public class item2 : map_item
+public class item2 : item
 {
 
     void Awake()
     {
     }
     
-    public item2()
+    public item2(string NAME, int ATTACK_POINT, int ATTACK_RANGE ,int ATTACK_TYPE,int DEVELOP_MATERIAL_1, int DEVELOP_MATERIAL_2, int DEVELOP_MATERIAL_3, int DEVELOP_NEED_MP)
     {
-        
+
         name = "爆弾";
         number = 0;
         exist = true;
+        attack_point = ATTACK_POINT;
+        attack_range = ATTACK_RANGE;
+        attack_type = ATTACK_TYPE;
+        develop_need_material1 = DEVELOP_MATERIAL_1;
+        develop_need_material2 = DEVELOP_MATERIAL_2;
+        develop_need_material3 = DEVELOP_MATERIAL_3;
+        develop_need_MP = DEVELOP_NEED_MP;
+
+        item_description = "正面に１０ダメージを与える";
     }
-    public void attackuse(int listnum)
-    {
-        //〇アイテム効果
-        GameManager.instance.AddMainText("爆弾を使用した");
-        GameManager.instance.Attack(1, 1, true, true, 10);
-        GameManager.instance.itemuse(listnum);
-    }
+    
 }
-public class item3 : map_item
+public class item3 : item
 {
-    public item3()
+    public item3(string NAME, int DEVELOP_MATERIAL_1, int DEVELOP_MATERIAL_2, int DEVELOP_MATERIAL_3, int DEVELOP_NEED_MP)
     {
         name = "場所替え";
         number = 0;
         exist = true;
+        develop_need_material1 = DEVELOP_MATERIAL_1;
+        develop_need_material2 = DEVELOP_MATERIAL_2;
+        develop_need_material3 = DEVELOP_MATERIAL_3;
+        develop_need_MP = DEVELOP_NEED_MP;
+
+        item_description = "ＨＰを３０回復する";
+    }
+    
+}
+
+public class item4 : item
+{
+    public item4(string NAME, int HEAL_POINT, int DEVELOP_MATERIAL_1, int DEVELOP_MATERIAL_2, int DEVELOP_MATERIAL_3, int DEVELOP_NEED_MP)
+    {
+        name = "回復薬（特）";
+        number = 0;
+        exist = true;
+        heal_point = HEAL_POINT;
+        develop_need_material1 = DEVELOP_MATERIAL_1;
+        develop_need_material2 = DEVELOP_MATERIAL_2;
+        develop_need_material3 = DEVELOP_MATERIAL_3;
+        develop_need_MP = DEVELOP_NEED_MP;
+
+        item_description = "ＨＰを１００回復する";
     }
     public void changeuse(int listnum)
     {
@@ -523,7 +656,15 @@ public class weapon : map_item
     public int ATTACK_TYPE_W;
     public bool ATTACK_THROUGH_W;
     public bool SLANTING_WALL_W;
+    public int DEVELOP_MATERIAL_1;
+    public int DEVELOP_MATERIAL_2;
+    public int DEVELOP_MATERIAL_3;
+    public int MP_COST_W;
+    public int ENDURANCE_W;
+    public int DEVELOP_NEED_MP;
 
+    public string weapon_description;
+        
     public void installing(int listnum)
     {
         if (GameManager.instance.possessionweaponlist[listnum].name.Contains("E:") == false)
@@ -540,6 +681,8 @@ public class weapon : map_item
             player.player_attack_type = ATTACK_TYPE_W;
             player.player_attack_through = ATTACK_THROUGH_W;
             player.player_slanting_wall = SLANTING_WALL_W;
+
+            player.equipment_weapon = GameManager.instance.possessionweaponlist[listnum] as weapon;
 
             for (int i = 0; i < GameManager.instance.possessionweaponlist.Count; i++)
             {
@@ -568,10 +711,15 @@ public class weapon : map_item
             player.player_attack_through = false;
             player.player_slanting_wall = false;
 
+            if (player.equipment_weapon.ENDURANCE_W > 0)
+            {
+                GameManager.instance.AddMainText(GameManager.instance.possessionweaponlist[listnum].name + "を外した");
+            }
+
+            player.equipment_weapon = null;
+
             GameManager.instance.possessionweaponlist[listnum].name = GameManager.instance.possessionweaponlist[listnum].name.Replace("E:", "");
-
-            GameManager.instance.AddMainText(GameManager.instance.possessionweaponlist[listnum].name + "を外した");
-
+            
             GameManager.instance.weaponuse(listnum);
         }
         GameManager.instance.Hp_Bar();
@@ -580,7 +728,7 @@ public class weapon : map_item
 }
 public class weapon1 : weapon
 {
-    public weapon1(string NAME, int hp_w, int attack_w , int defense_w , int attack_range_w , int attack_type_w , bool attack_through_w , bool slanting_wall_w)
+    public weapon1(string NAME, int hp_w, int attack_w , int defense_w , int attack_range_w , int attack_type_w , bool attack_through_w , bool slanting_wall_w, int develop_W1_material_1, int develop_W1_material_2, int develop_W1_material_3 , int mp_cost , int endurance, int develop_need_mp)
     {
         exist = true;
         number = 2;
@@ -594,11 +742,17 @@ public class weapon1 : weapon
         ATTACK_TYPE_W = attack_type_w;
         ATTACK_THROUGH_W = attack_through_w;
         SLANTING_WALL_W = slanting_wall_w;
+        DEVELOP_MATERIAL_1 = develop_W1_material_1;
+        DEVELOP_MATERIAL_2 = develop_W1_material_2;
+        DEVELOP_MATERIAL_3 = develop_W1_material_3;
+        MP_COST_W = mp_cost;
+        ENDURANCE_W = endurance;
+        DEVELOP_NEED_MP = develop_need_mp;
     }   
 }
 public class weapon2 : weapon
 {
-    public weapon2(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w)
+    public weapon2(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w, int develop_W2_material_1, int develop_W2_material_2, int develop_W2_material_3, int mp_cost, int endurance, int develop_need_mp)
     {
         exist = true;
         number = 2;
@@ -612,11 +766,17 @@ public class weapon2 : weapon
         ATTACK_TYPE_W = attack_type_w;
         ATTACK_THROUGH_W = attack_through_w;
         SLANTING_WALL_W = slanting_wall_w;
+        DEVELOP_MATERIAL_1 = develop_W2_material_1;
+        DEVELOP_MATERIAL_2 = develop_W2_material_2;
+        DEVELOP_MATERIAL_3 = develop_W2_material_3;
+        MP_COST_W = mp_cost;
+        ENDURANCE_W = endurance;
+        DEVELOP_NEED_MP = develop_need_mp;
     }
 }
 public class weapon3 : weapon
 {
-    public weapon3(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w)
+    public weapon3(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w, int develop_W3_material_1, int develop_W3_material_2, int develop_W3_material_3, int mp_cost, int endurance, int develop_need_mp)
     {
         exist = true;
         number = 2;
@@ -630,6 +790,60 @@ public class weapon3 : weapon
         ATTACK_TYPE_W = attack_type_w;
         ATTACK_THROUGH_W = attack_through_w;
         SLANTING_WALL_W = slanting_wall_w;
+        DEVELOP_MATERIAL_1 = develop_W3_material_1;
+        DEVELOP_MATERIAL_2 = develop_W3_material_2;
+        DEVELOP_MATERIAL_3 = develop_W3_material_3;
+        MP_COST_W = mp_cost;
+        ENDURANCE_W = endurance;
+        DEVELOP_NEED_MP = develop_need_mp;
+    }
+}
+public class weapon4 : weapon
+{
+    public weapon4(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w, int develop_W4_material_1, int develop_W4_material_2, int develop_W4_material_3, int mp_cost, int endurance, int develop_need_mp)
+    {
+        exist = true;
+        number = 2;
+        name = NAME; ;
+
+        HP_W = hp_w;
+        ATTACK_W = attack_w;
+        DEFENSE_W = defense_w;
+
+        ATTACK_RANGE_W = attack_range_w;
+        ATTACK_TYPE_W = attack_type_w;
+        ATTACK_THROUGH_W = attack_through_w;
+        SLANTING_WALL_W = slanting_wall_w;
+        DEVELOP_MATERIAL_1 = develop_W4_material_1;
+        DEVELOP_MATERIAL_2 = develop_W4_material_2;
+        DEVELOP_MATERIAL_3 = develop_W4_material_3;
+        MP_COST_W = mp_cost;
+        ENDURANCE_W = endurance;
+        DEVELOP_NEED_MP = develop_need_mp;
+    }
+}
+public class weapon5 : weapon
+{
+    public weapon5(string NAME, int hp_w, int attack_w, int defense_w, int attack_range_w, int attack_type_w, bool attack_through_w, bool slanting_wall_w, int develop_W5_material_1, int develop_W5_material_2, int develop_W5_material_3, int mp_cost, int endurance, int develop_need_mp)
+    {
+        exist = true;
+        number = 2;
+        name = NAME; ;
+
+        HP_W = hp_w;
+        ATTACK_W = attack_w;
+        DEFENSE_W = defense_w;
+
+        ATTACK_RANGE_W = attack_range_w;
+        ATTACK_TYPE_W = attack_type_w;
+        ATTACK_THROUGH_W = attack_through_w;
+        SLANTING_WALL_W = slanting_wall_w;
+        DEVELOP_MATERIAL_1 = develop_W5_material_1;
+        DEVELOP_MATERIAL_2 = develop_W5_material_2;
+        DEVELOP_MATERIAL_3 = develop_W5_material_3;
+        MP_COST_W = mp_cost;
+        ENDURANCE_W = endurance;
+        DEVELOP_NEED_MP = develop_need_mp;
     }
 }
 public class clean : map_item
@@ -693,7 +907,7 @@ public class player : map_exist
     public static int player_level = 1;
     public static int exist_room_no;
 
-    public static weapon weapon;
+    public static weapon equipment_weapon;
 
     public player()
     {

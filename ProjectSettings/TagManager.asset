@@ -13,9 +13,6 @@ TagManager:
   - Item3
   - Cannon
   - Equipment
-  - Material1
-  - Material2
-  - Material3
   - weapon1
   - weapon2
   - weapon3
@@ -25,6 +22,11 @@ TagManager:
   - ghost
   - dragon
   - golem
+  - material1
+  - material2
+  - material3
+  - weapon4
+  - weapon5
   layers:
   - Default
   - TransparentFX

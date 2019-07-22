@@ -201,6 +201,7 @@ GameObject:
   - component: {fileID: 4554561436107358}
   - component: {fileID: 95222912574533326}
   - component: {fileID: 114795664377074198}
+  - component: {fileID: 114109044398016992}
   m_Layer: 10
   m_Name: Rabbit_Cyan4
   m_TagString: rabbit
@@ -727,6 +728,17 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114109044398016992
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1430889338836290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd5dce43e14ceb4a8069ff04bed799d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114795664377074198
 MonoBehaviour:
   m_ObjectHideFlags: 1

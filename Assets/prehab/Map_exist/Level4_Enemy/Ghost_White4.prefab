@@ -141,6 +141,7 @@ GameObject:
   - component: {fileID: 4056715137506228}
   - component: {fileID: 95265867073783600}
   - component: {fileID: 114431264358835032}
+  - component: {fileID: 114408530278163844}
   m_Layer: 10
   m_Name: Ghost_White4
   m_TagString: ghost
@@ -379,6 +380,17 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114408530278163844
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1628728535021196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd5dce43e14ceb4a8069ff04bed799d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114431264358835032
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -187,6 +187,7 @@ GameObject:
   - component: {fileID: 4483291553605390}
   - component: {fileID: 95721492920325424}
   - component: {fileID: 114455347848041664}
+  - component: {fileID: 114759179610387004}
   m_Layer: 10
   m_Name: Rabbit_Yellow3
   m_TagString: rabbit
@@ -740,6 +741,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimap_enemy: {fileID: 1686598272740032, guid: 440d181fad14fcd4b81978cb2b50b2c2,
     type: 2}
+--- !u!114 &114759179610387004
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1350348405470588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fd5dce43e14ceb4a8069ff04bed799d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &137146308976008452
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

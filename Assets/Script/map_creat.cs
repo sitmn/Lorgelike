@@ -40,8 +40,37 @@ public class map_creat : MonoBehaviour {
     public const int SLIME1_ATTACK_TYPE = 0;
     public const bool SLIME1_SLANTING_WALL = true;
 
+    public const string NAME_I1 = "回復薬";
+    public const int HEAL_POINT_I1 = 50;
+    public const int DEVELOP_I1_MATERIAL_1 = 1;
+    public const int DEVELOP_I1_MATERIAL_2 = 0;
+    public const int DEVELOP_I1_MATERIAL_3 = 0;
+    public const int DEVELOP_NEED_MP_I1 = 3;
+
+    public const string NAME_I2 = "爆弾";
+    public const int DEVELOP_I2_MATERIAL_1 = 1;
+    public const int DEVELOP_I2_MATERIAL_2 = 0;
+    public const int DEVELOP_I2_MATERIAL_3 = 0;
+    public const int DEVELOP_NEED_MP_I2 = 3;
+
+    public const string NAME_I3 = "場所替え";
+    public const int ATTACK_POINT = 0;
+    public const int ATTACK_TYPE = 0;
+    public const int ATTACK_RANGE = 1;
+    public const int DEVELOP_I3_MATERIAL_1 = 1;
+    public const int DEVELOP_I3_MATERIAL_2 = 0;
+    public const int DEVELOP_I3_MATERIAL_3 = 0;
+    public const int DEVELOP_NEED_MP_I3 = 3;
+
+    public const string NAME_I4 = "回復薬（特）";
+    public const int HEAL_POINT_I4 = 100;
+    public const int DEVELOP_I4_MATERIAL_1 = 1;
+    public const int DEVELOP_I4_MATERIAL_2 = 0;
+    public const int DEVELOP_I4_MATERIAL_3 = 0;
+    public const int DEVELOP_NEED_MP_I4 = 3;
+
     //武器ステータス
-    public const string NAME_W1 = "ロングソード";
+    public const string NAME_W1 = "アクアマリン";
     public const int HP_W1 = 100;
     public const int ATTACK_W1 = 5;
     public const int DEFENSE_W1 = 3;
@@ -49,8 +78,14 @@ public class map_creat : MonoBehaviour {
     public const int ATTACK_TYPE_W1 = 0;
     public const bool ATTACK_THROUGH_W1 = false;
     public const bool SLANTING_WALL_W1 = false;
+    public const int DEVELOP_W1_MATERIAL_1 = 1;
+    public const int DEVELOP_W1_MATERIAL_2 = 1;
+    public const int DEVELOP_W1_MATERIAL_3 = 1;
+    public const int MP_COST_W1 = 1;
+    public const int ENDURANCE_W1 = 1;
+    public const int DEVELOP_NEED_MP_W1 = 1;
 
-    public const string NAME_W2 = "ショットガン";
+    public const string NAME_W2 = "アメシスト";
     public const int HP_W2 = 20;
     public const int ATTACK_W2 = 2;
     public const int DEFENSE_W2 = 1;
@@ -58,8 +93,14 @@ public class map_creat : MonoBehaviour {
     public const int ATTACK_TYPE_W2 = 1;
     public const bool ATTACK_THROUGH_W2 = false;
     public const bool SLANTING_WALL_W2 = true;
+    public const int DEVELOP_W2_MATERIAL_1 = 1;
+    public const int DEVELOP_W2_MATERIAL_2 = 1;
+    public const int DEVELOP_W2_MATERIAL_3 = 1;
+    public const int MP_COST_W2 = 1;
+    public const int ENDURANCE_W2 = 1;
+    public const int DEVELOP_NEED_MP_W2 = 1;
 
-    public const string NAME_W3 = "ライフル";
+    public const string NAME_W3 = "エメラルド";
     public const int HP_W3 = 0;
     public const int ATTACK_W3 = 5;
     public const int DEFENSE_W3 = 0;
@@ -67,7 +108,42 @@ public class map_creat : MonoBehaviour {
     public const int ATTACK_TYPE_W3 = 0;
     public const bool ATTACK_THROUGH_W3 = true;
     public const bool SLANTING_WALL_W3 = true;
+    public const int DEVELOP_W3_MATERIAL_1 = 1;
+    public const int DEVELOP_W3_MATERIAL_2 = 1;
+    public const int DEVELOP_W3_MATERIAL_3 = 1;
+    public const int MP_COST_W3 = 1;
+    public const int ENDURANCE_W3 = 1;
+    public const int DEVELOP_NEED_MP_W3 = 1;
 
+    public const string NAME_W4 = "ルビー";
+    public const int HP_W4 = 0;
+    public const int ATTACK_W4 = 5;
+    public const int DEFENSE_W4 = 0;
+    public const int ATTACK_RANGE_W4 = 3;
+    public const int ATTACK_TYPE_W4 = 0;
+    public const bool ATTACK_THROUGH_W4 = true;
+    public const bool SLANTING_WALL_W4 = true;
+    public const int DEVELOP_W4_MATERIAL_1 = 1;
+    public const int DEVELOP_W4_MATERIAL_2 = 1;
+    public const int DEVELOP_W4_MATERIAL_3 = 1;
+    public const int MP_COST_W4 = 1;
+    public const int ENDURANCE_W4 = 1;
+    public const int DEVELOP_NEED_MP_W4 = 1;
+
+    public const string NAME_W5 = "エメラルド";
+    public const int HP_W5 = 0;
+    public const int ATTACK_W5 = 5;
+    public const int DEFENSE_W5 = 0;
+    public const int ATTACK_RANGE_W5 = 3;
+    public const int ATTACK_TYPE_W5 = 0;
+    public const bool ATTACK_THROUGH_W5 = true;
+    public const bool SLANTING_WALL_W5 = true;
+    public const int DEVELOP_W5_MATERIAL_1 = 1;
+    public const int DEVELOP_W5_MATERIAL_2 = 1;
+    public const int DEVELOP_W5_MATERIAL_3 = 1;
+    public const int MP_COST_W5 = 1;
+    public const int ENDURANCE_W5 = 1;
+    public const int DEVELOP_NEED_MP_W5 = 1;
 
     private GameObject FloorText;
 
@@ -1406,15 +1482,15 @@ public class map_creat : MonoBehaviour {
             map[(int)pos.x , (int)pos.z].number = 5;
         }else if(obj.tag == "Item1")
         {
-            map_item[(int)pos.x, (int)pos.z] = new item1();
+            map_item[(int)pos.x, (int)pos.z] = new item1(NAME_I1,HEAL_POINT_I1,DEVELOP_I1_MATERIAL_1,DEVELOP_I1_MATERIAL_2,DEVELOP_I1_MATERIAL_3,DEVELOP_NEED_MP_I1);
         }
         else if (obj.tag == "Item2")
         {
-            map_item[(int)pos.x, (int)pos.z] = new item2();
+            map_item[(int)pos.x, (int)pos.z] = new item2(NAME_I2 , ATTACK_POINT , ATTACK_RANGE , ATTACK_TYPE , DEVELOP_I2_MATERIAL_1, DEVELOP_I2_MATERIAL_2, DEVELOP_I2_MATERIAL_3, DEVELOP_NEED_MP_I2);
         }
         else if (obj.tag == "Item3")
         {
-            map_item[(int)pos.x, (int)pos.z] = new item3();
+            map_item[(int)pos.x, (int)pos.z] = new item3(NAME_I3 , DEVELOP_I3_MATERIAL_1, DEVELOP_I3_MATERIAL_2, DEVELOP_I3_MATERIAL_3, DEVELOP_NEED_MP_I3);
         }else if(obj.tag == "material1")
         {
             map_item[(int)pos.x, (int)pos.z] = new material1();
@@ -1429,15 +1505,15 @@ public class map_creat : MonoBehaviour {
         }
         else if(obj.tag == "weapon1")
         {
-            map_item[(int)pos.x, (int)pos.z] = new weapon1(NAME_W1, HP_W1 , ATTACK_W1 , DEFENSE_W1, ATTACK_RANGE_W1 , ATTACK_TYPE_W1 , ATTACK_THROUGH_W1 , SLANTING_WALL_W1);
+            map_item[(int)pos.x, (int)pos.z] = new weapon1(NAME_W1, HP_W1 , ATTACK_W1 , DEFENSE_W1, ATTACK_RANGE_W1 , ATTACK_TYPE_W1 , ATTACK_THROUGH_W1 , SLANTING_WALL_W1 , DEVELOP_W1_MATERIAL_1, DEVELOP_W1_MATERIAL_2, DEVELOP_W1_MATERIAL_3, MP_COST_W1, ENDURANCE_W1, DEVELOP_NEED_MP_W1);
         }
         else if(obj.tag == "weapon2")
         {
-            map_item[(int)pos.x, (int)pos.z] = new weapon2(NAME_W2, HP_W2, ATTACK_W2, DEFENSE_W2, ATTACK_RANGE_W2, ATTACK_TYPE_W2, ATTACK_THROUGH_W2, SLANTING_WALL_W2);
+            map_item[(int)pos.x, (int)pos.z] = new weapon2(NAME_W2, HP_W2, ATTACK_W2, DEFENSE_W2, ATTACK_RANGE_W2, ATTACK_TYPE_W2, ATTACK_THROUGH_W2, SLANTING_WALL_W2, DEVELOP_W2_MATERIAL_1, DEVELOP_W2_MATERIAL_2, DEVELOP_W2_MATERIAL_3, MP_COST_W2, ENDURANCE_W2, DEVELOP_NEED_MP_W2);
         }
         else if(obj.tag == "weapon3")
         {
-            map_item[(int)pos.x, (int)pos.z] = new weapon3(NAME_W3, HP_W3, ATTACK_W3, DEFENSE_W3, ATTACK_RANGE_W3, ATTACK_TYPE_W3, ATTACK_THROUGH_W3, SLANTING_WALL_W3);
+            map_item[(int)pos.x, (int)pos.z] = new weapon3(NAME_W3, HP_W3, ATTACK_W3, DEFENSE_W3, ATTACK_RANGE_W3, ATTACK_TYPE_W3, ATTACK_THROUGH_W3, SLANTING_WALL_W3, DEVELOP_W3_MATERIAL_1, DEVELOP_W3_MATERIAL_2, DEVELOP_W3_MATERIAL_3, MP_COST_W3, ENDURANCE_W3, DEVELOP_NEED_MP_W3);
         }
         GameObject obj2 = Instantiate(obj, new Vector3(pos.x, 0, pos.z), Quaternion.identity);
 
